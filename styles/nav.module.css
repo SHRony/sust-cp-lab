@@ -1,0 +1,10 @@
+.navContainer{
+  @apply h-20 flex flex-row justify-between items-center w-full p-1;
+  background-color: var(--primary);
+}
+.navLeft{
+  @apply h-full flex flex-row justify-evenly items-center px-16;
+}
+.navRight{
+  @apply h-full flex flex-row justify-evenly items-center px-16;
+}
