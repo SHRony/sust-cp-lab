@@ -7,10 +7,13 @@ import Image from "next/image";
 export default function NavBar(){
   return <div className={styles.navContainer}>
     <div className={styles.navLeft}>
+      <NavButton url="/" type="text">
+        Home
+      </NavButton>
       <NavButton url="" type="text">
         Contests
       </NavButton>
-      <NavButton url="" type="text">
+      <NavButton url="/cfviz" type="text">
         CF Viz
       </NavButton>
       <NavButton url="" type="text">
