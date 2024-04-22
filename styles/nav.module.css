@@ -1,5 +1,5 @@
 .navContainer{
-  @apply h-20 flex flex-row justify-between items-center w-full p-1;
+  @apply h-20 flex flex-row justify-between items-center w-full p-1;  
   background-color: var(--primary);
 }
 .navLeft{
