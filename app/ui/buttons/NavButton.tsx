@@ -6,9 +6,9 @@ export default function NavButton({children, url, type} : Readonly<{children:Rea
   return (
     <Link href={url}>{
       type != 'icon' ? (
-        <Button variant="text" className='h-full flex flex-row justify-evenly items-center px-5 py-3 text-white'>{children}</Button>
+        <div className='h-full flex flex-row justify-evenly items-center px-5 py-3 text-white'><Button style={{color : 'white'}} variant="text">{children}</Button></div>
       ) : (
-        <IconButton className='h-full flex flex-row justify-evenly items-center p-5 mx-5'>{children}</IconButton>
+        <div className='h-full flex flex-row justify-evenly items-center mx-5 rounded-full'><IconButton style={{padding : '20px'}}>{children}</IconButton></div>
       ) 
     }
     </Link>

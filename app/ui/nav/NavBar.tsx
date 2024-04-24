@@ -1,12 +1,12 @@
 import React from "react";
-import styles from '@/styles/nav.module.css'
 import NavButton from '@/app/ui/buttons/NavButton';
 import logoutIcon from '@/public/logout_white.png'
 import profileIcon from '@/public/profile.svg'
 import Image from "next/image";
+
 export default function NavBar(){
-  return <div className={styles.navContainer}>
-    <div className={styles.navLeft}>
+  return <div style={{backgroundColor : 'var(--primary)'}} className='h-20 flex flex-row justify-between items-center w-full p-1'>
+    <div className='h-full flex flex-row justify-evenly items-center px-16'>
       <NavButton url="/" type="text">
         Home
       </NavButton>
@@ -24,7 +24,7 @@ export default function NavBar(){
       </NavButton>
       
     </div>
-    <div className={styles.navLeft}>
+    <div className='h-full flex flex-row justify-evenly items-center px-16'>
       <NavButton url="" type="icon">
         <Image
           src={profileIcon}
