@@ -11,7 +11,7 @@ import { useRef } from "react";
 import submitIcon from '@/public/plane.png'
 import { Button, IconButton, Snackbar, SnackbarContent } from "@mui/material";
 import CloseIcon from '@mui/icons-material/Close';
-
+import spinnerIcon from '@/public/spinner.gif'
 type userType = Readonly<{
   maxRating: number | string;
   maxRank: string;
@@ -24,10 +24,17 @@ type userType = Readonly<{
 
 export default function HandleInput({changeUser}:Readonly<{changeUser: (newUser: userType | null) => void;}>) {
   const [input, setInput] = useState('');
-  const [open, setOpen] = React.useState(false);
+  const [isLoading, setLoading] = useState(false);
+  const [open, setOpen] = useState(false);
   function handleChange(e:React.ChangeEvent<HTMLInputElement>){
    setInput (e.target.value);
   };
+  function startSpinner(){
+    setLoading(true);
+  }
+  function stopSpinner(){
+    setLoading(false);
+  }
   const handleClose = (event: React.SyntheticEvent | Event, reason?: string) => {
     if (reason === 'clickaway') {
       return;
@@ -49,8 +56,9 @@ export default function HandleInput({changeUser}:Readonly<{changeUser: (newUser:
   );
 
   
-  function handleSubmit() {
-    fetch(`/api/external/cfuserinfo?user=${input}`).then(
+  async function handleSubmit() {
+    setLoading(true);
+    await fetch(`/api/external/cfuserinfo?user=${input}`).then(
       (res) => {
         if(res.status == 200){
           res.json().then((val) => {
@@ -64,6 +72,7 @@ export default function HandleInput({changeUser}:Readonly<{changeUser: (newUser:
       }
     ).catch(() => {
     });
+    setLoading(false);
     
   }
   return (
@@ -76,7 +85,8 @@ export default function HandleInput({changeUser}:Readonly<{changeUser: (newUser:
         alt="Profile" />
       <div className="flex flex-row items-center justify-center">
         <Box className='shadow-sm' sx={{ display: 'flex', alignItems: 'flex-end' }}>
-          <AccountCircleIcon sx={{ color: 'action.active', mr: 1, my: 0.5 }} />
+        <AccountCircleIcon sx={{ color: 'action.active', mr: 1, my: 0.5 }} />
+          
           <TextField
             label="CF Handles"
             variant="standard"
@@ -86,19 +96,31 @@ export default function HandleInput({changeUser}:Readonly<{changeUser: (newUser:
         </Box>
         <div className="ml-5 flex justify-center items-center translate-y-1">
           <SubmitButton clickHandler={handleSubmit}>
-            <Image
-              src={submitIcon}
-              width={20}
-              height={20}
-              className="mr-2"
-              alt="Profile" />
+            {
+              isLoading ? (
+                <Image
+                  src={spinnerIcon}
+                  width={20}
+                  height={20}
+                  className="mr-2"
+                  alt="Profile" />
+              ):(
+                <Image
+                  src={submitIcon}
+                  width={20}
+                  height={20}
+                  className="mr-2"
+                  alt="Profile" />
+              )
+            }
+            
             Show stats
           </SubmitButton>
         </div>
       </div>
       <Snackbar
       open={open}
-      autoHideDuration={600000}
+      autoHideDuration={1000}
       onClose={handleClose}
       style={{
         position: 'absolute',
