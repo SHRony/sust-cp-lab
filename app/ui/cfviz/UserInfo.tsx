@@ -24,9 +24,9 @@ export default function UserInfo({maxRating, maxRank, lastActive, registered, co
         objectFit="contain"
         alt="Profile"
       />
-      <div className="w-full flex justify-center items-center text-2xl font-bold text-gray-700 text-shadow-2xl">
-        {name}
       </div>
+      <div className="w-full flex justify-center items-center text-2xl font-bold text-gray-700 text-shadow-2xl text-center">
+        {name}
       </div>
       <div className="flex flex-row justify-start w-full p-2 ml-60">
         <div className="font-bold text-gray-700 w-40">
