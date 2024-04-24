@@ -1,4 +1,5 @@
 import { NextResponse, NextRequest } from "next/server";
+
 function getTime(s : number){
   let m = Math.floor(s / 60);
   let h = Math.floor(m / 60);
@@ -31,14 +32,14 @@ export async function GET(request:NextRequest) {
   try{
     let param = request.nextUrl.searchParams.get('user');
     if(!param || param == '') return NextResponse.json({ error: 'Missing parameters' }, { status: 500 });
-    const users = param?.split(",");
-    const response = await fetch('https://codeforces.com/api/user.info?handles='+users?.join(";"));
-    const userData = await response.json();
+    const users:string[] = param?.split(",");
+    const userResponse = await fetch('https://codeforces.com/api/user.info?handles='+users?.join(";"));
+    const userData = await userResponse.json();
     const userResult = userData.result;
     const contribution = userResult.reduce((mx:number, x:any)=>{ mx = Math.max(mx, x.contribution); return mx;}, 0);
     const lastActive = getTime(
       userResult.reduce((mn:any, x:any) => {
-        mn = Math.min(mn, Math.floor(Date.now()/ 1000) - x.lastOnlineTimeSeconds);console.log(Date.now());
+        mn = Math.min(mn, Math.floor(Date.now()/ 1000) - x.lastOnlineTimeSeconds);
         return mn
       }, 1000000000)
     );  
@@ -52,9 +53,41 @@ export async function GET(request:NextRequest) {
     const avatar = userResult[0].avatar;
     const name = userResult[0].firstName + " " + userResult[0].lastName;
     
-  
-  
-  
+    let solvedProblems:any = [];
+    let mn = 1000000;
+    let acTime = [];
+    for(const user of users){
+      let url = "https://codeforces.com/api/user.status?handle=" + user;
+      let statusResponse = await fetch(url);
+      let statusData = await statusResponse.json();
+      let statusResult = statusData.result;
+      let st = new Map();
+      for(const submission of statusResult) {
+        let problemName = submission.problem.name;
+        if(submission.verdict == 'OK' && !st.has(problemName)){
+          mn = Math.min(mn, Math.round(submission.creationTimeSeconds / 86400));
+          if(submission.problem.rating){
+            acTime.push({
+              x: Math.round(submission.creationTimeSeconds / 86400),
+              y: submission.problem.rating
+            })
+          }
+          st.set(problemName, 1);
+          solvedProblems.push(submission.problem);
+        }
+      }
+      for(let i = 0; i < acTime.length; i++){
+        acTime[i].x = acTime[i].x - mn;
+      }
+    }
+    let diffCount = new Map();
+    let catCount = new Map();
+    for(const problem of solvedProblems){
+      diffCount.set(problem.rating , diffCount.has(problem.rating) ? diffCount.get(problem.rating) + 1 : 1);
+      for(const tag of problem.tags){
+        catCount.set(tag, catCount.has(tag) ? catCount.get(tag) + 1 : 1);
+      }
+    }
   
   
     let user = {
@@ -64,8 +97,8 @@ export async function GET(request:NextRequest) {
       maxRank : maxRank,
       registered : registered,
       avatar : avatar,
-      name : name
-
+      name : name,
+      acTime : acTime
     };
     return NextResponse.json(user);
   }catch{
