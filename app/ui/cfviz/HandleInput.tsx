@@ -20,6 +20,7 @@ type userType = Readonly<{
   contribution: number | string;
   avatar : string;
   name : string;
+  acTime : {x : number, y : number}[]
 }>;
 
 export default function HandleInput({changeUser}:Readonly<{changeUser: (newUser: userType | null) => void;}>) {
