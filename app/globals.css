@@ -39,3 +39,7 @@ body {
     text-wrap: balance;
   }
 }
+
+input{
+  padding: 5px !important;
+}
