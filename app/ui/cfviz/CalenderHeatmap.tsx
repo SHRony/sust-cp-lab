@@ -30,7 +30,7 @@ export default function CalenderHeatmap({user}:{user : userType}){
      <div className="bg-white bg-opacity-75 backdrop-blur drop-shadow-3xl w-full mt-10">
       {
           Array.from({ length: new Date().getFullYear() - startYear + 1 }, (_, i) => i + startYear).map(year => (
-            <div className="w-full h-60 p-2 ">
+            <div key={year} className="w-full h-60 p-2 ">
               <div className="font-bold text-xl">{year}</div>
               <CalendarHeatmap
                 key={year} // Important to add a unique key for each heatmap
