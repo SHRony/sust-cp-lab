@@ -1,3 +1,4 @@
+import { Sort } from "@mui/icons-material";
 import { NextResponse, NextRequest } from "next/server";
 
 function getTime(s : number){
@@ -100,7 +101,6 @@ export async function GET(request:NextRequest) {
     }
     let calenderSubmissions:{date : string, count : number}[] = [];
     dateCnt.forEach((value, key) => {
-      // console.log(`Key: ${key}, Value: ${value}`);
       calenderSubmissions.push({
         date : key, 
         count : value
@@ -109,13 +109,34 @@ export async function GET(request:NextRequest) {
     let diffCount = new Map();
     let catCount = new Map();
     for(const problem of solvedProblems){
-      diffCount.set(problem.rating , diffCount.has(problem.rating) ? diffCount.get(problem.rating) + 1 : 1);
+      if(problem.rating && problem.rating != "") diffCount.set(problem.rating , diffCount.has(problem.rating) ? diffCount.get(problem.rating) + 1 : 1);
       for(const tag of problem.tags){
         catCount.set(tag, catCount.has(tag) ? catCount.get(tag) + 1 : 1);
       }
     }
-  
-  
+    let catData: { x: any; y: any; }[] = [];
+    catCount.forEach((value, key)=>{
+      catData.push({
+        x : key,
+        y : value
+      });
+    });
+    const cmpcat = (a:any, b:any)=>{
+      return b.y - a.y;
+    }
+    const cmpdif = (a:any, b:any)=>{
+      return a.x - b.x;
+    }
+    catData.sort(cmpcat);
+    let diffData: { x: any; y: any; }[] = [];
+    for(let i = 800; i <= 3500; i += 100) if(!diffCount.has(i)) diffCount.set(i, 0);
+    diffCount.forEach((value, key)=>{
+      diffData.push({
+        x : key,
+        y : value
+      });
+    });
+    diffData.sort(cmpdif);
     let user = {
       contribution : contribution,
       lastActive : lastActive,
@@ -125,7 +146,9 @@ export async function GET(request:NextRequest) {
       avatar : avatar,
       name : name,
       acTime : acTime,
-      calenderSubmissions : calenderSubmissions
+      calenderSubmissions : calenderSubmissions,
+      diffData : diffData,
+      catData : catData
     };
     return NextResponse.json(user);
   }catch{

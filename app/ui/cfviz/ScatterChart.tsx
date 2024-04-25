@@ -9,7 +9,7 @@ export default function ScatterChart({user} : {user : userType}){
   return (
     <div style={{
           minWidth : '600px',
-          width : '80%'
+          width : '100%'
         }
       } 
       className="flex flex-row justify-center items-center bg-white bg-opacity-75 backdrop-blur drop-shadow-3xl p-5 mt-10 rounded">

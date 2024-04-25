@@ -10,22 +10,25 @@ export default function CalenderHeatmap({user}:{user : userType}){
   const getTooltipDataAttrs = (value:any) => {
     console.log(value);
     // Temporary hack around null value.date issue
-    if (!value || !value.date) {
-      return null;
-    }
+    // if (!value || !value.date) {
+    //   return null;
+    // }
     // Configuration for react-tooltip
     return {
       'data-tip': `yo bro`,
     };
   }
   const handleClick = (value:any) => {
-    alert(`You clicked on ${value.count}`);
+    if (!value || !value.date) {
+      return ;
+    }
+    alert(`${value.count}`);
   };
   return (
-     <div className="bg-white bg-opacity-75 backdrop-blur drop-shadow-3xl w-full mt-10">
+     <div className="bg-white bg-opacity-75 backdrop-blur drop-shadow-3xl w-full mt-10 flex flex-col justify-center items-center">
       {
-          Array.from({ length: new Date().getFullYear() - startYear + 1 }, (_, i) => i + startYear).map(year => (
-            <div key={year} className="w-full h-60 p-2 ">
+          Array.from({ length: new Date().getFullYear() - startYear + 1 }, (_, i) => i + startYear).reverse().map(year => (
+            <div style={{maxWidth : "1200px"}} key={year} className="w-full h-60 p-2">
               <div className="font-bold text-xl">{year}</div>
               <CalendarHeatmap
                 key={year} // Important to add a unique key for each heatmap

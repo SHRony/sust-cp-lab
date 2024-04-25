@@ -8,4 +8,6 @@ export type userType = Readonly<{
   name : string;
   acTime : {x : number, y : number}[]
   calenderSubmissions : {date : string, count : number}
+  diffData : { x: any; y: any; }[]
+  catData : { x: any; y: any; }[]
 }>;

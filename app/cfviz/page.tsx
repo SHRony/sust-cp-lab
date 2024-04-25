@@ -5,6 +5,8 @@ import UserInfo from "@/app/ui/cfviz/UserInfo";
 import { userType } from "@/app/lib/types";
 import ScatterChart from "@/app/ui/cfviz/ScatterChart";
 import CalenderHeatmap from "@/app/ui/cfviz/CalenderHeatmap";
+import CatagoryBarChart from "../ui/cfviz/CatagoryBarChart";
+import DifficultyBarChart from "../ui/cfviz/DifficultyBarChart";
 
 
 //rating curve, calender heatmap, number of contests participated in last among last hundred contest,
@@ -28,6 +30,21 @@ export default function CFViz(){
     }
     {
       user != null ? (
+        <DifficultyBarChart barData={user.diffData}></DifficultyBarChart>
+      ) : (
+        <></>
+      )
+    }
+    {
+      user != null ? (
+        <CatagoryBarChart barData={user.catData}></CatagoryBarChart>
+      ) : (
+        <></>
+      )
+    }
+
+    {
+      user != null ? (
         <ScatterChart user={user}></ScatterChart>
       ) : (
         <></>
@@ -40,6 +57,7 @@ export default function CFViz(){
         <></>
       )
     }
+    
 
   </div>
 }
