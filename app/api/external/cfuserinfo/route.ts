@@ -27,6 +27,19 @@ function getRank(r:number){
   if(r > 0) return "Newbie";
   return "Unknown";
 }
+
+function getDate(timestamp:number) {
+  timestamp = timestamp * 1000;
+  const date = new Date(timestamp);
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0'); // Add leading zero for single-digit months
+  const day = String(date.getDate()).padStart(2, '0');  // Add leading zero for single-digit days
+  
+  // Combine year, month, and day in the desired format
+  const formattedDate = `${year}-${month}-${day}`;
+  return formattedDate;
+}
+
 export async function GET(request:NextRequest) {
   
   try{
@@ -56,14 +69,18 @@ export async function GET(request:NextRequest) {
     let solvedProblems:any = [];
     let mn = 1000000;
     let acTime = [];
+    let dateCnt = new Map();
+    let st = new Map();
     for(const user of users){
       let url = "https://codeforces.com/api/user.status?handle=" + user;
       let statusResponse = await fetch(url);
       let statusData = await statusResponse.json();
       let statusResult = statusData.result;
-      let st = new Map();
+
       for(const submission of statusResult) {
         let problemName = submission.problem.name;
+        let date = getDate(submission.creationTimeSeconds);
+        dateCnt.set(date, dateCnt.has(date) ? dateCnt.get(date) + 1 : 1);
         if(submission.verdict == 'OK' && !st.has(problemName)){
           mn = Math.min(mn, Math.round(submission.creationTimeSeconds / 86400));
           if(submission.problem.rating){
@@ -79,7 +96,16 @@ export async function GET(request:NextRequest) {
       for(let i = 0; i < acTime.length; i++){
         acTime[i].x = acTime[i].x - mn;
       }
+      
     }
+    let calenderSubmissions:{date : string, count : number}[] = [];
+    dateCnt.forEach((value, key) => {
+      // console.log(`Key: ${key}, Value: ${value}`);
+      calenderSubmissions.push({
+        date : key, 
+        count : value
+      });
+    });
     let diffCount = new Map();
     let catCount = new Map();
     for(const problem of solvedProblems){
@@ -98,7 +124,8 @@ export async function GET(request:NextRequest) {
       registered : registered,
       avatar : avatar,
       name : name,
-      acTime : acTime
+      acTime : acTime,
+      calenderSubmissions : calenderSubmissions
     };
     return NextResponse.json(user);
   }catch{

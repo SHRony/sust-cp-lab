@@ -12,16 +12,7 @@ import submitIcon from '@/public/plane.png'
 import { Button, IconButton, Snackbar, SnackbarContent } from "@mui/material";
 import CloseIcon from '@mui/icons-material/Close';
 import spinnerIcon from '@/public/spinner.gif'
-type userType = Readonly<{
-  maxRating: number | string;
-  maxRank: string;
-  lastActive: string;
-  registered: string;
-  contribution: number | string;
-  avatar : string;
-  name : string;
-  acTime : {x : number, y : number}[]
-}>;
+import { userType } from "@/app/lib/types";
 
 export default function HandleInput({changeUser}:Readonly<{changeUser: (newUser: userType | null) => void;}>) {
   const [input, setInput] = useState('');
@@ -77,7 +68,8 @@ export default function HandleInput({changeUser}:Readonly<{changeUser: (newUser:
     
   }
   return (
-    <div style={{position:'relative'}} className="relative flex flex-col justify-between items-center bg-white bg-opacity-75 backdrop-blur drop-shadow-3xl w-full max-w-xl h-80 rounded pb-32">
+    <div className="
+    flex flex-col justify-between items-center bg-white bg-opacity-75 backdrop-blur drop-shadow-3xl w-full max-w-xl h-80 rounded pb-32">
       <Image
         src={cfLogo}
         width={80}

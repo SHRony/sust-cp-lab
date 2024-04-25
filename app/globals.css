@@ -43,3 +43,170 @@ body {
 input{
   padding: 5px !important;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
+ * react-calendar-heatmap styles
+ *
+ * All of the styles in this file are optional and configurable!
+ * The github and gitlab color scales are provided for reference.
+ */
+
+ .react-calendar-heatmap text {
+  font-size: 10px;
+  fill: #aaa;
+}
+
+.react-calendar-heatmap .react-calendar-heatmap-small-text {
+  font-size: 5px;
+}
+
+.react-calendar-heatmap rect:hover {
+  stroke: #555;
+  stroke-width: 1px;
+}
+
+/*
+ * Default color scale
+ */
+
+.react-calendar-heatmap .color-empty {
+  fill: #eeeeee;
+}
+
+.react-calendar-heatmap .color-filled {
+  fill: #8cc665;
+}
+
+/*
+ * Github color scale
+ */
+
+.react-calendar-heatmap .color-github-0 {
+  fill: #eeeeee;
+}
+.react-calendar-heatmap .color-github-1 {
+  fill: #d6e685;
+}
+.react-calendar-heatmap .color-github-2 {
+  fill: #8cc665;
+}
+.react-calendar-heatmap .color-github-3 {
+  fill: #44a340;
+}
+.react-calendar-heatmap .color-github-4 {
+  fill: #1e6823;
+}
+
+/*
+ * Gitlab color scale
+ */
+
+ .react-calendar-heatmap {
+  /* Existing styles... */
+  fill: #00a136;
+  
+}
+
+.react-calendar-heatmap .color-scale-1{
+  opacity : 0.13;
+  }
+  .react-calendar-heatmap .color-scale-2{
+  opacity : 0.16;
+  }
+  .react-calendar-heatmap .color-scale-3{
+  opacity : 0.19;
+  }
+  .react-calendar-heatmap .color-scale-4{
+  opacity : 0.22;
+  }
+  .react-calendar-heatmap .color-scale-5{
+  opacity : 0.25;
+  }
+  .react-calendar-heatmap .color-scale-6{
+  opacity : 0.28;
+  }
+  .react-calendar-heatmap .color-scale-7{
+  opacity : 0.31;
+  }
+  .react-calendar-heatmap .color-scale-8{
+  opacity : 0.34;
+  }
+  .react-calendar-heatmap .color-scale-9{
+  opacity : 0.37;
+  }
+  .react-calendar-heatmap .color-scale-10{
+  opacity : 0.40;
+  }
+  .react-calendar-heatmap .color-scale-11{
+  opacity : 0.43;
+  }
+  .react-calendar-heatmap .color-scale-12{
+  opacity : 0.46;
+  }
+  .react-calendar-heatmap .color-scale-13{
+  opacity : 0.49;
+  }
+  .react-calendar-heatmap .color-scale-14{
+  opacity : 0.52;
+  }
+  .react-calendar-heatmap .color-scale-15{
+  opacity : 0.55;
+  }
+  .react-calendar-heatmap .color-scale-16{
+  opacity : 0.58;
+  }
+  .react-calendar-heatmap .color-scale-17{
+  opacity : 0.61;
+  }
+  .react-calendar-heatmap .color-scale-18{
+  opacity : 0.64;
+  }
+  .react-calendar-heatmap .color-scale-19{
+  opacity : 0.67;
+  }
+  .react-calendar-heatmap .color-scale-20{
+  opacity : 0.70;
+  }
+  .react-calendar-heatmap .color-scale-21{
+  opacity : 0.73;
+  }
+  .react-calendar-heatmap .color-scale-22{
+  opacity : 0.76;
+  }
+  .react-calendar-heatmap .color-scale-23{
+  opacity : 0.79;
+  }
+  .react-calendar-heatmap .color-scale-24{
+  opacity : 0.82;
+  }
+  .react-calendar-heatmap .color-scale-25{
+  opacity : 0.85;
+  }
+  .react-calendar-heatmap .color-scale-26{
+  opacity : 0.88;
+  }
+  .react-calendar-heatmap .color-scale-27{
+  opacity : 0.91;
+  }
+  .react-calendar-heatmap .color-scale-28{
+  opacity : 0.94;
+  }
+  .react-calendar-heatmap .color-scale-29{
+  opacity : 0.97;
+  }
+  .react-calendar-heatmap .color-scale-30{
+  opacity : 0.100;
+  }
+  
