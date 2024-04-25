@@ -7,7 +7,8 @@ import CalendarHeatmap from 'react-calendar-heatmap';
 export default function CalenderHeatmap({user}:{user : userType}){
   const value:any = user.calenderSubmissions;
   const startYear = value.reduce((mn:number, x:any)=>{ mn = Math.min(mn, new Date(x.date).getFullYear()); return mn;}, new Date().getFullYear());
-  function getTooltipDataAttrs(value:any){
+  const getTooltipDataAttrs = (value:any) => {
+    console.log(value);
     // Temporary hack around null value.date issue
     if (!value || !value.date) {
       return null;
@@ -17,15 +18,9 @@ export default function CalenderHeatmap({user}:{user : userType}){
       'data-tip': `yo bro`,
     };
   }
-  function getHeatMap(year : number){
-    return (
-      <CalendarHeatmap
-        startDate={new Date(year + '-01-01')}
-        endDate={new Date(year + '-12-31')}
-        values={value}
-      />
-    );
-  }
+  const handleClick = (value:any) => {
+    alert(`You clicked on ${value.count}`);
+  };
   return (
      <div className="bg-white bg-opacity-75 backdrop-blur drop-shadow-3xl w-full mt-10">
       {
@@ -43,7 +38,10 @@ export default function CalenderHeatmap({user}:{user : userType}){
                   }
                   return `color-scale-${value.count}`;
                 }}
-                tooltipDataAttrs={getTooltipDataAttrs}
+                tooltipDataAttrs={{
+                  'data-tooltip': 'tooltip'
+                }}
+                onClick={handleClick}
               />
             </div>
         ))
