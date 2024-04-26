@@ -46,7 +46,7 @@ export default function CatagoryBarChart({barData} : {barData:{ x: string; y: nu
   }
   
   return (
-    <div className="mt-10 bg-white bg-opacity-75 backdrop-blur drop-shadow-3xl w-full">
+    <div className="mt-10 bg-white bg-opacity-75 backdrop-blur drop-shadow-3xl w-full flex justify-center items-center">
       <Bar options={options}
         data = {
           {

@@ -1,6 +1,6 @@
 import { Sort } from "@mui/icons-material";
 import { NextResponse, NextRequest } from "next/server";
-
+import { ratingChangeType } from "@/app/lib/types";
 function getTime(s : number){
   let m = Math.floor(s / 60);
   let h = Math.floor(m / 60);
@@ -41,6 +41,23 @@ function getDate(timestamp:number) {
   return formattedDate;
 }
 
+const borderColors:string[] =  [
+  "rgba(255, 99, 132, 1)",
+  "rgba(54, 162, 235, 1)",
+  "rgba(255, 206, 86, 1)",
+  "rgba(75, 192, 192, 1)",
+  "rgba(153, 102, 255, 1)",
+  "rgba(255, 159, 64, 1)",
+];
+const backgroundColors = [
+  "rgba(255, 99, 132, 0.2)",
+  "rgba(54, 162, 235, 0.2)",
+  "rgba(255, 206, 86, 0.2)",
+  "rgba(75, 192, 192, 0.2)",
+  "rgba(153, 102, 255, 0.2)",
+  "rgba(255, 159, 64, 0.2)",
+];
+
 export async function GET(request:NextRequest) {
   
   try{
@@ -67,11 +84,24 @@ export async function GET(request:NextRequest) {
     const avatar = userResult[0].avatar;
     const name = userResult[0].firstName + " " + userResult[0].lastName;
     
+
+
+
+
+
+
+
     let solvedProblems:any = [];
     let mn = 1000000;
     let acTime = [];
     let dateCnt = new Map();
-    let st = new Map();
+    let stProblems = new Map();
+    let stRatingChangeDates = new Map();
+    let ratingChanges:ratingChangeType = {
+      labels : [],
+      datasets : [],
+    };
+    let iteration:number = 0;
     for(const user of users){
       let url = "https://codeforces.com/api/user.status?handle=" + user;
       let statusResponse = await fetch(url);
@@ -82,7 +112,7 @@ export async function GET(request:NextRequest) {
         let problemName = submission.problem.name;
         let date = getDate(submission.creationTimeSeconds);
         dateCnt.set(date, dateCnt.has(date) ? dateCnt.get(date) + 1 : 1);
-        if(submission.verdict == 'OK' && !st.has(problemName)){
+        if(submission.verdict == 'OK' && !stProblems.has(problemName)){
           mn = Math.min(mn, Math.round(submission.creationTimeSeconds / 86400));
           if(submission.problem.rating){
             acTime.push({
@@ -90,15 +120,36 @@ export async function GET(request:NextRequest) {
               y: submission.problem.rating
             })
           }
-          st.set(problemName, 1);
+          stProblems.set(problemName, 1);
           solvedProblems.push(submission.problem);
         }
       }
       for(let i = 0; i < acTime.length; i++){
         acTime[i].x = acTime[i].x - mn;
       }
-      
+
+      url = " https://codeforces.com/api/user.rating?handle=" + user;
+      let ratingResponse = await fetch(url);
+      let ratingData = await ratingResponse.json();
+      let ratingResult = ratingData.result;
+      let ratingChangeArray : number[] = [];
+      for(const elem of ratingResult){
+        ratingChangeArray.push(elem.newRating);
+        stRatingChangeDates.set(getDate(elem.ratingUpdateTimeSeconds), 1);
+      }
+      let curRatingChange : { label : string; data : number[];borderColor : string; backgroundColor : string } = {
+        label : user,
+        data : ratingChangeArray,
+        borderColor : borderColors[iteration],
+        backgroundColor : backgroundColors[iteration],
+      };
+      ratingChanges.datasets.push(curRatingChange);
+      iteration = (iteration + 1) % 6;
     }
+    stRatingChangeDates.forEach((value, key)=>{
+      ratingChanges.labels.push(key);
+    });
+    ratingChanges.labels.sort();
     let calenderSubmissions:{date : string, count : number}[] = [];
     dateCnt.forEach((value, key) => {
       calenderSubmissions.push({
@@ -137,6 +188,15 @@ export async function GET(request:NextRequest) {
       });
     });
     diffData.sort(cmpdif);
+
+
+
+
+
+
+
+
+
     let user = {
       contribution : contribution,
       lastActive : lastActive,
@@ -148,7 +208,8 @@ export async function GET(request:NextRequest) {
       acTime : acTime,
       calenderSubmissions : calenderSubmissions,
       diffData : diffData,
-      catData : catData
+      catData : catData,
+      ratingChanges : ratingChanges
     };
     return NextResponse.json(user);
   }catch{

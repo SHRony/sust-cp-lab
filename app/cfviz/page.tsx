@@ -7,6 +7,7 @@ import ScatterChart from "@/app/ui/cfviz/ScatterChart";
 import CalenderHeatmap from "@/app/ui/cfviz/CalenderHeatmap";
 import CatagoryBarChart from "../ui/cfviz/CatagoryBarChart";
 import DifficultyBarChart from "../ui/cfviz/DifficultyBarChart";
+import RatingLineChart from "../ui/cfviz/RatingLineChart";
 
 
 //rating curve, calender heatmap, number of contests participated in last among last hundred contest,
@@ -21,9 +22,17 @@ export default function CFViz(){
     <HandleInput changeUser = {changeUser}>
 
     </HandleInput>
+    
     {
       user != null ? (
         <UserInfo maxRating={user.maxRating} maxRank={user.maxRank} lastActive={user.lastActive} registered={user.registered} contribution={user.contribution} avatar={user.avatar} name={user.name}></UserInfo>
+      ) : (
+        <></>
+      )
+    }
+    {
+      user != null ? (
+        <RatingLineChart lineData={user.ratingChanges}></RatingLineChart>
       ) : (
         <></>
       )
