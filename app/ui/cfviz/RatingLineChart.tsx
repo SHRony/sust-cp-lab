@@ -23,6 +23,7 @@ ChartJS.register(
 
 export const options = {
   responsive: true,
+  spanGaps : true,
   plugins: {
     legend: {
       position: 'top' as const,

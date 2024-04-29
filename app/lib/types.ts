@@ -2,7 +2,7 @@ export type ratingChangeType = {
   labels : string[];
   datasets : {
     label : string;
-    data : number[];
+    data : (number|null)[];
     borderColor : string;
     backgroundColor : string;
   }[]

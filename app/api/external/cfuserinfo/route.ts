@@ -96,6 +96,7 @@ export async function GET(request:NextRequest) {
     let acTime = [];
     let dateCnt = new Map();
     let stProblems = new Map();
+    let ratingChangeMaps = [];
     let stRatingChangeDates = new Map();
     let ratingChanges:ratingChangeType = {
       labels : [],
@@ -128,16 +129,23 @@ export async function GET(request:NextRequest) {
         acTime[i].x = acTime[i].x - mn;
       }
 
+
+
+
+
+
       url = " https://codeforces.com/api/user.rating?handle=" + user;
       let ratingResponse = await fetch(url);
       let ratingData = await ratingResponse.json();
       let ratingResult = ratingData.result;
-      let ratingChangeArray : number[] = [];
+      let ratingChangeArray : (number | null) [] = [];
+      let mp = new Map();
       for(const elem of ratingResult){
-        ratingChangeArray.push(elem.newRating);
+        mp.set(getDate(elem.ratingUpdateTimeSeconds),elem.newRating);
         stRatingChangeDates.set(getDate(elem.ratingUpdateTimeSeconds), 1);
       }
-      let curRatingChange : { label : string; data : number[];borderColor : string; backgroundColor : string } = {
+      ratingChangeMaps.push(mp);
+      let curRatingChange : { label : string; data : (number|null)[];borderColor : string; backgroundColor : string } = {
         label : user,
         data : ratingChangeArray,
         borderColor : borderColors[iteration],
@@ -147,6 +155,9 @@ export async function GET(request:NextRequest) {
       iteration = (iteration + 1) % 6;
     }
     stRatingChangeDates.forEach((value, key)=>{
+      for(let i = 0; i < users.length; i++){
+        ratingChanges.datasets[i].data.push(ratingChangeMaps[i].has(key) ? ratingChangeMaps[i].get(key) : null);
+      }
       ratingChanges.labels.push(key);
     });
     ratingChanges.labels.sort();
