@@ -1,6 +1,11 @@
 import { Sort } from "@mui/icons-material";
 import { NextResponse, NextRequest } from "next/server";
 import { ratingChangeType } from "@/app/lib/types";
+import { borderColors, backgroundColors } from "@/app/lib/colors";
+
+
+
+
 function getTime(s : number){
   let m = Math.floor(s / 60);
   let h = Math.floor(m / 60);
@@ -15,19 +20,24 @@ function getTime(s : number){
   return m + " Minutes ago";
 
 }
-function getRank(r:number){
-  if(r >= 3000) return "Legendary Grand Master";
-  if(r >= 2600) return "International Grand Master";
-  if(r >= 2400) return "Grand Master";
-  if(r >= 2300) return "International Master";
-  if(r >= 2100) return "Master";
-  if(r >= 1900) return "Candidate Master";
-  if(r >= 1600) return "Expert";
-  if(r >= 1400) return "Specialist";
-  if(r >= 1200) return "Pupil";
-  if(r > 0) return "Newbie";
+
+
+
+function getRank(rating:number){
+  if(rating >= 3000) return "Legendary Grand Master";
+  if(rating >= 2600) return "International Grand Master";
+  if(rating >= 2400) return "Grand Master";
+  if(rating >= 2300) return "International Master";
+  if(rating >= 2100) return "Master";
+  if(rating >= 1900) return "Candidate Master";
+  if(rating >= 1600) return "Expert";
+  if(rating >= 1400) return "Specialist";
+  if(rating >= 1200) return "Pupil";
+  if(rating > 0) return "Newbie";
   return "Unknown";
 }
+
+
 
 function getDate(timestamp:number) {
   timestamp = timestamp * 1000;
@@ -41,29 +51,8 @@ function getDate(timestamp:number) {
   return formattedDate;
 }
 
-const borderColors:string[] =  [
-  "rgba(255, 99, 132, 1)",
-  "rgba(54, 162, 235, 1)",
-  "rgba(255, 206, 86, 1)",
-  "rgba(75, 192, 192, 1)",
-  "rgba(153, 102, 255, 1)",
-  "rgba(255, 159, 64, 1)",
-];
-const backgroundColors = [
-  "rgba(255, 99, 132, 0.2)",
-  "rgba(54, 162, 235, 0.2)",
-  "rgba(255, 206, 86, 0.2)",
-  "rgba(75, 192, 192, 0.2)",
-  "rgba(153, 102, 255, 0.2)",
-  "rgba(255, 159, 64, 0.2)",
-];
 
-export async function GET(request:NextRequest) {
-  
-  try{
-    let param = request.nextUrl.searchParams.get('user');
-    if(!param || param == '') return NextResponse.json({ error: 'Missing parameters' }, { status: 500 });
-    const users:string[] = param?.split(",");
+async function fetchUserInfo(users:string[]){
     const userResponse = await fetch('https://codeforces.com/api/user.info?handles='+users?.join(";"));
     const userData = await userResponse.json();
     const userResult = userData.result;
@@ -83,20 +72,86 @@ export async function GET(request:NextRequest) {
     const maxRank = getRank(maxRating);
     const avatar = userResult[0].avatar;
     const name = userResult[0].firstName + " " + userResult[0].lastName;
-    
+    return [maxRating, maxRank, registered, lastActive, avatar, name, contribution]
+}
 
 
+async function fetchSubmissionsInfo(users:string[]) {
+  let solvedProblems:any = [];
+  let mn = 1000000;
+  let acTime = [];
+  let dateCnt = new Map();
+  let stProblems = new Map();
+  let iteration:number = 0;
+  for(const user of users){
+    let url = "https://codeforces.com/api/user.status?handle=" + user;
+    let statusResponse = await fetch(url);
+    let statusData = await statusResponse.json();
+    let statusResult = statusData.result;
 
+    for(const submission of statusResult) {
+      let problemName = submission.problem.name;
+      let date = getDate(submission.creationTimeSeconds);
+      dateCnt.set(date, dateCnt.has(date) ? dateCnt.get(date) + 1 : 1);
+      if(submission.verdict == 'OK' && !stProblems.has(problemName)){
+        mn = Math.min(mn, Math.round(submission.creationTimeSeconds / 86400));
+        if(submission.problem.rating){
+          acTime.push({
+            x: Math.round(submission.creationTimeSeconds / 86400),
+            y: submission.problem.rating
+          })
+        }
+        stProblems.set(problemName, 1);
+        solvedProblems.push(submission.problem);
+      }
+    }
+  }
+  for(let i = 0; i < acTime.length; i++){
+    acTime[i].x = acTime[i].x - mn;
+  }
+  let calenderSubmissions:{date : string, count : number}[] = [];
+  dateCnt.forEach((value, key) => {
+    calenderSubmissions.push({
+      date : key, 
+      count : value
+    });
+  });
+  let diffCount = new Map();
+  let catCount = new Map();
+  for(const problem of solvedProblems){
+    if(problem.rating && problem.rating != "") diffCount.set(problem.rating , diffCount.has(problem.rating) ? diffCount.get(problem.rating) + 1 : 1);
+    for(const tag of problem.tags){
+      catCount.set(tag, catCount.has(tag) ? catCount.get(tag) + 1 : 1);
+    }
+  }
+  let catData: { x: any; y: any; }[] = [];
+  catCount.forEach((value, key)=>{
+    catData.push({
+      x : key,
+      y : value
+    });
+  });
+  const cmpcat = (a:any, b:any)=>{
+    return b.y - a.y;
+  }
+  const cmpdif = (a:any, b:any)=>{
+    return a.x - b.x;
+  }
+  catData.sort(cmpcat);
+  let diffData: { x: any; y: any; }[] = [];
+  for(let i = 800; i <= 3500; i += 100) if(!diffCount.has(i)) diffCount.set(i, 0);
+  diffCount.forEach((value, key)=>{
+    diffData.push({
+      x : key,
+      y : value
+    });
+  });
+  diffData.sort(cmpdif);
+  return [acTime, calenderSubmissions, diffData, catData];
+}
 
-
-
-
-    let solvedProblems:any = [];
-    let mn = 1000000;
-    let acTime = [];
-    let dateCnt = new Map();
-    let stProblems = new Map();
-    let ratingChangeMaps = [];
+async function fetchRatingInfo(users : string[]){
+  let ratingChangeMaps = [];
     let stRatingChangeDates = new Map();
     let ratingChanges:ratingChangeType = {
       labels : [],
@@ -104,37 +159,8 @@ export async function GET(request:NextRequest) {
     };
     let iteration:number = 0;
     for(const user of users){
-      let url = "https://codeforces.com/api/user.status?handle=" + user;
-      let statusResponse = await fetch(url);
-      let statusData = await statusResponse.json();
-      let statusResult = statusData.result;
-
-      for(const submission of statusResult) {
-        let problemName = submission.problem.name;
-        let date = getDate(submission.creationTimeSeconds);
-        dateCnt.set(date, dateCnt.has(date) ? dateCnt.get(date) + 1 : 1);
-        if(submission.verdict == 'OK' && !stProblems.has(problemName)){
-          mn = Math.min(mn, Math.round(submission.creationTimeSeconds / 86400));
-          if(submission.problem.rating){
-            acTime.push({
-              x: Math.round(submission.creationTimeSeconds / 86400),
-              y: submission.problem.rating
-            })
-          }
-          stProblems.set(problemName, 1);
-          solvedProblems.push(submission.problem);
-        }
-      }
-      for(let i = 0; i < acTime.length; i++){
-        acTime[i].x = acTime[i].x - mn;
-      }
-
-
-
-
-
-
-      url = " https://codeforces.com/api/user.rating?handle=" + user;
+      
+      let url = " https://codeforces.com/api/user.rating?handle=" + user;
       let ratingResponse = await fetch(url);
       let ratingData = await ratingResponse.json();
       let ratingResult = ratingData.result;
@@ -155,59 +181,29 @@ export async function GET(request:NextRequest) {
       iteration = (iteration + 1) % 6;
     }
     stRatingChangeDates.forEach((value, key)=>{
-      for(let i = 0; i < users.length; i++){
-        ratingChanges.datasets[i].data.push(ratingChangeMaps[i].has(key) ? ratingChangeMaps[i].get(key) : null);
-      }
       ratingChanges.labels.push(key);
     });
     ratingChanges.labels.sort();
-    let calenderSubmissions:{date : string, count : number}[] = [];
-    dateCnt.forEach((value, key) => {
-      calenderSubmissions.push({
-        date : key, 
-        count : value
-      });
-    });
-    let diffCount = new Map();
-    let catCount = new Map();
-    for(const problem of solvedProblems){
-      if(problem.rating && problem.rating != "") diffCount.set(problem.rating , diffCount.has(problem.rating) ? diffCount.get(problem.rating) + 1 : 1);
-      for(const tag of problem.tags){
-        catCount.set(tag, catCount.has(tag) ? catCount.get(tag) + 1 : 1);
+    for(const date of ratingChanges.labels){
+      for(let i = 0; i < users.length; i++){
+        ratingChanges.datasets[i].data.push(ratingChangeMaps[i].has(date) ? ratingChangeMaps[i].get(date) : null);
       }
     }
-    let catData: { x: any; y: any; }[] = [];
-    catCount.forEach((value, key)=>{
-      catData.push({
-        x : key,
-        y : value
-      });
-    });
-    const cmpcat = (a:any, b:any)=>{
-      return b.y - a.y;
-    }
-    const cmpdif = (a:any, b:any)=>{
-      return a.x - b.x;
-    }
-    catData.sort(cmpcat);
-    let diffData: { x: any; y: any; }[] = [];
-    for(let i = 800; i <= 3500; i += 100) if(!diffCount.has(i)) diffCount.set(i, 0);
-    diffCount.forEach((value, key)=>{
-      diffData.push({
-        x : key,
-        y : value
-      });
-    });
-    diffData.sort(cmpdif);
+    return ratingChanges;
+}
 
 
 
+export async function GET(request:NextRequest) {
+  
+  try{
+    let param = request.nextUrl.searchParams.get('user');
+    if(!param || param == '') return NextResponse.json({ error: 'Missing parameters' }, { status: 500 });
+    const users:string[] = param?.split(",");
 
-
-
-
-
-
+    const [maxRating, maxRank, registered, lastActive, avatar, name, contribution] = await fetchUserInfo(users);
+    const [acTime, calenderSubmissions, diffData, catData] = await fetchSubmissionsInfo(users);
+    const ratingChanges = await fetchRatingInfo(users);
     let user = {
       contribution : contribution,
       lastActive : lastActive,
