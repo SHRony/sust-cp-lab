@@ -84,7 +84,6 @@ export default function HandleInput({changeUser}:Readonly<{changeUser: (newUser:
             label="CF Handles"
             variant="standard"
             onChange={handleChange}
-            className="autofill:bg-red-200"
             />
         </Box>
         <div className="ml-5 flex justify-center items-center translate-y-1">

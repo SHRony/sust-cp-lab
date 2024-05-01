@@ -13,7 +13,7 @@ export default function RootLayout({children} : Readonly<{children:React.ReactNo
   
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <body style={{display : "flex"}} className={inter.className + "flex flex-col"}>
           <NavBar></NavBar>
           {children}
       </body>
