@@ -3,8 +3,10 @@ import NavButton from '@/app/ui/buttons/NavButton';
 import logoutIcon from '@/public/logout_white.png'
 import profileIcon from '@/public/profile.svg'
 import Image from "next/image";
-import isLoggedIn from "@/app/utils/isLoggedIn";
 export default function NavBar(){
+  function isLoggedIn(){
+    return true;
+  }
   function logInButtonSet(){
     return <>
       <NavButton url="/login" type="text">
