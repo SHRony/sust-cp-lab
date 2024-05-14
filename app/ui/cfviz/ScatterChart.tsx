@@ -4,15 +4,33 @@ import { Scatter } from "react-chartjs-2";
 import { LinearScale } from "chart.js";
 import { Chart as ChartJS, LineController, LineElement, PointElement, Title } from 'chart.js';
 ChartJS.register(LineController, LineElement, PointElement, LinearScale, Title);
-
+const options = {
+  responsive: true,
+  spanGaps : true,
+  plugins: {
+    legend: {
+      position: 'top' as const,
+    },
+    title: {
+      display: false,
+      text: 'Scatter diagram of solved problems with time',
+    },
+  },
+};
 export default function ScatterChart({user} : {user : userType}){
   return (
     <div style={{
           minWidth : '600px',
           width : '100%'
         }
-      } 
-      className="flex flex-row justify-center items-center bg-white bg-opacity-75 backdrop-blur drop-shadow-3xl p-5 mt-10 rounded">
+      }
+      className="flex flex-col justify-center items-center bg-white backdrop-blur drop-shadow-xl p-8 mt-10 rounded max-h-600">
+        <p 
+        className='px-5 m-4 text-lg'
+        style={{backgroundColor : 'var(--primaryContainer)', color : 'var(--primary)', borderRadius : '50px', fontWeight : 'bold'}}
+        >
+          Scatter plot
+        </p>
         <Scatter 
         className="w-full" 
         data={
@@ -20,12 +38,13 @@ export default function ScatterChart({user} : {user : userType}){
             datasets: [
               {
                 data: user.acTime,
-                backgroundColor: 'rgba(255, 99, 132, 1)',
+                backgroundColor: '#6750A4',
+                label : ''
               },
             ],
           }
         }
-        options={{ maintainAspectRatio: true }}
+        options={options}
 
         />
       </div>

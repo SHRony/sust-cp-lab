@@ -12,20 +12,23 @@ type userType = Readonly<{
 
 export default function UserInfo({maxRating, maxRank, lastActive, registered, contribution, avatar, name}:userType){
   return (
-    <div style={{backgroundImage : 'url(profile_bg.png)', backgroundSize : '100% 100%'} } className="flex flex-col items-center bg-white bg-opacity-75 backdrop-blur drop-shadow-3xl w-full max-w-lg min-h-10 mt-10 py-8 rounded">
+    <div style={{backgroundImage : 'url(profile_bg.png)', backgroundSize : '100% 100%'} } className="flex flex-col items-center bg-white backdrop-blur drop-shadow-xl w-full max-w-xl min-h-10 mt-10 py-8 rounded">
       <div className="">
         <Image
         src={avatar}
         width={120}
         height={120}
-        style={{height:'120px', width : '120px', borderColor : 'var(--secondary)'}}
+        style={{height:'120px', width : '120px', borderColor : 'var(--primaryContainer)'}}
         className="block filter drop-shadow-3xl mb-5 rounded-full border-8"
         layout="fixed"
         objectFit="contain"
         alt="Profile"
       />
       </div>
-      <div className="w-full flex justify-center items-center text-2xl font-bold text-gray-700 text-shadow-2xl text-center">
+      <div 
+        className="flex justify-center items-center text-2xl font-bold text-gray-700 text-shadow-2xl text-center px-10 mb-5"
+        style={{backgroundColor : 'var(--primaryContainer)', color : 'var(--primary)', borderRadius : '50px'}}
+      >
         {name}
       </div>
       <div className="flex flex-row justify-start w-full p-2 ml-60">

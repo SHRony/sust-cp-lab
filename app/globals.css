@@ -5,9 +5,29 @@
   --foreground-rgb: 0, 0, 0;
   --background-start-rgb: 214, 219, 220;
   --background-end-rgb: 255, 255, 255;
-  --primary: #1b3358;
-  --secondary: #00a8e8;
-  --tertiary: #cbe4f5;
+  --primary: #6750A4;
+  --onPrimary : #FFFFFF;
+  --primaryContainer : #EADDFF;
+  --onPrimaryContainer : #21005D;
+  --secondary: #625B71;
+  --onsecondary : #FFFFFF;
+  --secondaryContainer : #E8DEF8;
+  --onSecondaryContainer : #1D192B;
+  --tertiary: #7D5260;
+  --onTertiary : #FFFFFF;
+  --tertiaryContainer : #FFD8E4;
+  --onTertiaryContainer : #31111D;
+  --error : #B3261E;
+  --onError : #FFFFFF;
+  --errorContainer : #F9DEDC;
+  --onErrorContainer : #410E0B;
+  --surface : #FEF7FF;
+  --onSurface : #1D1B20;
+  --surfaceVariant : #E7E0EC;
+  --onSurfaceVariant : #49454F;
+  --surfaceContainer : #F3EDF7;
+  --outline : #79747E;
+  --outlineVariant : #CAC4D0;
   --shade: #e2e8ec;
   --text: #51555a;
   --text-shade : #e7e7e7;
@@ -24,12 +44,13 @@
 
 body {
   color: var(--text);
-  background: linear-gradient(
+  /* background: linear-gradient(
       to bottom,
       transparent,
       rgb(var(--background-end-rgb))
     )
-    rgb(var(--background-start-rgb));
+    rgb(var(--background-start-rgb)); */
+    background-color: var(--surface);
   min-height: 100vh;
   background-attachment: fixed;
 }
@@ -125,7 +146,7 @@ input{
 
  .react-calendar-heatmap {
   /* Existing styles... */
-  fill: #00a136;
+  fill: var(--primary);
   
 }
 

@@ -9,6 +9,13 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      backgroundColor:{
+        'primary' : 'var(--primary)'
+        
+      },
+      textColor: {
+        onPrimary : 'var(--onPrimary)'
+      },
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
         "gradient-conic":
@@ -21,24 +28,43 @@ const config: Config = {
         '300' : '300px',
         '400' : '400px',
         '600' : '600px',
+        '700' : '700px',
         '800' : '800px'
       },
       height:{
         '300' : '300px',
         '400' : '400px',
         '600' : '600px',
+        '700' : '700px',
         '800' : '800px'
       },
       minWidth:{
         '300' : '300px',
         '400' : '400px',
         '600' : '600px',
+        '700' : '700px',
         '800' : '800px'
       },
       minHeight:{
         '300' : '300px',
         '400' : '400px',
         '600' : '600px',
+        '700' : '700px',
+        '800' : '800px'
+      }
+      ,
+      maxWidth:{
+        '300' : '300px',
+        '400' : '400px',
+        '600' : '600px',
+        '700' : '700px',
+        '800' : '800px'
+      },
+      maxHeight:{
+        '300' : '300px',
+        '400' : '400px',
+        '600' : '600px',
+        '700' : '700px',
         '800' : '800px'
       }
     },

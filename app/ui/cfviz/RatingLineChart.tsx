@@ -29,22 +29,20 @@ export const options = {
       position: 'top' as const,
     },
     title: {
-      display: true,
-      text: 'Chart.js Line Chart',
+      display: false,
+      text: 'Ratingwise solve count',
     },
   },
-};
-const labels = ['January', 'February', 'March', 'April', 'May', 'June', 'July'];
-const data = {
-  labels,
-  datasets: [
-    
-  ],
 };
 export default function RatingLineChart({lineData} : {lineData : ratingChangeType}){
   
   return (
-    <div className="mt-10 bg-white bg-opacity-75 backdrop-blur drop-shadow-3xl w-full flex justify-center items-center">
+    <div className="mt-10 bg-white backdrop-blur drop-shadow-xl w-full flex flex-col justify-center items-center max-h-700 p-8">
+      <p 
+      className='px-5 m-4 text-lg'
+      style={{backgroundColor : 'var(--primaryContainer)', color : 'var(--primary)', borderRadius : '50px', fontWeight : 'bold'}}
+      >
+        Rating curve</p>
       <Line options={options}
         data = {
           lineData

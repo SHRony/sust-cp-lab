@@ -25,18 +25,12 @@ const options = {
       position: 'top' as const,
     },
     title: {
-      display: true,
+      display: false,
       text: 'Catagory wise problem count',
     },
   },
 };
-const labels = ['January', 'February', 'March', 'April', 'May', 'June', 'July'];
-const data = {
-  labels,
-  datasets: [
-    
-  ],
-};
+
 export default function CatagoryBarChart({barData} : {barData:{ x: string; y: number; }[]}){
   let xArray : string[] = [];
   let yArray : number[] = [];
@@ -46,7 +40,13 @@ export default function CatagoryBarChart({barData} : {barData:{ x: string; y: nu
   }
   
   return (
-    <div className="mt-10 bg-white bg-opacity-75 backdrop-blur drop-shadow-3xl w-full flex justify-center items-center">
+    <div className="mt-10 bg-white backdrop-blur drop-shadow-xl w-full flex flex-col justify-center items-center max-h-600 p-8">
+      <p 
+      className='px-5 m-4 text-lg'
+      style={{backgroundColor : 'var(--primaryContainer)', color : 'var(--primary)', borderRadius : '50px', fontWeight : 'bold'}}
+      >
+        Catagory wise solve count
+      </p>
       <Bar options={options}
         data = {
           {
@@ -55,7 +55,7 @@ export default function CatagoryBarChart({barData} : {barData:{ x: string; y: nu
               {
                 label : '',
                 data : yArray,
-                backgroundColor: 'rgba(255, 99, 132, 0.5)',
+                backgroundColor: '#6750A4BB',
               },
             ]
           }

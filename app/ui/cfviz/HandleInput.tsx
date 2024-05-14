@@ -69,7 +69,7 @@ export default function HandleInput({changeUser}:Readonly<{changeUser: (newUser:
   }
   return (
     <div className="
-    flex flex-col justify-between items-center bg-white bg-opacity-75 backdrop-blur drop-shadow-3xl w-full max-w-xl h-80 rounded pb-32">
+    flex flex-col justify-between items-center bg-white backdrop-blur drop-shadow-xl w-full max-w-xl h-80 rounded pb-32">
       <Image
         src={cfLogo}
         width={80}

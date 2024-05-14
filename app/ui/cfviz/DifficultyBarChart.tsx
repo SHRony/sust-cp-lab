@@ -25,17 +25,10 @@ const options = {
       position: 'top' as const,
     },
     title: {
-      display: true,
+      display: false,
       text: 'Difficulty wise problem count',
     },
   },
-};
-const labels = ['January', 'February', 'March', 'April', 'May', 'June', 'July'];
-const data = {
-  labels,
-  datasets: [
-    
-  ],
 };
 export default function DifficultyBarChart({barData} : {barData:{ x: string; y: number; }[]}){
   let xArray : string[] = [];
@@ -48,7 +41,13 @@ export default function DifficultyBarChart({barData} : {barData:{ x: string; y: 
   let yCumSum : number[] = yArray.reverse().reduce((arr:number[], x)=>{arr.push(x + (arr.length != 0 ? arr[arr.length - 1] : 0)); return arr},[]).reverse();
   yArray.reverse();
   return (
-    <div className="mt-10 bg-white bg-opacity-75 backdrop-blur drop-shadow-3xl w-full flex justify-center items-center">
+    <div className="mt-10 bg-white backdrop-blur drop-shadow-xl w-full flex flex-col justify-center items-center max-h-600 p-8">
+      <p 
+      className='px-5 m-4 text-lg'
+      style={{backgroundColor : 'var(--primaryContainer)', color : 'var(--primary)', borderRadius : '50px', fontWeight : 'bold'}}
+      >
+        Difficulty wise solve count
+      </p>
       <Bar options={options}
         data = {
           {
@@ -57,7 +56,7 @@ export default function DifficultyBarChart({barData} : {barData:{ x: string; y: 
               {
                 label : 'x difficulty',
                 data : yArray,
-                backgroundColor: 'rgba(255, 99, 132, 0.5)',
+                backgroundColor: '#6750A4BB',
               },
               {
                 label : 'x+ difficulty',
