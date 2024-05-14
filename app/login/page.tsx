@@ -50,7 +50,7 @@ export default function LogIn(){
       <SubmitButton clickHandler={handleSubmit}>
         <div className="w-300">Login</div>
       </SubmitButton>
-      <p>Don't have an account ? <Link href={'registration'}>Sign UP</Link></p>
+      <p>Dont have an account ? <Link href={'registration'}>Sign UP</Link></p>
       </div>
   </div>
 }
