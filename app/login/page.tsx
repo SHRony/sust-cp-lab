@@ -5,17 +5,25 @@ import lockIcon from '@/public/lock.svg'
 import Image from "next/image";
 import Link from "next/link";
 import SubmitButton from "../ui/buttons/SubmitButton";
+import axios from "axios";
+import { authContext } from "../lib/AuthProvider";
 export default function LogIn(){
   const [userName, setUserName] = useState('');
   const [password, setPassword] = useState('');
-  
+  const auth = React.useContext(authContext);
   function handleUserChange(e:React.ChangeEvent<HTMLInputElement>){
     setUserName(e.target.value);
   }
   function handlePasswordChange(e:React.ChangeEvent<HTMLInputElement>){
     setPassword(e.target.value);
   }
-  function handleSubmit(){
+  const validate = () => {
+    return true;
+  }
+  async function handleSubmit(){
+    console.log(userName);
+    if(!validate()) return;
+    auth!.signIn(userName, password);
 
   }
 

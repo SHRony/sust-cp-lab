@@ -12,9 +12,9 @@ import submitIcon from '@/public/plane.png'
 import { Button, IconButton, Snackbar, SnackbarContent } from "@mui/material";
 import CloseIcon from '@mui/icons-material/Close';
 import spinnerIcon from '@/public/spinner.gif'
-import { userType } from "@/app/lib/types";
+import { cfUserType } from "@/app/lib/types";
 
-export default function HandleInput({changeUser}:Readonly<{changeUser: (newUser: userType | null) => void;}>) {
+export default function HandleInput({changeUser}:Readonly<{changeUser: (newUser: cfUserType | null) => void;}>) {
   const [input, setInput] = useState('');
   const [isLoading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);

@@ -1,4 +1,3 @@
-import { Sort } from "@mui/icons-material";
 import { NextResponse, NextRequest } from "next/server";
 import { ratingChangeType } from "@/app/lib/types";
 import { borderColors, backgroundColors } from "@/app/lib/colors";

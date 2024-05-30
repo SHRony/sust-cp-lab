@@ -13,23 +13,21 @@ export default function NavButton({children, url, type} : Readonly<{children:Rea
           <Button 
             
             variant="text"
-            
             sx = {url == pathname ? {
-              'color' : 'var(--primary)',
+              'color' : 'white',
               fontWeight : 'bold',
-              // bgcolor : 'var(--primary)',
-              borderBottom : '2px solid var(--primary)',
+              borderBottom : '2px solid white',
               borderRadius : '0',
               ':hover': {
-                bgcolor: 'var(--primary)', // theme.palette.primary.main
+                bgcolor: 'rgba(255, 255, 255, 0.1)', // theme.palette.primary.main
                 color: 'var(--onPrimary)',
                 borderRadius : '4px',
               },
             } : {
-              'color' : 'var(--onSurfaceVariant)',
+              'color' : 'white',
               fontWeight : 'bold',
               ':hover': {
-                bgcolor: 'var(--primary)', // theme.palette.primary.main
+                bgcolor: 'rgba(255, 255, 255, 0.1)', // theme.palette.primary.main
                 color: 'var(--onPrimary)',
               },
             }

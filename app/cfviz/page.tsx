@@ -2,19 +2,18 @@
 import React, { useState } from "react";
 import HandleInput from "@/app/ui/cfviz/HandleInput";
 import UserInfo from "@/app/ui/cfviz/UserInfo";
-import { userType } from "@/app/lib/types";
 import ScatterChart from "@/app/ui/cfviz/ScatterChart";
 import CalenderHeatmap from "@/app/ui/cfviz/CalenderHeatmap";
 import CatagoryBarChart from "../ui/cfviz/CatagoryBarChart";
 import DifficultyBarChart from "../ui/cfviz/DifficultyBarChart";
 import RatingLineChart from "../ui/cfviz/RatingLineChart";
-
+import { cfUserType } from "../lib/types";
 
 //rating curve, calender heatmap, number of contests participated in last among last hundred contest,
 
 export default function CFViz(){
-  const [user, setUser] = useState<userType | null>(null);
-  function changeUser(newUser:userType | null){
+  const [user, setUser] = useState<cfUserType | null>(null);
+  function changeUser(newUser:cfUserType | null){
     setUser(newUser);
   }
 

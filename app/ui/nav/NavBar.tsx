@@ -1,11 +1,14 @@
-import React from "react";
+'use client';
+import React, { useContext } from "react";
 import NavButton from '@/app/ui/buttons/NavButton';
 import logoutIcon from '@/public/logout_white.png'
 import profileIcon from '@/public/profile.svg'
 import Image from "next/image";
+import { authContext } from "@/app/lib/AuthProvider";
 export default function NavBar(){
-  function isLoggedIn(){
-    return true;
+  const auth = useContext(authContext);
+  const handleLogout = async () => {
+    await auth?.signOut();
   }
   function logInButtonSet(){
     return <>
@@ -35,11 +38,12 @@ export default function NavBar(){
           height={25}
           className="block"
           alt="Logout"
+          onClick={handleLogout}
         />
       </NavButton>
     </>
   }
-  return <div style={{backgroundColor : 'var(--surfaceContainer)'}} className='h-20 flex flex-row justify-between items-center w-full p-1'>
+  return <div style={{backgroundColor : 'var(--primary)'}} className='h-20 flex flex-row justify-between items-center w-full p-1'>
     <div className='h-full flex flex-row justify-evenly items-center px-16'>
       <NavButton url="/" type="text">
         Home
@@ -59,7 +63,7 @@ export default function NavBar(){
       
     </div>
     <div className='h-full flex flex-row justify-evenly items-center px-16'>
-      {isLoggedIn() ? logOutButtonSet() : logInButtonSet()}
+      {(!auth || auth.loading) ? <></> : (auth?.signedIn ? logOutButtonSet() : logInButtonSet())}
     </div>
   </div>
 }
