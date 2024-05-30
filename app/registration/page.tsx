@@ -4,15 +4,13 @@ import Image from "next/image";
 import { TextField } from "@mui/material";
 import SubmitButton from "@/app/ui/buttons/SubmitButton";
 import Link from "next/link";
-import regIcon from "@/public/registration.svg"
+import regIcon from "@/public/registration.svg";
+import axios from 'axios';
 export default function Register() {
   const [userName, setUserName] = useState('');
   const [fullName, setFullName] = useState('');
   const [registrationNumber, setRegistrationNumber] = useState('');
   const [email, setEmail] = useState('');
-  const [phoneNumber, setPhoneNumber] = useState('');
-  const [codeforcesHandle, setCodeforcesHandle] = useState('');
-  const [vjudgeHandle, setVjudgeHandle] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
 
@@ -28,23 +26,24 @@ export default function Register() {
   function handleEmailChange(e:React.ChangeEvent<HTMLInputElement>){
     setEmail(e.target.value);
   }
-  function handlePhoneNumberChange(e:React.ChangeEvent<HTMLInputElement>){
-    setPhoneNumber(e.target.value);
-  }
-  function handleCodeforcesHandleChange(e:React.ChangeEvent<HTMLInputElement>){
-    setCodeforcesHandle(e.target.value);
-  }
-  function handleVjudgeHandleChange(e:React.ChangeEvent<HTMLInputElement>){
-    setVjudgeHandle(e.target.value);
-  }
   function handlePasswordChange(e:React.ChangeEvent<HTMLInputElement>){
     setPassword(e.target.value);
   }
   function handleConfirmPasswordChange(e:React.ChangeEvent<HTMLInputElement>){
     setConfirmPassword(e.target.value);
   }
+  const validate = () => {
+    return true;
+  }
   function handleSubmit(){
-
+    if(!validate()) return;
+    axios.post('/api/registration', {
+      userName: userName,
+      fullName: fullName,
+      registrationNumber: registrationNumber,
+      email: email,
+      password: password,
+    });
   }
 
   return <div className="w-full h-full flex justify-center items-center margin-auto flex-grow">
@@ -84,24 +83,6 @@ export default function Register() {
         label="Email"
         variant="standard"
         onChange={handleEmailChange}
-        className="w-full"
-      />
-      <TextField
-        label="Phone number"
-        variant="standard"
-        onChange={handlePhoneNumberChange}
-        className="w-full"
-      />
-      <TextField
-        label="Codeforces Handle"
-        variant="standard"
-        onChange={handleCodeforcesHandleChange}
-        className="w-full"
-      />
-      <TextField
-        label="Vjudge Handle"
-        variant="standard"
-        onChange={handleVjudgeHandleChange}
         className="w-full"
       />
       <TextField

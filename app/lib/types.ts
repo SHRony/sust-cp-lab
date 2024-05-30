@@ -7,7 +7,7 @@ export type ratingChangeType = {
     backgroundColor : string;
   }[]
 };
-export type userType = Readonly<{
+export type cfUserType = Readonly<{
   maxRating: number | string;
   maxRank: string;
   lastActive: string;
@@ -21,3 +21,24 @@ export type userType = Readonly<{
   catData : { x: any; y: any; }[];
   ratingChanges : ratingChangeType;
 }>;
+export type userType = {
+  userName: string;
+  fullName: string;
+  registrationNumber: string | null;
+  email: string;
+  phone: string | null;
+  vjudgeHandle: string | null;
+  cfHandles: string[] | null;
+  password: string;
+};
+export type AuthContextType = {
+  signedIn: boolean;
+  loading: boolean;
+  user: null | { /* Define user object properties */ };
+  signIn: (email: string, password: string) => Promise<void>;
+  signOut: () => void;
+}
+export type userStateType = {
+  userName: string;
+  userType: string;
+};

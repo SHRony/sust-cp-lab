@@ -3,6 +3,7 @@ import "./globals.css";
 import {inter} from '@/app/ui/fonts';
 import React from "react";
 import NavBar from '@/app/ui/nav/NavBar';
+import AuthProvider from "./lib/AuthProvider";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -14,8 +15,11 @@ export default function RootLayout({children} : Readonly<{children:React.ReactNo
   return (
     <html lang="en">
       <body style={{display : "flex"}} className={inter.className + "flex flex-col"}>
+        <AuthProvider>
           <NavBar></NavBar>
-          {children}
+            {children}
+          </AuthProvider>
+          
       </body>
     </html>
   );

@@ -1,5 +1,5 @@
 import React from "react";
-import { userType } from "@/app/lib/types";
+import { cfUserType } from "@/app/lib/types";
 import { Scatter } from "react-chartjs-2";
 import { LinearScale } from "chart.js";
 import { Chart as ChartJS, LineController, LineElement, PointElement, Title } from 'chart.js';
@@ -17,7 +17,7 @@ const options = {
     },
   },
 };
-export default function ScatterChart({user} : {user : userType}){
+export default function ScatterChart({user} : {user : cfUserType}){
   return (
     <div style={{
           minWidth : '600px',
