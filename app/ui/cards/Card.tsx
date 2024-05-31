@@ -1,7 +1,11 @@
-import React from "react";
+import React from 'react';
 
-export default function Card({children}:{children : React.ReactNode}){
+const Card = ({ children, className = '', style = {}}: {children: React.ReactNode, className?: string, style?: any}) => {
   return (
-    <div className="w-full h-full "> </div>
+    <div style={style} className={`border border-gray-300 shadow-md ${className}`}>
+      {children}
+    </div>
   );
-}
+};
+
+export default Card;

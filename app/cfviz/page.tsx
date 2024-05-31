@@ -17,18 +17,20 @@ export default function CFViz(){
     setUser(newUser);
   }
 
-  return <div className="p-20 flex flex-col items-center">
-    <HandleInput changeUser = {changeUser}>
+  return <div className="flex flex-col items-center w-full pt-20 gap-20">
+    <div className="flex flex-row flex-wrap w-full justify-center items-stretch gap-20">
+      <HandleInput changeUser = {changeUser}>
 
-    </HandleInput>
-    
-    {
-      user != null ? (
-        <UserInfo maxRating={user.maxRating} maxRank={user.maxRank} lastActive={user.lastActive} registered={user.registered} contribution={user.contribution} avatar={user.avatar} name={user.name}></UserInfo>
-      ) : (
-        <></>
-      )
-    }
+      </HandleInput>
+      
+      {
+        user != null ? (
+          <UserInfo maxRating={user.maxRating} maxRank={user.maxRank} lastActive={user.lastActive} registered={user.registered} contribution={user.contribution} avatar={user.avatar} name={user.name}></UserInfo>
+        ) : (
+          <></>
+        )
+      }
+    </div>
     {
       user != null ? (
         <RatingLineChart lineData={user.ratingChanges}></RatingLineChart>

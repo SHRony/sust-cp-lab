@@ -35,7 +35,7 @@ export default function Register() {
   const validate = () => {
     return true;
   }
-  function handleSubmit(){
+  async function handleSubmit(){
     if(!validate()) return;
     axios.post('/api/registration', {
       userName: userName,
