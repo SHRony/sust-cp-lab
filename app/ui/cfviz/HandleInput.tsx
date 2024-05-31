@@ -13,6 +13,7 @@ import { Button, IconButton, Snackbar, SnackbarContent } from "@mui/material";
 import CloseIcon from '@mui/icons-material/Close';
 import spinnerIcon from '@/public/spinner.gif'
 import { cfUserType } from "@/app/lib/types";
+import Card from "../cards/Card";
 
 export default function HandleInput({changeUser}:Readonly<{changeUser: (newUser: cfUserType | null) => void;}>) {
   const [input, setInput] = useState('');
@@ -68,8 +69,8 @@ export default function HandleInput({changeUser}:Readonly<{changeUser: (newUser:
     
   }
   return (
-    <div className="
-    flex flex-col justify-between items-center bg-white backdrop-blur drop-shadow-xl w-full max-w-xl h-80 rounded pb-32">
+    <Card style={null} className="
+    flex flex-col justify-between items-center bg-white w-170 rounded pb-32">
       <Image
         src={cfLogo}
         width={80}
@@ -125,6 +126,6 @@ export default function HandleInput({changeUser}:Readonly<{changeUser: (newUser:
         className="bg-red-600 bg-opacity-80"
       />
   </Snackbar>
-    </div>
+    </Card>
   );
 }

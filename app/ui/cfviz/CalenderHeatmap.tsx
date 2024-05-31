@@ -3,6 +3,7 @@ import { cfUserType } from "@/app/lib/types";
 import Tooltip from '@uiw/react-tooltip';
 import HeatMap from '@uiw/react-heat-map';
 import CalendarHeatmap from 'react-calendar-heatmap';
+import Card from "../cards/Card";
 
 export default function CalenderHeatmap({user}:{user : cfUserType}){
   const value:any = user.calenderSubmissions;
@@ -25,7 +26,7 @@ export default function CalenderHeatmap({user}:{user : cfUserType}){
     alert(`${value.count}`);
   };
   return (
-     <div className="bg-white backdrop-blur drop-shadow-xl w-full mt-10 flex flex-col justify-center items-center">
+     <Card className="bg-white w-full mt-10 flex flex-col justify-center items-center">
       {
           Array.from({ length: new Date().getFullYear() - startYear + 1 }, (_, i) => i + startYear).reverse().map(year => (
             <div style={{maxWidth : "1200px"}} key={year} className="w-full h-60 p-2">
@@ -49,6 +50,6 @@ export default function CalenderHeatmap({user}:{user : cfUserType}){
             </div>
         ))
        }
-     </div>
+     </Card>
   )
 }

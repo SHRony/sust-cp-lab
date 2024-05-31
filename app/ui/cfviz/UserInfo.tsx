@@ -1,5 +1,6 @@
 import React from "react";
 import Image from "next/image";
+import Card from "../cards/Card";
 type cfUserType = Readonly<{
   maxRating: number | string;
   maxRank: string;
@@ -12,7 +13,7 @@ type cfUserType = Readonly<{
 
 export default function UserInfo({maxRating, maxRank, lastActive, registered, contribution, avatar, name}:cfUserType){
   return (
-    <div style={{backgroundImage : 'url(profile_bg.png)', backgroundSize : '100% 100%'} } className="flex flex-col items-center bg-white backdrop-blur drop-shadow-xl w-full max-w-xl min-h-10 mt-10 py-8 rounded">
+    <Card style={{backgroundImage : 'url(profile_bg.png)', backgroundSize : '100% 100%'} } className="flex flex-col items-center bg-white w-170 min-h-10 py-8 rounded">
       <div className="">
         <Image
         src={avatar}
@@ -72,6 +73,6 @@ export default function UserInfo({maxRating, maxRank, lastActive, registered, co
         </div>
       </div>
 
-    </div>
+    </Card>
   )
 }

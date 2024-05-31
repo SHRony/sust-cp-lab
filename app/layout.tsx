@@ -14,11 +14,13 @@ export default function RootLayout({children} : Readonly<{children:React.ReactNo
   
   return (
     <html lang="en">
-      <body style={{display : "flex"}} className={inter.className + "flex flex-col"}>
+      <body style={{display : "flex"}} className={inter.className + "flex flex-col items-center"}>
         <AuthProvider>
           <NavBar></NavBar>
+          <div className="flex flex-col items-center w-360">
             {children}
-          </AuthProvider>
+          </div>
+        </AuthProvider>
           
       </body>
     </html>
