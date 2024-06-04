@@ -24,7 +24,7 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
         console.log(res.data.error);
         return ;
       }
-      setUser({ userName: userName, userType: res.data.userType});
+      await setUser({ userName: userName, userType: res.data.userType});
       setSignedIn(true);
     } catch (error) {
       // Handle authentication errors
@@ -55,7 +55,8 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
     async function yo(){
       const res = await axios.post('/api/isloggedin');
       if(res.status == 200){
-        setUser({ userName: res.data.userName, userType: res.data.userType});
+        console.log(res);
+        setUser({ userName: res.data.user.username, userType: res.data.user.userType});
         setSignedIn(true);
       }
       setLoading(false);
@@ -63,7 +64,7 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
     yo();
   }, []);
   useEffect(() => {
-    console.log(signedIn);
+    console.log(user);
   });
 
   return (

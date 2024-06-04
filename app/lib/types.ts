@@ -34,7 +34,7 @@ export type userType = {
 export type AuthContextType = {
   signedIn: boolean;
   loading: boolean;
-  user: null | { /* Define user object properties */ };
+  user: null | userStateType;
   signIn: (email: string, password: string) => Promise<void>;
   signOut: () => void;
 }
