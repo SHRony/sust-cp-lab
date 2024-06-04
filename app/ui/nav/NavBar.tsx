@@ -22,7 +22,7 @@ export default function NavBar(){
   }
   function logOutButtonSet(){
     return <>
-    <NavButton url="" type="icon">
+    <NavButton url="/profile" type="icon">
         <Image
           src={profileIcon}
           width={25}
@@ -31,14 +31,14 @@ export default function NavBar(){
           alt="Profile"
         />
       </NavButton>
-      <NavButton url="" type="icon">
+      <NavButton url="" type="icon" onClick={handleLogout}>
         <Image
           src={logoutIcon}
           width={25}
           height={25}
           className="block"
           alt="Logout"
-          onClick={handleLogout}
+          
         />
       </NavButton>
     </>

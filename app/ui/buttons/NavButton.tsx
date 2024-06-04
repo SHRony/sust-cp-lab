@@ -4,7 +4,7 @@ import { Button, IconButton } from "@mui/material";
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-export default function NavButton({children, url, type} : Readonly<{children:ReactNode|string, url : string, type : string}>){
+export default function NavButton({children, url, type, onClick} : Readonly<{children:ReactNode|string, url : string, type : string, onClick?:() => void | Promise<void> | null}>){
   const pathname = usePathname();
   return (
     <Link href={url}>{
@@ -13,6 +13,7 @@ export default function NavButton({children, url, type} : Readonly<{children:Rea
           <Button 
             
             variant="text"
+            onClick={onClick}
             sx = {url == pathname ? {
               'color' : 'white',
               fontWeight : 'bold',
@@ -37,7 +38,7 @@ export default function NavButton({children, url, type} : Readonly<{children:Rea
           </Button>
         </div>
       ) : (
-        <div className='h-full flex flex-row justify-evenly items-center mx-5 rounded-full'><IconButton style={{padding : '20px'}}>{children}</IconButton></div>
+        <div className='h-full flex flex-row justify-evenly items-center mx-5 rounded-full'><IconButton style={{padding : '20px'}} onClick={onClick}>{children}</IconButton></div>
       ) 
     }
     </Link>

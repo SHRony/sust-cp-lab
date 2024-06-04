@@ -1,7 +1,7 @@
 'use client'
 import React, { useState } from "react";
 import HandleInput from "@/app/ui/cfviz/HandleInput";
-import UserInfo from "@/app/ui/cfviz/UserInfo";
+import CFUserInfo from "@/app/ui/cfviz/CFUserInfo";
 import ScatterChart from "@/app/ui/cfviz/ScatterChart";
 import CalenderHeatmap from "@/app/ui/cfviz/CalenderHeatmap";
 import CatagoryBarChart from "../ui/cfviz/CatagoryBarChart";
@@ -17,7 +17,8 @@ export default function CFViz(){
     setUser(newUser);
   }
 
-  return <div className="flex flex-col items-center w-full pt-20 gap-20">
+  return (
+  <div className="flex flex-col items-center w-full pt-20 gap-20">
     <div className="flex flex-row flex-wrap w-full justify-center items-stretch gap-20">
       <HandleInput changeUser = {changeUser}>
 
@@ -25,7 +26,7 @@ export default function CFViz(){
       
       {
         user != null ? (
-          <UserInfo maxRating={user.maxRating} maxRank={user.maxRank} lastActive={user.lastActive} registered={user.registered} contribution={user.contribution} avatar={user.avatar} name={user.name}></UserInfo>
+          <CFUserInfo maxRating={user.maxRating} maxRank={user.maxRank} lastActive={user.lastActive} registered={user.registered} contribution={user.contribution} avatar={user.avatar} name={user.name}></CFUserInfo>
         ) : (
           <></>
         )
@@ -69,5 +70,5 @@ export default function CFViz(){
     }
     
 
-  </div>
+  </div>)
 }
