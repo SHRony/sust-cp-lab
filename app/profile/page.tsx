@@ -13,6 +13,7 @@ import DifficultyBarChart from '../ui/cfviz/DifficultyBarChart';
 import RatingLineChart from '../ui/cfviz/RatingLineChart';
 import ScatterChart from '../ui/cfviz/ScatterChart';
 import UserCard from '../ui/cards/UserCard';
+import UserCardSkeleton from '../ui/cards/UserCardSkeleton';
 export default function Page() {
   const auth = useContext(authContext);
   const [user, setUser] = useState<userType|null>(null);
@@ -41,7 +42,7 @@ export default function Page() {
         user != null ? (
           <UserCard phone={''} password='' userName={user.userName} fullName={user.fullName} email={user.email} vjudgeHandle={user.vjudgeHandle} cfHandles={user.cfHandles} registrationNumber={user.registrationNumber}></UserCard>
         ):(
-          <></>
+          <UserCardSkeleton></UserCardSkeleton>
         )
       }
       {
