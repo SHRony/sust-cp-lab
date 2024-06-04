@@ -98,8 +98,12 @@ const UserInfoComponent: React.FC<UserInfoComponentProps> = ({ name }) => {
 }
 
 export default function Page() {
-  const searchParams = useSearchParams();
-  const username = searchParams.get('username');
+  const [username, setUsername] = useState<string|null> (null); // Store username in state
+
+  useEffect(() => {
+    const searchParams = new URLSearchParams(window.location.search); // Use standard URLSearchParams
+    setUsername(searchParams.get('username'));
+  }, []);
 
   return (
     <Suspense fallback={<div>Loading...</div>}>
