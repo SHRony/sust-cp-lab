@@ -16,7 +16,7 @@ import UserCard from '../ui/cards/UserCard';
 import UserCardSkeleton from '../ui/cards/UserCardSkeleton';
 
 type UserInfoComponentProps = {
-  name: string | undefined;
+  name: any;
 };
 
 const UserInfoComponent: React.FC<UserInfoComponentProps> = ({ name }) => {
@@ -103,7 +103,7 @@ export default function Page() {
 
   return (
     <Suspense fallback={<div>Loading...</div>}>
-      <UserInfoComponent username={username} />
+      <UserInfoComponent name={username} />
     </Suspense>
   )
 }
