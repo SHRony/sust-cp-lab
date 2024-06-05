@@ -2,7 +2,6 @@
 import React, { useState, useEffect, useContext, Suspense } from 'react';
 import { authContext } from "@/app/lib/AuthProvider";
 import { redirect } from 'next/navigation';
-import { useSearchParams } from 'next/navigation'
 import { cfUserType, userType } from '../lib/types';
 
 import axios from 'axios';
@@ -27,7 +26,9 @@ const UserInfoComponent: React.FC<UserInfoComponentProps> = ({ name }) => {
   useEffect(() => {
     let username:string|null = name ?? null;
     if(!username && auth?.signedIn) username = auth?.user?.userName??null;
+    if(!username && auth && !auth.loading && !auth.signedIn) redirect('/login');
     if(!username) return ;
+    
     axios.get(`/api/userinfo?name=${username}`).then((res) => {
       if(res.data){
         setUser(res.data.user);
