@@ -33,10 +33,22 @@ const UserInfoComponent: React.FC<UserInfoComponentProps> = ({ name }) => {
       if(res.data){
         setUser(res.data.user);
         console.log(res.data.user);
+        let handles = res.data.user.cfHandles?.join(',') ?? '';
+        console.log(handles);
+        axios.get(`/api/external/cfuserinfo?user=${handles}`).then((res) => {
+          if(res.data){
+            setCfUser(res.data);
+            console.log(res.data);
+          }
+        }).catch((res)=>{
+          setCfUser(null);
+        });
       }
     }).catch((res)=>{
-
+      setUser(null);
     });
+    
+    
   }, [name, auth]);
 
   return (
