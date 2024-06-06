@@ -35,7 +35,7 @@ export type AuthContextType = {
   signedIn: boolean;
   loading: boolean;
   user: null | userStateType;
-  signIn: (email: string, password: string) => Promise<void>;
+  signIn: (email: string, password: string) => Promise<boolean>;
   signOut: () => void;
 }
 export type userStateType = {

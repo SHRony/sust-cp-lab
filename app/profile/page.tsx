@@ -28,7 +28,7 @@ const UserInfoComponent: React.FC<UserInfoComponentProps> = ({ name }) => {
     if(!username && auth?.signedIn) username = auth?.user?.userName??null;
     if(!username && auth && !auth.loading && !auth.signedIn) redirect('/login');
     if(!username) return ;
-    
+    console.log(username);
     axios.get(`/api/userinfo?name=${username}`).then((res) => {
       if(res.data){
         setUser(res.data.user);

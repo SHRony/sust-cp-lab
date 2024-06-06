@@ -13,16 +13,19 @@ export async function POST(request:NextRequest) {
     const user = await getUser(userName);
     if (user && await bcrypt.compare(password, user.password)) {
       const token = await generateAuthToken(user);
-      cookies().set('token', token);
+      const expires = new Date();
+      expires.setMonth(expires.getMonth() + 1);
+      cookies().set('token', token, { expires });
       return NextResponse.json({ token: token, userType: user.user_type });
-    }else if(!user){
+    }
+    else if(!user){
       return NextResponse.json({ error: "User not found" }, { status: 404 });
-    }else {
-      return NextResponse.json({ error: "Internal error during encryption" }, { status: 500 });
+    }
+    else {
+      return NextResponse.json({ error: "Incorrect password" }, { status: 401 });
     }
     
   }catch{
-    console.error("Error logging in");
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
