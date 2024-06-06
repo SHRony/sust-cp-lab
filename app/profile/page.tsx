@@ -22,7 +22,16 @@ const UserInfoComponent: React.FC<UserInfoComponentProps> = ({ name }) => {
   const auth = useContext(authContext);
   const [user, setUser] = useState<userType|null>(null);
   const [cfUser, setCfUser] = useState<cfUserType|null>(null);
-  
+  const addCFHandle = async (handle : string) => {
+    if(user && user.cfHandles && !user.cfHandles.includes(handle)){
+      setUser({...user, cfHandles: [...user.cfHandles, handle]})
+    }
+  }
+  const removeCFHandle = async (handle : string) => {
+    if(user && user.cfHandles && user.cfHandles.includes(handle)){
+      setUser({...user, cfHandles: user.cfHandles.filter((cfHandle) => cfHandle != handle)});
+    }
+  }
   useEffect(() => {
     let username:string|null = name ?? null;
     if(!username && auth?.signedIn) username = auth?.user?.userName??null;
@@ -57,7 +66,20 @@ const UserInfoComponent: React.FC<UserInfoComponentProps> = ({ name }) => {
         {/* basic userinfo here */}
         {
           user != null ? (
-            <UserCard phone={''} password='' userName={user.userName} fullName={user.fullName} email={user.email} vjudgeHandle={user.vjudgeHandle} cfHandles={user.cfHandles} registrationNumber={user.registrationNumber}></UserCard>
+            <UserCard 
+              phone={''} 
+              password='' 
+              userName={user.userName}
+              fullName={user.fullName}
+              email={user.email}
+              vjudgeHandle={user.vjudgeHandle}
+              cfHandles={user.cfHandles}
+              registrationNumber={user.registrationNumber}
+              addCFHandle={addCFHandle}
+              removeCFHandle={removeCFHandle}
+              >
+                
+              </UserCard>
           ):(
             <UserCardSkeleton></UserCardSkeleton>
           )

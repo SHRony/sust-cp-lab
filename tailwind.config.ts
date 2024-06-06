@@ -33,11 +33,17 @@ const config: Config = {
         '80': '20rem',
         '90': '22.5rem',
         '100': '25rem',
+        '106': '26.5rem',
         '112': '28rem',
         '120': '30rem',
         '170': '42.5rem',
-        '360': '90rem',
+        '192': '48rem',
         '200': '50rem',
+        '240': '60rem',
+        '256': '64rem',
+        '300': '75rem',
+        '320': '80rem',
+        '360': '90rem',
       },
       height:{
         '300-px' : '300px',
@@ -74,8 +80,15 @@ const config: Config = {
         '600-px' : '600px',
         '700-px' : '700px',
         '800-px' : '800px'
+      },
+      screens: {
+        'desktop': '1460px',
+        'laptop': '1024px',
+        'tablet': '768px',
+        'mobile': '425px',
       }
     },
+
   },
   plugins: [],
 };
