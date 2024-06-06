@@ -131,7 +131,7 @@ export default function UserCard({userName, fullName, registrationNumber, email,
                   >
                     <a 
                       className="bg-gray-200 font-bold h-7" 
-                      href={'codeforces.com/profile/' + handle}
+                      href={'https://codeforces.com/profile/' + handle}
                       >
                         {handle}
                     </a>
