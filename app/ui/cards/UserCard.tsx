@@ -1,11 +1,14 @@
 import { userType } from "@/app/lib/types";
 import Card from "./Card";
 import Image from "next/image";
-import editIcon from '@/public/edit.png'
-import { Input } from "@mui/material";
+import editIcon from '@/public/edit.png';
+import closeIcon from '@/public/close.png';
+
+import { Input, Skeleton } from "@mui/material";
 import { useContext, useState } from "react";
 import {authContext} from "@/app/lib/AuthProvider";
 import axios from "axios";
+import CloseIcon from "@mui/icons-material/Close";
 export default function UserCard({userName, fullName, registrationNumber, email, vjudgeHandle, cfHandles, phone} : userType){
   const auth = useContext(authContext);
   const [editVjudge, setEditVjudge] = useState(false);
@@ -13,20 +16,34 @@ export default function UserCard({userName, fullName, registrationNumber, email,
   const [vjudgeState, setVjudgeState] = useState(vjudgeHandle??'');
   const [CFNewHandle, setCFNewHandle] = useState('');
   const [CFState, setCFState] = useState([...cfHandles??[]]);
+  const [addingCFHandle, setAddingCFHandle] = useState(false);
   const addCFhandle = async (e: React.KeyboardEvent<HTMLInputElement>) => {
     if(e.key == 'Enter'){
+      setEditCF(false);
       if(CFNewHandle == '') return;
+      setAddingCFHandle(true);
+      
       if(!CFState.includes(CFNewHandle)){
-        setCFState((prevCFState) => {return [...prevCFState, CFNewHandle];});
-        setCFNewHandle('');
-        setEditCF(false);
+        // call the addCFhandle in the api/profile/addCFHandle/route.ts using axios properly  
+        const res = await axios.post('/api/profile/addCFHandle', {cfHandle : CFNewHandle, userName : userName});
+        if(res.status == 200){
+          setCFState((prevCFState) => {return [...prevCFState, CFNewHandle];});
+        }
+        setCFNewHandle(''); 
       }
+      setAddingCFHandle(false);
     }
+  }
+  // write delete cf handle function
+  const deleteCFhandle = async (handle : string) => {
+    // call the deleteCFhandle in the api/profile/removeCFHandle/route.ts using axios properly
+    const res = await axios.post('/api/profile/removeCFHandle', {cfHandle : handle, userName : userName});
+    console.log(res);
+    setCFState((prevCFState) => {return prevCFState.filter((cfHandle) => cfHandle != handle);});
   }
   const updateVjudge = async (e: React.KeyboardEvent<HTMLInputElement>) => {
     if(e.key == 'Enter'){
       // call the updateVjudge in the api/profile/route.ts using axios properly
-      console.log(userName);
       const res = await axios.post('/api/profile/updateVjudgeHandle', {vjudgeHandle : vjudgeState, userName : userName});
       console.log(res);
       setEditVjudge(false); 
@@ -106,15 +123,34 @@ export default function UserCard({userName, fullName, registrationNumber, email,
         <div className="flex flex-row flex-wrap gap-2 items-start">
           {
             CFState?.map((handle)=>{
-              return <a 
-                className="bg-gray-200 px-4 rounded border font-bold h-7" 
-                key={handle}
-                style={{backgroundColor : 'var(--primaryContainer)', color : 'var(--primary)'}}
-                href={'codeforces.com/profile/' + handle}
-                >
-                  {handle}
-                </a>
+              return (
+                <div 
+                  key={handle} 
+                  className="flex flex-row items-center rounded border px-4"
+                  style={{backgroundColor : 'var(--primaryContainer)', color : 'var(--primary)'}}
+                  >
+                    <a 
+                      className="bg-gray-200 font-bold h-7" 
+                      href={'codeforces.com/profile/' + handle}
+                      >
+                        {handle}
+                    </a>
+                    {/* if the user is visiting his own profile, then show the close icon to delete the handle */}
+                    {auth?.user?.userName == userName ? (
+                      <Image className="cursor-pointer ml-2" alt = 'close' height={20} src = {closeIcon} onClick={()=> {deleteCFhandle(handle)}}/>
+                    ):(
+                      <></>
+                    )}
+                </div>
+              )
             })
+          }
+          {
+            addingCFHandle ? (
+              <Skeleton variant="text" className="w-24"></Skeleton>
+            ):(
+              <></>
+            )
           }
           {
             editCF ? (
