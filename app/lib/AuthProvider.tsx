@@ -22,16 +22,20 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
       });
       if(res.status != 200){
         console.log(res.data.error);
-        return ;
+        return false;
       }
       await setUser({ userName: userName, userType: res.data.userType});
       setSignedIn(true);
+      setLoading(false);
+      return true;
     } catch (error) {
       // Handle authentication errors
-      console.error("Authentication failed:", error);
+      console.log('coldnot login');
+      setLoading(false);
+      return false;
     } finally {
       setLoading(false);
-    }
+    }    
   };
   
   const signOut = async () => {
@@ -63,9 +67,9 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
     }
     yo();
   }, []);
-  useEffect(() => {
-    console.log(user);
-  });
+  // useEffect(() => {
+  //   console.log(user);
+  // });
 
   return (
     <authContext.Provider value={authValue}>

@@ -7,6 +7,8 @@ import Link from "next/link";
 import regIcon from "@/public/registration.svg";
 import axios from 'axios';
 import Card from "../ui/cards/Card";
+import spinnerIcon from '@/public/spinner.gif'
+
 export default function Register() {
   const [userName, setUserName] = useState('');
   const [fullName, setFullName] = useState('');
@@ -14,7 +16,7 @@ export default function Register() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-
+  const [loading, setLoading] = useState(false);
   function handleUserNameChange(e:React.ChangeEvent<HTMLInputElement>){
     setUserName(e.target.value);
   }
@@ -33,18 +35,43 @@ export default function Register() {
   function handleConfirmPasswordChange(e:React.ChangeEvent<HTMLInputElement>){
     setConfirmPassword(e.target.value);
   }
-  const validate = () => {
+  const validate = async () => {
+    // add the validation logic here
+    if(password != confirmPassword) return false;
+    if(userName == '' || fullName == '' || registrationNumber == '' || email == '' || password == '' || confirmPassword == '') return false;
+    //validate email
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if(!regex.test(email)) return false;
     return true;
   }
   async function handleSubmit(){
-    if(!validate()) return;
-    axios.post('/api/registration', {
-      userName: userName,
-      fullName: fullName,
-      registrationNumber: registrationNumber,
-      email: email,
-      password: password,
-    });
+    setLoading(true);
+    const isValid = await validate();
+    if(!isValid){
+      setLoading(false);
+      return;
+    }
+    try {
+      const res = await axios.post('/api/registration', {
+        userName: userName,
+        fullName: fullName,
+        registrationNumber: registrationNumber,
+        email: email,
+        password: password,
+      });
+      if (res.status == 200) {
+        console.log(res.data);
+        window.location.href = '/login';
+      } else {
+        console.log(res.data.error);
+        alert('please try again');
+      }
+    } catch (error) {
+      console.error("Error registering user:", error);
+      alert('please try again');
+    }
+
+    setLoading(false);
   }
 
   return <div className="w-full h-full flex justify-center items-strech py-10">
@@ -107,7 +134,7 @@ export default function Register() {
             className="w-full"
           />
           <SubmitButton clickHandler={handleSubmit}>
-            <div className="w-full">Register</div>
+            <div className="flex w-full items-center justify-center">{loading ? <Image src={spinnerIcon} height={24} width={24} alt=""/> : 'Register'}</div>
           </SubmitButton>
           <p>Already have an account ? <Link href={'login'}>Log In</Link></p>
         </div>

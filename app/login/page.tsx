@@ -8,23 +8,44 @@ import SubmitButton from "../ui/buttons/SubmitButton";
 import axios from "axios";
 import { authContext } from "../lib/AuthProvider";
 import Card from "../ui/cards/Card";
+import spinnerIcon from '@/public/spinner.gif'
 export default function LogIn(){
   const [userName, setUserName] = useState('');
   const [password, setPassword] = useState('');
   const auth = React.useContext(authContext);
+  const [loading, setLoading] = useState(false);
   function handleUserChange(e:React.ChangeEvent<HTMLInputElement>){
     setUserName(e.target.value);
   }
   function handlePasswordChange(e:React.ChangeEvent<HTMLInputElement>){
     setPassword(e.target.value);
   }
-  const validate = () => {
+  const validate = async () => {
+    // add the validation logic for the form here
+    if(userName == '' || password == '') return false;
+    if(password.length < 3) return false;
     return true;
   }
   async function handleSubmit(){
-    console.log(userName);
-    if(!validate()) return;
-    auth!.signIn(userName, password);
+    //CODIUM:add the login logic here. use the spinner like the registration logic and redirect to the profile in successful login
+    setLoading(true);
+    // console.log("yo yo");
+    const isValid = await validate();
+    if(!isValid){
+      setLoading(false);
+      return;
+    }
+    try {
+      if(await auth!.signIn(userName, password)) {
+        window.location.href = '/profile';
+      };
+      
+    } catch (error) {
+      console.error("Error registering user:", error);
+      alert('please try again');
+    }
+    setLoading(false);
+    
 
   }
 
@@ -64,7 +85,7 @@ export default function LogIn(){
               className="w-full"
             />
             <SubmitButton clickHandler={handleSubmit}>
-              <div className="w-full">Login</div>
+              <div className="flex w-full items-center justify-center">{loading ? <Image src={spinnerIcon} height={24} width={24} alt="loading"/> : 'Sign In'}</div>
             </SubmitButton>
             <p>Dont have an account ? <Link href={'registration'}>Sign UP</Link></p>
           </div>

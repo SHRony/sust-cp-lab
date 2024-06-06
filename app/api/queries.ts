@@ -10,7 +10,7 @@ export const getUserInfo = async (username: string) => {
   if(!userResult.rows[0]) return null;
   const studentResult = await client.query(`SELECT * FROM ${dbTables.student_info} WHERE username = $1`, [username]);
   if(!studentResult.rows[0]) return null;
-  const cfResult = await client.query(`SELECT handle FROM ${dbTables.cf_handles}`);
+  const cfResult = await client.query(`SELECT handle FROM ${dbTables.cf_handles} WHERE username = $1`, [username]);
   const cfHandles = cfResult.rows.map(row => row.handle);
   const user = {
     userName: userResult.rows[0].username,
