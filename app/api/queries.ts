@@ -16,7 +16,7 @@ export const getUserInfo = async (username: string) => {
     fullName: studentResult.rows[0].full_name,
     registrationNumber: studentResult.rows[0].registration_no,
     email: userResult.rows[0].email,
-    vjudgeHandle: userResult.rows[0].vjudge_handle,
+    vjudgeHandle: studentResult.rows[0].vjudge_handle,
     cfHanles: cfResult.rows,
     password: '',
   }
