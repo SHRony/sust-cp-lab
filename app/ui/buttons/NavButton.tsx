@@ -9,14 +9,13 @@ export default function NavButton({children, url, type, onClick} : Readonly<{chi
   return (
     <Link href={url}>{
       type != 'icon' ? (
-        <div className='h-full flex flex-row justify-evenly items-center px-5 py-3 text-white'>
+        <div className='h-full flex flex-row justify-evenly items-center text-white font-bold'>
           <Button 
             
             variant="text"
             onClick={onClick}
             sx = {url == pathname ? {
               'color' : 'white',
-              fontWeight : 'bold',
               borderBottom : '2px solid white',
               borderRadius : '0',
               ':hover': {
@@ -26,7 +25,6 @@ export default function NavButton({children, url, type, onClick} : Readonly<{chi
               },
             } : {
               'color' : 'white',
-              fontWeight : 'bold',
               ':hover': {
                 bgcolor: 'rgba(255, 255, 255, 0.1)', // theme.palette.primary.main
                 color: 'var(--onPrimary)',
@@ -38,7 +36,7 @@ export default function NavButton({children, url, type, onClick} : Readonly<{chi
           </Button>
         </div>
       ) : (
-        <div className='h-full flex flex-row justify-evenly items-center mx-5 rounded-full'><IconButton style={{padding : '20px'}} onClick={onClick}>{children}</IconButton></div>
+        <div className='h-full flex flex-row justify-evenly items-center rounded-full'><IconButton style={{padding : '20px'}} onClick={onClick}>{children}</IconButton></div>
       ) 
     }
     </Link>

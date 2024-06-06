@@ -9,7 +9,7 @@ import { useContext, useState } from "react";
 import {authContext} from "@/app/lib/AuthProvider";
 import axios from "axios";
 import CloseIcon from "@mui/icons-material/Close";
-export default function UserCard({userName, fullName, registrationNumber, email, vjudgeHandle, cfHandles, phone} : userType){
+export default function UserCard({userName, fullName, registrationNumber, email, vjudgeHandle, cfHandles, phone, addCFHandle, removeCFHandle} : userType & {addCFHandle : (handle : string) => void, removeCFHandle : (handle : string) => void}) {
   const auth = useContext(authContext);
   const [editVjudge, setEditVjudge] = useState(false);
   const [editCF, setEditCF] = useState(false);
@@ -17,7 +17,8 @@ export default function UserCard({userName, fullName, registrationNumber, email,
   const [CFNewHandle, setCFNewHandle] = useState('');
   const [CFState, setCFState] = useState([...cfHandles??[]]);
   const [addingCFHandle, setAddingCFHandle] = useState(false);
-  const addCFhandle = async (e: React.KeyboardEvent<HTMLInputElement>) => {
+  const addCFhandler = async (e: React.KeyboardEvent<HTMLInputElement>) => {
+    
     if(e.key == 'Enter'){
       setEditCF(false);
       if(CFNewHandle == '') return;
@@ -27,7 +28,7 @@ export default function UserCard({userName, fullName, registrationNumber, email,
         // call the addCFhandle in the api/profile/addCFHandle/route.ts using axios properly  
         const res = await axios.post('/api/profile/addCFHandle', {cfHandle : CFNewHandle, userName : userName});
         if(res.status == 200){
-          setCFState((prevCFState) => {return [...prevCFState, CFNewHandle];});
+          addCFHandle(CFNewHandle);
         }
         setCFNewHandle(''); 
       }
@@ -39,7 +40,10 @@ export default function UserCard({userName, fullName, registrationNumber, email,
     // call the deleteCFhandle in the api/profile/removeCFHandle/route.ts using axios properly
     const res = await axios.post('/api/profile/removeCFHandle', {cfHandle : handle, userName : userName});
     console.log(res);
-    setCFState((prevCFState) => {return prevCFState.filter((cfHandle) => cfHandle != handle);});
+    if(res.status == 200){
+      removeCFHandle(handle);
+    }
+    // setCFState((prevCFState) => {return prevCFState.filter((cfHandle) => cfHandle != handle);});
   }
   const updateVjudge = async (e: React.KeyboardEvent<HTMLInputElement>) => {
     if(e.key == 'Enter'){
@@ -58,7 +62,7 @@ export default function UserCard({userName, fullName, registrationNumber, email,
       >
         {userName}
       </div>
-      <div className="flex flex-row justify-start w-full p-2 pl-40">
+      <div className="flex flex-row justify-start w-full p-2 pl-2 mobile:pl-10 tablet:pl-40">
         <div className="font-bold text-gray-700 w-40 leading-8">
           Full Name :
         </div>
@@ -66,7 +70,7 @@ export default function UserCard({userName, fullName, registrationNumber, email,
           {fullName}
         </div>
       </div>
-      <div className="flex flex-row justify-start w-full p-2 pl-40">
+      <div className="flex flex-row justify-start w-full p-2 pl-2 mobile:pl-10 tablet:pl-40">
         <div className="font-bold text-gray-700 w-40 leading-8">
           email :
         </div>
@@ -74,7 +78,7 @@ export default function UserCard({userName, fullName, registrationNumber, email,
           {email}
         </div>
       </div>
-      <div className="flex flex-row justify-start w-full p-2 pl-40">
+      <div className="flex flex-row justify-start w-full p-2 pl-2 mobile:pl-10 tablet:pl-40">
         <div className="font-bold text-gray-700 w-40 leading-8">
           Phone :
         </div>
@@ -82,7 +86,7 @@ export default function UserCard({userName, fullName, registrationNumber, email,
           {phone}
         </div>
       </div>
-      <div className="flex flex-row justify-start w-full p-2 pl-40">
+      <div className="flex flex-row justify-start w-full p-2 pl-2 mobile:pl-10 tablet:pl-40">
         <div className="font-bold text-gray-700 w-40 leading-8">
           Registration NO :
         </div>
@@ -90,7 +94,7 @@ export default function UserCard({userName, fullName, registrationNumber, email,
           {registrationNumber}
         </div>
       </div>
-      <div className="flex flex-row justify-start w-full p-2 pl-40">
+      <div className="flex flex-row justify-start w-full p-2 pl-2 mobile:pl-10 tablet:pl-40">
         <div className="font-bold text-gray-700 w-40 leading-8">
           Vjudge Handle :
         </div>
@@ -101,13 +105,13 @@ export default function UserCard({userName, fullName, registrationNumber, email,
                 <Input value={vjudgeState} onChange={e => setVjudgeState(e.target.value)} onKeyDown={updateVjudge}></Input>
               </>
             ):(
-              <div className="flex flex-row flex-wrap gap-2">
+              <div className="flex flex-row flex-wrap gap-2 items-start">
                 <p>
                   {vjudgeState} 
                 </p>
                   {/* this edit icon is visible only if the user is visiting his own profile */}
                   {auth?.user?.userName == userName ? (
-                    <Image className="cursor-pointer" alt = 'edit' height={24} src = {editIcon} onClick={()=> {setEditVjudge(true)}}/>
+                    <Image className="cursor-pointer" alt = 'edit' height={20} src = {editIcon} onClick={()=> {setEditVjudge(true)}}/>
                   ):(
                     <></>
                   )}
@@ -116,7 +120,7 @@ export default function UserCard({userName, fullName, registrationNumber, email,
           }
         </div>
       </div>
-      <div className="flex flex-row justify-start w-full p-2 pl-40">
+      <div className="flex flex-row justify-start w-full p-2 pl-2 mobile:pl-10 tablet:pl-40">
         <div className="font-bold text-gray-700 w-40 leading-8">
           CF Handles :
         </div>
@@ -130,7 +134,7 @@ export default function UserCard({userName, fullName, registrationNumber, email,
                   style={{backgroundColor : 'var(--primaryContainer)', color : 'var(--primary)'}}
                   >
                     <a 
-                      className="bg-gray-200 font-bold h-7" 
+                      className="flex bg-gray-200 font-bold h-7 items-center" 
                       href={'https://codeforces.com/profile/' + handle}
                       >
                         {handle}
@@ -155,13 +159,13 @@ export default function UserCard({userName, fullName, registrationNumber, email,
           {
             editCF ? (
               <>
-              <Input className="w-24" value={CFNewHandle} onChange={(e)=>{setCFNewHandle(e.target.value)}} onKeyDown={addCFhandle}/>
+              <Input className="w-24" value={CFNewHandle} onChange={(e)=>{setCFNewHandle(e.target.value)}} onKeyDown={addCFhandler}/>
               </>
             ) : (
               <>
                 {/* this edit icon is visible only if the user is visiting his own profile */}
                 {auth?.user?.userName == userName ? (
-                  <Image className="cursor-pointer" layout="fixed" width={24} alt = 'edit' src = {editIcon} onClick={()=> {setEditCF(true)}}/>
+                  <Image className="cursor-pointer" layout="fixed" width={20} alt = 'edit' src = {editIcon} onClick={()=> {setEditCF(true)}}/>
                 ):(
                   <></>
                 )}

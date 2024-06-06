@@ -32,7 +32,7 @@ export default function cfUserInfo({maxRating, maxRank, lastActive, registered, 
       >
         {name}
       </div>
-      <div className="flex flex-row justify-start w-full p-2 ml-60">
+      <div className="flex flex-row justify-start w-full p-2 pl-40">
         <div className="font-bold text-gray-700 w-40">
           Max Rating :
         </div>
@@ -40,7 +40,7 @@ export default function cfUserInfo({maxRating, maxRank, lastActive, registered, 
           {maxRating}
         </div>
       </div>
-      <div className="flex flex-row justify-start w-full p-2 ml-60">
+      <div className="flex flex-row justify-start w-full p-2 pl-40">
         <div className="font-bold text-gray-700 w-40">
           Max Rank :
         </div>
@@ -48,7 +48,7 @@ export default function cfUserInfo({maxRating, maxRank, lastActive, registered, 
           {maxRank}
         </div>
       </div>
-      <div className="flex flex-row justify-start w-full p-2 ml-60">
+      <div className="flex flex-row justify-start w-full p-2 pl-40">
         <div className="font-bold text-gray-700 w-40">
           Last Active :
         </div>
@@ -56,7 +56,7 @@ export default function cfUserInfo({maxRating, maxRank, lastActive, registered, 
           {lastActive}
         </div>
       </div>
-      <div className="flex flex-row justify-start w-full p-2 ml-60">
+      <div className="flex flex-row justify-start w-full p-2 pl-40">
         <div className="font-bold text-gray-700 w-40">
           Registered :
         </div>
@@ -64,7 +64,7 @@ export default function cfUserInfo({maxRating, maxRank, lastActive, registered, 
           {registered}
         </div>
       </div>
-      <div className="flex flex-row justify-start w-full p-2 ml-60">
+      <div className="flex flex-row justify-start w-full p-2 pl-40">
         <div className="font-bold text-gray-700 w-40">
           Contribution :
         </div>

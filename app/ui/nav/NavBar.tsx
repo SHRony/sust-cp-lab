@@ -43,8 +43,8 @@ export default function NavBar(){
       </NavButton>
     </>
   }
-  return <div style={{backgroundColor : 'var(--primary)'}} className='h-20 flex flex-row justify-between items-center w-full p-1'>
-    <div className='h-full flex flex-row justify-evenly items-center px-16'>
+  return <div style={{backgroundColor : 'var(--primary)'}} className='h-20 flex flex-row justify-between items-center w-full p-1 tablet:px-4 laptop:px-16'>
+    <div className='h-full flex flex-row justify-evenly items-center mobile:gap-0 tablet:gap-2 laptop:gap-8'>
       <NavButton url="/" type="text">
         Home
       </NavButton>
@@ -62,7 +62,7 @@ export default function NavBar(){
       </NavButton>
       
     </div>
-    <div className='h-full flex flex-row justify-evenly items-center px-16'>
+    <div className='h-full flex flex-row justify-evenly items-center'>
       {(!auth || auth.loading) ? <></> : (auth?.signedIn ? logOutButtonSet() : logInButtonSet())}
     </div>
   </div>
