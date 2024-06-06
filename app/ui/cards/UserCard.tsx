@@ -3,13 +3,16 @@ import Card from "./Card";
 import Image from "next/image";
 import editIcon from '@/public/edit.png'
 import { Input } from "@mui/material";
-import { useState } from "react";
+import { useContext, useState } from "react";
+import {authContext} from "@/app/lib/AuthProvider";
+import axios from "axios";
 export default function UserCard({userName, fullName, registrationNumber, email, vjudgeHandle, cfHandles, phone} : userType){
+  const auth = useContext(authContext);
   const [editVjudge, setEditVjudge] = useState(false);
   const [editCF, setEditCF] = useState(false);
   const [vjudgeState, setVjudgeState] = useState(vjudgeHandle??'');
   const [CFNewHandle, setCFNewHandle] = useState('');
-  const [CFState, setCFState] = useState(['yo', 'no']);
+  const [CFState, setCFState] = useState([...cfHandles??[]]);
   const addCFhandle = async (e: React.KeyboardEvent<HTMLInputElement>) => {
     if(e.key == 'Enter'){
       if(CFNewHandle == '') return;
@@ -22,7 +25,10 @@ export default function UserCard({userName, fullName, registrationNumber, email,
   }
   const updateVjudge = async (e: React.KeyboardEvent<HTMLInputElement>) => {
     if(e.key == 'Enter'){
-      console.log(vjudgeState);
+      // call the updateVjudge in the api/profile/route.ts using axios properly
+      console.log(userName);
+      const res = await axios.post('/api/profile/updateVjudgeHandle', {vjudgeHandle : vjudgeState, userName : userName});
+      console.log(res);
       setEditVjudge(false); 
     }
   }
@@ -82,7 +88,12 @@ export default function UserCard({userName, fullName, registrationNumber, email,
                 <p>
                   {vjudgeState} 
                 </p>
-                <Image className="cursor-pointer" alt = 'edit' height={24} src = {editIcon} onClick={()=> {setEditVjudge(true)}}/>
+                  {/* this edit icon is visible only if the user is visiting his own profile */}
+                  {auth?.user?.userName == userName ? (
+                    <Image className="cursor-pointer" alt = 'edit' height={24} src = {editIcon} onClick={()=> {setEditVjudge(true)}}/>
+                  ):(
+                    <></>
+                  )}
               </div>
             )
           }
@@ -92,11 +103,11 @@ export default function UserCard({userName, fullName, registrationNumber, email,
         <div className="font-bold text-gray-700 w-40 leading-8">
           CF Handles :
         </div>
-        <div className="text-gray-600 flex flex-row flex-wrap gap-2">
+        <div className="flex flex-row flex-wrap gap-2 items-start">
           {
             CFState?.map((handle)=>{
               return <a 
-                className="bg-gray-200 px-4 rounded border font-bold" 
+                className="bg-gray-200 px-4 rounded border font-bold h-7" 
                 key={handle}
                 style={{backgroundColor : 'var(--primaryContainer)', color : 'var(--primary)'}}
                 href={'codeforces.com/profile/' + handle}
@@ -112,7 +123,12 @@ export default function UserCard({userName, fullName, registrationNumber, email,
               </>
             ) : (
               <>
-                <Image className="cursor-pointer" alt = 'edit' height={24} src = {editIcon} onClick={()=> {setEditCF(true)}}/>
+                {/* this edit icon is visible only if the user is visiting his own profile */}
+                {auth?.user?.userName == userName ? (
+                  <Image className="cursor-pointer" layout="fixed" width={24} alt = 'edit' src = {editIcon} onClick={()=> {setEditCF(true)}}/>
+                ):(
+                  <></>
+                )}
               </>
             )
           }

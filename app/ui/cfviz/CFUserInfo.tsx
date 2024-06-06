@@ -11,7 +11,7 @@ type cfUserType = Readonly<{
   name : string;
 }>;
 
-export default function UserInfo({maxRating, maxRank, lastActive, registered, contribution, avatar, name}:cfUserType){
+export default function cfUserInfo({maxRating, maxRank, lastActive, registered, contribution, avatar, name}:cfUserType){
   return (
     <Card style={{backgroundImage : 'url(profile_bg.png)', backgroundSize : '100% 100%'} } className="flex flex-col items-center bg-white w-170 min-h-10 py-8 rounded">
       <div className="">
