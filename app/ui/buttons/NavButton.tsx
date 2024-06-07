@@ -9,7 +9,7 @@ export default function NavButton({children, url, type, onClick} : Readonly<{chi
   return (
     <Link href={url}>{
       type != 'icon' ? (
-        <div className='h-full flex flex-row justify-evenly items-center text-white font-bold'>
+        <div className='h-full flex flex-row justify-evenly items-center text-white'>
           <Button 
             
             variant="text"
@@ -22,12 +22,14 @@ export default function NavButton({children, url, type, onClick} : Readonly<{chi
                 bgcolor: 'rgba(255, 255, 255, 0.1)', // theme.palette.primary.main
                 color: 'var(--onPrimary)',
                 borderRadius : '4px',
+                fontWeight : 'bold',
               },
             } : {
               'color' : 'white',
               ':hover': {
                 bgcolor: 'rgba(255, 255, 255, 0.1)', // theme.palette.primary.main
                 color: 'var(--onPrimary)',
+                fontWeight : 'bold',
               },
             }
           }
