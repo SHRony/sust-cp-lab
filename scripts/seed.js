@@ -1,11 +1,11 @@
 const { Client } = require('pg')
 require('dotenv').config();
-
 const dbTables = {
   users: 'sust_cp_lab_users',
   cf_handles: 'sust_cp_lab_cf_handles',
   student_info: 'sust_cp_lab_student_info',
   mentor_info: 'sust_cp_lab_mentor_info',
+  cf_cache: 'sust_cp_lab_cf_cache',
 }
 const client = new Client({
   connectionString: process.env.POSTGRES_URL ,
@@ -51,7 +51,7 @@ async function seedUsers(client) {
 }
 async function seedStudents(client) {
   try {
-    // Create the "users" table if it doesn't exist
+    // Create the "students" table if it doesn't exist
 
     const createTable = await client.query(`
       CREATE TABLE IF NOT EXISTS ${dbTables.student_info} (
@@ -62,7 +62,6 @@ async function seedStudents(client) {
       );
     `);
     console.log(`Created "student" table`);
-      // Insert data into the "users" table
 
 
   } catch (error) {
@@ -72,7 +71,7 @@ async function seedStudents(client) {
 }
 async function seedCFHandles(client) {
   try {
-    // Create the "users" table if it doesn't exist
+    // Create the "cf_handles" table if it doesn't exist
 
     const createTable = await client.query(`
       CREATE TABLE IF NOT EXISTS ${dbTables.cf_handles} (
@@ -81,7 +80,6 @@ async function seedCFHandles(client) {
       );
     `);
     console.log(`Created "cf_handles" table`);
-      // Insert data into the "users" table
 
 
   } catch (error) {
@@ -90,6 +88,22 @@ async function seedCFHandles(client) {
   }
 }
 
+//write seedCFCache function which creates table named dbTables.cf_cache and columns are username and info which is a json object
+async function seedCFCache(client) {
+  try {
+    // Create the "users" table if it doesn't exist
+    const createTable = await client.query(`
+      CREATE TABLE IF NOT EXISTS ${dbTables.cf_cache} (
+        username VARCHAR(255) NOT NULL PRIMARY KEY,
+        info JSON
+      );
+    `);
+    console.log(`Created "cf_cache" table`);
+  } catch (error) {
+    console.error('Error seeding cf_cache:', error);
+    throw error;
+  }
+}
 // async function seedInvoices(client) {
 //   try {
 //     await client.query(`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`);
@@ -216,6 +230,7 @@ async function main() {
   await seedUsers(client);
   await seedStudents(client);
   await seedCFHandles(client);
+  await seedCFCache(client);
   // await seedCustomers(client);
   // await seedInvoices(client);
   // await seedRevenue(client);

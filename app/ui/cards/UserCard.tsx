@@ -29,6 +29,7 @@ export default function UserCard({userName, fullName, registrationNumber, email,
         const res = await axios.post('/api/profile/addCFHandle', {cfHandle : CFNewHandle, userName : userName});
         if(res.status == 200){
           addCFHandle(CFNewHandle);
+          setCFState((prevCFState) => [...prevCFState, CFNewHandle]);
         }
         setCFNewHandle(''); 
       }
@@ -42,6 +43,7 @@ export default function UserCard({userName, fullName, registrationNumber, email,
     console.log(res);
     if(res.status == 200){
       removeCFHandle(handle);
+      setCFState((prevCFState) => prevCFState.filter((cfHandle) => cfHandle != handle));
     }
     // setCFState((prevCFState) => {return prevCFState.filter((cfHandle) => cfHandle != handle);});
   }

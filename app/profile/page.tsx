@@ -22,14 +22,17 @@ const UserInfoComponent: React.FC<UserInfoComponentProps> = ({ name }) => {
   const auth = useContext(authContext);
   const [user, setUser] = useState<userType|null>(null);
   const [cfUser, setCfUser] = useState<cfUserType|null>(null);
+  const [trigger, setTrigger] = useState(false);
   const addCFHandle = async (handle : string) => {
     if(user && user.cfHandles && !user.cfHandles.includes(handle)){
-      setUser({...user, cfHandles: [...user.cfHandles, handle]})
+      setUser({...user, cfHandles: [...user.cfHandles, handle]});
+      setTrigger(!trigger);
     }
   }
   const removeCFHandle = async (handle : string) => {
     if(user && user.cfHandles && user.cfHandles.includes(handle)){
       setUser({...user, cfHandles: user.cfHandles.filter((cfHandle) => cfHandle != handle)});
+      setTrigger(!trigger);
     }
   }
   useEffect(() => {
@@ -41,13 +44,12 @@ const UserInfoComponent: React.FC<UserInfoComponentProps> = ({ name }) => {
     axios.get(`/api/userinfo?name=${username}`).then((res) => {
       if(res.data){
         setUser(res.data.user);
-        console.log(res.data.user);
         let handles = res.data.user.cfHandles?.join(',') ?? '';
-        console.log(handles);
         axios.get(`/api/external/cfuserinfo?user=${handles}`).then((res) => {
           if(res.data){
             setCfUser(res.data);
             console.log(res.data);
+            axios.post('api/userinfo/addcache', {username : username, info : res.data});
           }
         }).catch((res)=>{
           setCfUser(null);
@@ -58,8 +60,10 @@ const UserInfoComponent: React.FC<UserInfoComponentProps> = ({ name }) => {
     });
     
     
-  }, [name, auth]);
-
+  }, [name, auth, trigger]);
+  useEffect(() => {
+    console.log(user);
+  }, [user])
   return (
     <div className="flex flex-col items-center w-full pt-20 gap-20">
       <div className="flex flex-row flex-wrap w-full justify-center items-stretch gap-20">
