@@ -19,7 +19,11 @@ export default function Page() {
 
   useEffect(() => {
     const fetchData = async () => {
-      const response = await axios.get('/api/userinfo/userslist');
+      const response = await axios.get('/api/userinfo/userslist', {
+        params: {
+          timestamp: Date.now()
+        }
+      });
       const data = response.data;
 
       if(data){
