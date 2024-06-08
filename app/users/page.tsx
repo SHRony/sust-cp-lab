@@ -8,13 +8,13 @@ import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { DataGrid, GridCellParams, GridColDef, GridPaginationModel } from '@mui/x-data-grid';
 import { Button } from '@mui/material';
-
+import Image from 'next/image'
 
 import Link from 'next/link'
 
 export default function Page() {
 
-  const [users, setUsers] = useState<{username: string, maxRating: number, maxRank: number, id: string}[]>([]);
+  const [users, setUsers] = useState<{username: string, maxRating: number, maxRank: number, id: string, avatar: string}[]>([]);
   const [paginationModel, setPaginationModel] = useState<GridPaginationModel>({ page: 0, pageSize: 10 });
 
   useEffect(() => {
@@ -23,19 +23,29 @@ export default function Page() {
       const data = response.data;
 
       if(data){
-        console.log(data);
-        //the data is an object with two properties: username and info. Then info is another object with maxRating and maxRank property. now I want to show the username and the maxrating and maxrank in the table
-        setUsers(data.users.map((user: {username: string, info: {maxRating: number, maxRank: number}}) => ({username: user.username, maxRating: user.info.maxRating, maxRank: user.info.maxRank, id: user.username })));
+        setUsers(data.users.map((user: {username: string, info: {maxRating: number, maxRank: number, avatar: string, contribution: number}}) => ({username: user.username, maxRating: user.info.maxRating, maxRank: user.info.maxRank, id: user.username, avatar: user.info.avatar, contribution: user.info.contribution})));
       }
     };
     fetchData();
   }, []);
-
   useEffect(() => {
     console.log(users);
-  }, [users]);
+  },[users])
 
   const columns: GridColDef[] = [
+    { 
+      field: 'avatar', 
+      headerName: '', 
+      flex: 1, 
+      minWidth: 50,
+      maxWidth: 50,
+      renderCell: (params: GridCellParams) => (
+        
+        <div className='h-full flex justify-center items-center w-8'>
+          <Image style={{borderRadius: '50%', height: '30px', width: '30px', objectFit: 'cover'}} src={params.row.avatar} alt={params.row.username} width={30} height={30}/>
+        </div>
+      ),
+    },
     { 
       field: 'username', 
       headerName: 'Username', 
@@ -49,15 +59,22 @@ export default function Page() {
     },
     { field: 'maxRating', headerName: 'Max Rating', flex: 1, minWidth: 150 },
     { field: 'maxRank', headerName: 'Max Rank', flex: 1, minWidth: 150 },
+    { field: 'contribution', headerName: 'Contribution', flex: 1, minWidth: 150 },
   ];
 
   return (
-    <div>
-      <DataGrid
-        rows={users}
-        columns={columns}
-        paginationModel={paginationModel}
-      />
+    <div className='p-10'>
+      {
+        users.length > 0 ? (
+          <DataGrid
+            rows={users}
+            columns={columns}
+            paginationModel={paginationModel}
+          />
+        ) : (
+          <> </>
+        )
+      }
     </div>
   );
 }
