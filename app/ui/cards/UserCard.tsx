@@ -5,7 +5,7 @@ import editIcon from '@/public/edit.png';
 import closeIcon from '@/public/close.png';
 
 import { Input, Skeleton } from "@mui/material";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import {authContext} from "@/app/lib/AuthProvider";
 import axios from "axios";
 import CloseIcon from "@mui/icons-material/Close";
@@ -29,7 +29,6 @@ export default function UserCard({userName, fullName, registrationNumber, email,
         const res = await axios.post('/api/profile/addCFHandle', {cfHandle : CFNewHandle, userName : userName});
         if(res.status == 200){
           addCFHandle(CFNewHandle);
-          setCFState((prevCFState) => [...prevCFState, CFNewHandle]);
         }
         setCFNewHandle(''); 
       }
@@ -43,7 +42,6 @@ export default function UserCard({userName, fullName, registrationNumber, email,
     console.log(res);
     if(res.status == 200){
       removeCFHandle(handle);
-      setCFState((prevCFState) => prevCFState.filter((cfHandle) => cfHandle != handle));
     }
     // setCFState((prevCFState) => {return prevCFState.filter((cfHandle) => cfHandle != handle);});
   }
@@ -55,7 +53,9 @@ export default function UserCard({userName, fullName, registrationNumber, email,
       setEditVjudge(false); 
     }
   }
-  
+  useEffect(() => {
+    setCFState([...cfHandles??[]]);
+  }, [cfHandles]);
   return (
     <Card className="flex flex-col items-center bg-white w-170 min-h-10 py-8 rounded">
       <div 
