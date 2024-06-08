@@ -14,11 +14,12 @@ import ScatterChart from '../ui/cfviz/ScatterChart';
 import UserCard from '../ui/cards/UserCard';
 import UserCardSkeleton from '../ui/cards/UserCardSkeleton';
 import { useSearchParams } from 'next/navigation';
-type UserInfoComponentProps = {
-  name: any;
-};
 
-const UserInfoComponent: React.FC<UserInfoComponentProps> = ({ name }) => {
+
+const UserInfoComponent = () => {
+  const [username, setUsername] = useState<string|null> (null); // Store username in state
+  const searchParams = useSearchParams();
+  const auth = useContext(authContext);
   const [user, setUser] = useState<userType|null>(null);
   const [cfUser, setCfUser] = useState<cfUserType|null>(null);
   const [trigger, setTrigger] = useState(false);
@@ -34,9 +35,15 @@ const UserInfoComponent: React.FC<UserInfoComponentProps> = ({ name }) => {
       setTrigger(!trigger);
     }
   }
+
+  useEffect(() => {
+    let name = searchParams.get('username');
+    if(!name && auth?.signedIn) name = auth?.user?.userName??null;
+    if(!name && auth && !auth.loading && !auth.signedIn) redirect('/login');
+    setUsername(name);
+  }, [searchParams, auth]);
   useEffect(() => {
     const yo = async() => {
-      let username:string|null = name ?? null;
       if(!username) return ;
       console.log(username);
       const res = await axios.get(`/api/userinfo?name=${username}`);
@@ -58,7 +65,7 @@ const UserInfoComponent: React.FC<UserInfoComponentProps> = ({ name }) => {
     
     
     
-  }, [name, trigger]);
+  }, [username, trigger]);
   useEffect
   useEffect(() => {
     console.log(user);
@@ -136,29 +143,8 @@ const UserInfoComponent: React.FC<UserInfoComponentProps> = ({ name }) => {
 }
 
 export default function Page() {
-  const [username, setUsername] = useState<string|null> (null); // Store username in state
-  const searchParams = useSearchParams();
-  const auth = useContext(authContext);
-
-  useEffect(() => {
-    let name = searchParams.get('username');
-    if(!name && auth?.signedIn) name = auth?.user?.userName??null;
-    if(!name && auth && !auth.loading && !auth.signedIn) redirect('/login');
-    setUsername(name);
-  }, [searchParams, auth]);
-  useEffect(() => {
-    console.log(username);
-
-  }, [username]);
-  return(
-    <Suspense>
-     {
-      username ? (
-        <UserInfoComponent name={username} />
-      ):(
-        <></>
-      )
-     }
-    </Suspense>
-  )
+  
+  return <Suspense>
+    <UserInfoComponent></UserInfoComponent>
+  </Suspense>
 }
