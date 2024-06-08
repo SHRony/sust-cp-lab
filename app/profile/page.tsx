@@ -13,13 +13,12 @@ import RatingLineChart from '../ui/cfviz/RatingLineChart';
 import ScatterChart from '../ui/cfviz/ScatterChart';
 import UserCard from '../ui/cards/UserCard';
 import UserCardSkeleton from '../ui/cards/UserCardSkeleton';
-
+import { useSearchParams } from 'next/navigation';
 type UserInfoComponentProps = {
   name: any;
 };
 
 const UserInfoComponent: React.FC<UserInfoComponentProps> = ({ name }) => {
-  const auth = useContext(authContext);
   const [user, setUser] = useState<userType|null>(null);
   const [cfUser, setCfUser] = useState<cfUserType|null>(null);
   const [trigger, setTrigger] = useState(false);
@@ -36,34 +35,34 @@ const UserInfoComponent: React.FC<UserInfoComponentProps> = ({ name }) => {
     }
   }
   useEffect(() => {
-    let username:string|null = name ?? null;
-    if(!username && auth?.signedIn) username = auth?.user?.userName??null;
-    if(!username && auth && !auth.loading && !auth.signedIn) redirect('/login');
-    if(!username) return ;
-    console.log(username);
-    axios.get(`/api/userinfo?name=${username}`).then((res) => {
+    const yo = async() => {
+      let username:string|null = name ?? null;
+      if(!username) return ;
+      console.log(username);
+      const res = await axios.get(`/api/userinfo?name=${username}`);
       if(res.data){
         setUser(res.data.user);
         let handles = res.data.user.cfHandles?.join(',') ?? '';
         axios.get(`/api/external/cfuserinfo?user=${handles}`).then((res) => {
           if(res.data){
             setCfUser(res.data);
-            console.log(res.data);
             axios.post('api/userinfo/addcache', {username : username, info : res.data});
           }
         }).catch((res)=>{
           setCfUser(null);
         });
       }
-    }).catch((res)=>{
-      setUser(null);
-    });
+    }
+    yo();
+
     
     
-  }, [name, auth, trigger]);
+    
+  }, [name, trigger]);
+  useEffect
   useEffect(() => {
     console.log(user);
-  }, [user])
+  }, [user]);
   return (
     <div className="flex flex-col items-center w-full pt-20 gap-20">
       <div className="flex flex-row flex-wrap w-full justify-center items-stretch gap-20">
@@ -138,15 +137,22 @@ const UserInfoComponent: React.FC<UserInfoComponentProps> = ({ name }) => {
 
 export default function Page() {
   const [username, setUsername] = useState<string|null> (null); // Store username in state
+  const searchParams = useSearchParams();
+  const auth = useContext(authContext);
 
   useEffect(() => {
-    const searchParams = new URLSearchParams(window.location.search); // Use standard URLSearchParams
-    setUsername(searchParams.get('username'));
-  }, []);
+    let name = searchParams.get('username');
+    if(!name && auth?.signedIn) name = auth?.user?.userName??null;
+    if(!name && auth && !auth.loading && !auth.signedIn) redirect('/login');
+    setUsername(name);
+  }, [searchParams, auth]);
+  useEffect(() => {
+    console.log(username);
 
-  return (
-    <Suspense fallback={<div>Loading...</div>}>
-      <UserInfoComponent name={username} />
-    </Suspense>
+  }, [username]);
+  return username ? (
+    <UserInfoComponent name={username} />
+  ):(
+    <></>
   )
 }
