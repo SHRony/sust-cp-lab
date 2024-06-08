@@ -16,7 +16,7 @@ export type cfUserType = Readonly<{
   avatar : string;
   name : string;
   acTime : {x : number, y : number}[];
-  calenderSubmissions : {date : string, count : number};
+  calenderSubmissions : {date : string, count : number}[];
   diffData : { x: any; y: any; }[];
   catData : { x: any; y: any; }[];
   ratingChanges : ratingChangeType;

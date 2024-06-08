@@ -217,6 +217,7 @@ export async function GET(request:NextRequest) {
       catData : catData,
       ratingChanges : ratingChanges
     };
+    
     return NextResponse.json(user);
   }catch{
     return NextResponse.json({ error: 'An error occurred' }, { status: 500 });
