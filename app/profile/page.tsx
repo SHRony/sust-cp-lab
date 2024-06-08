@@ -150,9 +150,15 @@ export default function Page() {
     console.log(username);
 
   }, [username]);
-  return username ? (
-    <UserInfoComponent name={username} />
-  ):(
-    <></>
+  return(
+    <Suspense>
+     {
+      username ? (
+        <UserInfoComponent name={username} />
+      ):(
+        <></>
+      )
+     }
+    </Suspense>
   )
 }
