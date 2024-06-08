@@ -2,6 +2,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import dbTables from '@/app/lib/dbTables';
 import client from '@/app/api/dbclient';
+export const dynamic = 'force-dynamic';
 
 export async function POST(request:NextRequest) {
   // write code to add user and codeforces handles into database table dbTables.cf_handles
