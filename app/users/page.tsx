@@ -1,13 +1,8 @@
 // write a user component to display list of users
 'use client'
-import { NextRequest, NextResponse } from 'next/server';
-import dbTables from '@/app/lib/dbTables';
-import client from '@/app/api/dbclient';
-import { redirect } from 'next/navigation';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { DataGrid, GridCellParams, GridColDef, GridPaginationModel } from '@mui/x-data-grid';
-import { Button } from '@mui/material';
 import Image from 'next/image'
 
 import Link from 'next/link'
@@ -19,11 +14,7 @@ export default function Page() {
 
   useEffect(() => {
     const fetchData = async () => {
-      const response = await axios.get('/api/userinfo/userslist', {
-        params: {
-          timestamp: Date.now()
-        }
-      });
+      const response = await axios.get('/api/userinfo/userslist');
       const data = response.data;
 
       if(data){
