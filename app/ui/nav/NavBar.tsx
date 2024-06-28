@@ -51,7 +51,7 @@ export default function NavBar(){
       <NavButton url="/" type="text">
         Home
       </NavButton>
-      <NavButton url="" type="text">
+      <NavButton url="/contests" type="text">
         Contests
       </NavButton>
       <NavButton url="/cfviz" type="text">
