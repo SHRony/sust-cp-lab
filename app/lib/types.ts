@@ -42,3 +42,13 @@ export type userStateType = {
   userName: string;
   userType: string;
 };
+//contestType. Contest has properties like name, venue, description, date, type, poster image.
+export type contestType = {
+  name: string;
+  venue: string;
+  description: string;
+  date: string;
+  type: string;
+  poster?: string|null|undefined;
+  id: number;
+}
