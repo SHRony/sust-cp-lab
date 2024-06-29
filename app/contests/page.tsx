@@ -106,12 +106,12 @@ export default function Contests() {
 
   return (
     <div className="flex flex-col items-left w-full">
-      <Link href="/contest/create" className="mt-10">
+      <Link href="/contests/create" className="mt-10">
         <Button variant="contained" color="primary">
           Create Contest
         </Button>
       </Link>
-      <div className="grid gap-8 w-full justify-between pt-20 rounded" style={{gridTemplateColumns: 'repeat(auto-fill, 300px)'}}>
+      <div className="grid w-full gap-10 laptop:gap-4 desktop:gap-10 justify-center tablet:justify-between pt-20 rounded" style={{gridTemplateColumns: 'repeat(auto-fill, 20rem)'}}>
         {contests.map((contest) => (
           <ContestCard key={contest.id} contest={contest} />
         ))}

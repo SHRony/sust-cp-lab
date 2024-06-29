@@ -12,23 +12,21 @@ export default function ContestCard({ contest }: { contest: contestType }) {
   )}`;
   return (
     <Card
-      className={`flex flex-col items-start md:items-center gap-4 ${
+      className={`flex flex-col items-start md:items-center gap-4 bg-white ${
         contest.poster ? "row-span-2" : ""
       }`}
     >
       {contest.poster && (
         <div className="flex-1">
-          <Link href={contestPath}>
             <Image
               src={contest.poster}
               alt="Contest logo"
-              width={300}
+              width={340}
               height={100}
             />
-          </Link>
         </div>
       )}
-      <div className="flex-1 flex flex-col justify-center items-start min-h-48 w-full p-4 bg-white">
+      <div className="flex-1 flex flex-col justify-center items-start min-h-48 w-full p-4 bg-white overflow-y-scroll" style={{ scrollbarWidth: "none" }}>
         <h2 className="text-2xl font-bold text-center w-full">{contest.name}</h2>
         <div className="flex flex-col justify-center items-start">
           <p className="text-lg font-semibold text-gray-600">{contest.venue}</p>
