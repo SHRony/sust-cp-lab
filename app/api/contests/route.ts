@@ -1,6 +1,7 @@
 import { NextResponse, NextRequest } from 'next/server';
 import dbclient from '@/app/api/dbclient';
 import dbTables from '@/app/lib/dbTables';
+export const dynamic = 'force-dynamic';
 
 export async function GET(request: NextRequest) {
   try {
