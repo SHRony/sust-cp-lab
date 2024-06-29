@@ -33,7 +33,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ onChange }) => {
         onChange={handleFileChange}
       />
       <button className="py-1 px-2 rounded" style={{ background: 'var(--primaryContainer)', color: 'var(--primary)' }} onClick={() => inputRef.current?.click()}>
-        Choose Image
+        Upload Poster
       </button>
     </div>
   );

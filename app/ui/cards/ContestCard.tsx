@@ -26,16 +26,20 @@ export default function ContestCard({ contest }: { contest: contestType }) {
             />
         </div>
       )}
-      <div className="flex-1 flex flex-col justify-center items-start min-h-48 w-full p-4 bg-white overflow-y-scroll" style={{ scrollbarWidth: "none" }}>
+      <div className="flex-1 flex flex-col justify-center items-start min-h-48 w-full p-4 bg-white overflow-y-scroll gap-3" style={{ scrollbarWidth: "none" }}>
         <h2 className="text-2xl font-bold text-center w-full">{contest.name}</h2>
-        <div className="flex flex-col justify-center items-start">
+        <div className="flex flex-col justify-center items-start gap-2">
           <p className="text-lg font-semibold text-gray-600">{contest.venue}</p>
           <p className="text-sm text-gray-600">{contest.description}</p>
           <p className="text-sm text-gray-600">
             Date: {new Date(contest.date).toLocaleDateString()}
+          </p>
+          <p className="text-sm text-gray-600">
+            Type: {contest.type}
           </p>
         </div>
       </div>
     </Card>
   );
 }
+

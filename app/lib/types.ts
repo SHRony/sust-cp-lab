@@ -49,6 +49,6 @@ export type contestType = {
   description: string;
   date: string;
   type: string;
-  poster?: string|null|undefined;
-  id: number;
+  poster?: string|null;
+  id?: number;
 }
