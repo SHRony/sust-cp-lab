@@ -8,33 +8,40 @@ import { TextField } from "@mui/material";
 import Card from "@/app/ui/cards/Card";
 import ImageUploader from "@/app/ui/input/ImageUploader";
 import DoubleClickInput from "@/app/ui/input/DoubleClickInput";
+import axios from "axios";
 export default function CreateContestPage() {
-  const [name, setName] = useState("");
-  const [venue, setVenue] = useState("");
-  const [description, setDescription] = useState("");
-  const [type, setType] = useState("");
-  const [date, setDate] = useState(new Date());
+  const [name, setName] = useState("Random Inter University Programming Contest");
+  const [venue, setVenue] = useState("Random University");
+  const [description, setDescription] = useState("An inter university programming contest for everyone. Teams will be formed based on the performaces of online contests and TFCs.");
+  const [type, setType] = useState("Onsite IUPC");
+  const [date, setDate] = useState(new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split("T")[0]);
   const [poster, setPoster] = useState("");
   
   const handleCreateContest = async () => {
     const newContest: contestType = {
-      id: Date.now(),
       name,
       venue,
       description,
-      date: date.toISOString(),
+      date,
       type,
       poster,
     };
-
+    console.log(newContest)
     try {
-      await fetch("/api/contests", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(newContest),
-      });
+      axios.post("/api/contests/create", newContest)
+        .then((res) => {
+          if (res.status == 200) {
+            window.location.href = '/contests';
+            console.log('contest created');
+          } else {
+            console.log(res.data.error);
+            alert('please try again');
+          }
+        })
+        .catch((error) => {
+          console.error("Error creating contest:", error);
+          alert('please try again');
+        });
     } catch (error) {
       console.error("Error creating contest:", error);
     }
@@ -55,25 +62,25 @@ export default function CreateContestPage() {
       <div className="flex flex-col max-w-md w-full">
         <div className="p-2">
           <span className="text-gray-400">Name</span>
-          <DoubleClickInput textClassName="text-2xl font-bold" inputClassName="text-2xl font-bold" initialValue="Random Inter University Programming Contest" onChange={(value) => {setName(value)}} />
+          <DoubleClickInput textClassName="text-2xl font-bold" inputClassName="text-2xl font-bold" initialValue = {name} onChange={(value) => {setName(value)}} />
         </div>
         <div className="p-2">
           <span className="text-gray-400">Venue</span>
-          <DoubleClickInput textClassName="text-black" inputClassName="text-black" initialValue="Randome University" onChange={(value) => {setVenue(value)}} />
+          <DoubleClickInput textClassName="text-black" inputClassName="text-black" initialValue={venue} onChange = {(value) => {setVenue(value)}} />
         </div>
         <div className="p-2">
           <span className="text-gray-400">Description</span>
-          <DoubleClickInput textClassName="text-black" inputClassName="text-black" initialValue="An inter university programming contest for everyone. Teams will be formed based on the performaces of online contests and TFCs." onChange={(value) => {setDescription(value)}} />
+          <DoubleClickInput textClassName="text-black" inputClassName="text-black" initialValue= {description} onChange = {(value) => {setDescription(value)}} />
         </div>
         <div className="p-2">
           <span className="text-gray-400">Type</span>
-          <DoubleClickInput textClassName="text-black" inputClassName="text-black" initialValue="Onsite IUPC" onChange={(value) => {setType(value)}} />
+          <DoubleClickInput textClassName="text-black" inputClassName="text-black" initialValue={type} onChange={(value) => {setType(value)}} />
         </div>
         <TextField
           label="Date"
           type="date"
-          value={date.toISOString().split("T")[0]}
-          onChange={(event) => setDate(new Date(event.target.value))}
+          value={date}
+          onChange={(event) => setDate(event.target.value)}
           className="w-full border-none p-2"
         />
         

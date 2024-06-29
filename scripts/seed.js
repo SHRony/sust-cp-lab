@@ -6,6 +6,7 @@ const dbTables = {
   student_info: 'sust_cp_lab_student_info',
   mentor_info: 'sust_cp_lab_mentor_info',
   cf_cache: 'sust_cp_lab_cf_cache',
+  contests: 'sust_cp_lab_contests',
 }
 const client = new Client({
   connectionString: process.env.POSTGRES_URL ,
@@ -101,6 +102,28 @@ async function seedCFCache(client) {
     console.log(`Created "cf_cache" table`);
   } catch (error) {
     console.error('Error seeding cf_cache:', error);
+    throw error;
+  }
+}
+
+// seed contests table
+async function seedContests(client) {
+  try {
+    // Create the "contests" table if it doesn't exist
+    const createTable = await client.query(`
+      CREATE TABLE IF NOT EXISTS ${dbTables.contests} (
+        id SERIAL PRIMARY KEY,
+        name VARCHAR(255) NOT NULL,
+        venue VARCHAR(35) NOT NULL,
+        description VARCHAR(500) NOT NULL,
+        type VARCHAR(35) NOT NULL,
+        date VARCHAR(25) NOT NULL,
+        poster VARCHAR(255)
+      );
+    `);
+    console.log(`Created "contests" table`);
+  } catch (error) {
+    console.error('Error seeding contests:', error);
     throw error;
   }
 }
@@ -217,7 +240,16 @@ async function seedCFCache(client) {
 //     throw error;
 //   }
 // }
-
+// write a function which whill take table name and client as parameter and then drop that table if exists
+async function dropTable(tableName, client) {
+  try {
+    const dropTable = await client.query(`DROP TABLE IF EXISTS ${tableName} CASCADE`);
+    console.log(`Dropped ${tableName} table`);
+  } catch (error) {
+    console.error(`Error dropping ${tableName} table:`, error);
+    throw error;
+  }
+}
 async function main() {
   // const client = await db.connect();
   console.log(process.env.POSTGRES_URL);
@@ -231,12 +263,12 @@ async function main() {
   await seedStudents(client);
   await seedCFHandles(client);
   await seedCFCache(client);
-  // await seedCustomers(client);
-  // await seedInvoices(client);
-  // await seedRevenue(client);
+  await seedContests(client);
 
   await client.end();
 }
+
+
 
 main().catch((err) => {
   console.error(

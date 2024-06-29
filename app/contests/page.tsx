@@ -8,100 +8,25 @@ import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";  
 import Button from '@mui/material/Button';
 import { useRouter } from "next/router";
+import axios from "axios";
 
 export default function Contests() {
   const [contests, setContests] = useState<contestType[]>([]);
 
   useEffect(() => {
-    const dummyContests: contestType[] = [
-      {
-        id: 1,
-        name: "Contest 1",
-        venue: "Venue 1",
-        description: "Dummy contest 1",
-        date: new Date().toISOString(),
-        type: "Type 1",
-        poster: "https://c4.wallpaperflare.com/wallpaper/177/182/521/abstract-fantasy-art-simple-background-digital-art-wallpaper-preview.jpg",
-      },
-      {
-        id: 2,
-        name: "Contest 2",
-        venue: "Venue 2",
-        description: "Dummy contest 2",
-        date: new Date().toISOString(),
-        type: "Type 2",
-        poster: "https://c4.wallpaperflare.com/wallpaper/608/48/1018/digital-art-abstract-skull-white-background-wallpaper-preview.jpg",
-      },
-      {
-        id: 3,
-        name: "Contest 3",
-        venue: "Venue 3",
-        description: "Dummy contest 3",
-        date: new Date().toISOString(),
-        type: "Type 3",
-      },
-      {
-        id: 4,
-        name: "Contest 4",
-        venue: "Venue 4",
-        description: "Dummy contest 4",
-        date: new Date().toISOString(),
-        type: "Type 4",
-        poster: "https://c4.wallpaperflare.com/wallpaper/771/126/358/facets-animals-parrot-digital-art-wallpaper-preview.jpg",
-      },
-      {
-        id: 5,
-        name: "Contest 5",
-        venue: "Venue 5",
-        description: "Dummy contest 5",
-        date: new Date().toISOString(),
-        type: "Type 5",
-        poster: "https://c4.wallpaperflare.com/wallpaper/112/867/656/3d-abstract-artwork-circle-wallpaper-preview.jpg",
-      },
-      {
-        id: 6,
-        name: "Contest 6",
-        venue: "Venue 6",
-        description: "Dummy contest 6",
-        date: new Date().toISOString(),
-        type: "Type 6",
-      },
-      {
-        id: 7,
-        name: "Contest 7",
-        venue: "Venue 7",
-        description: "Dummy contest 7",
-        date: new Date().toISOString(),
-        type: "Type 7",
-      },
-      {
-        id: 8,
-        name: "Contest 8",
-        venue: "Venue 8",
-        description: "Dummy contest 8",
-        date: new Date().toISOString(),
-        type: "Type 8",
-        poster: "https://c4.wallpaperflare.com/wallpaper/177/182/521/abstract-fantasy-art-simple-background-digital-art-wallpaper-preview.jpg",
-      },
-      {
-        id: 9,
-        name: "Contest 9",
-        venue: "Venue 9",
-        description: "Dummy contest 9",
-        date: new Date().toISOString(),
-        type: "Type 9",
-        poster: "https://c4.wallpaperflare.com/wallpaper/608/48/1018/digital-art-abstract-skull-white-background-wallpaper-preview.jpg",
-      },
-      {
-        id: 10,
-        name: "Contest 10",
-        venue: "Venue 10",
-        description: "Dummy contest 10",
-        date: new Date().toISOString(),
-        type: "Type 10",
-      },
-    ];
-    setContests(dummyContests);
+    axios.get("/api/contests")
+      .then((res) => {
+        if (res.status == 200) {
+          setContests(res.data);
+        } else {
+          console.log(res.data.error);
+          alert('please try again');
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching contests:", error);
+        alert('please try again');
+      });
   }, []);
 
   return (
@@ -119,3 +44,4 @@ export default function Contests() {
     </div>
   );
 }
+
