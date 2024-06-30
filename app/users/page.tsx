@@ -47,7 +47,7 @@ export default function Page() {
       flex: 1, 
       minWidth: 150,
       renderCell: (params: GridCellParams) => (
-        <Link href={`/profile?username=${params.row.username}`}>
+        <Link href={`/profile/${params.row.username}`}>
           {params.row.username}
         </Link>
       ),

@@ -1,5 +1,6 @@
 'use client'
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, Suspense } from 'react';
+import { useRouter } from 'next/navigation';
 import { authContext } from "@/app/lib/AuthProvider";
 import { redirect } from 'next/navigation';
 import { cfUserType, userType } from '@/app/lib/types';
@@ -14,7 +15,8 @@ import ScatterChart from '@/app/ui/cfviz/ScatterChart';
 import UserCard from '@/app/ui/cards/UserCard';
 import UserCardSkeleton from '@/app/ui/cards/UserCardSkeleton';
 
-const UserInfoComponent = () => {
+export default function Page({params : {username}} : {params : {username : string}}) {
+  const router = useRouter();
   const auth = useContext(authContext);
   const [user, setUser] = useState<userType|null>(null);
   const [cfUser, setCfUser] = useState<cfUserType|null>(null);
@@ -33,17 +35,21 @@ const UserInfoComponent = () => {
   }
 
   useEffect(() => {
+     console.log(username);
+    if(!username) redirect('/login');
     const yo = async() => {
-      if(!auth?.user?.userName) return ;
-      console.log(auth.user.userName);
-      const res = await axios.get(`/api/userinfo?name=${auth.user.userName}`);
+      if(!username) return ;
+      const res = await axios.get(`/api/userinfo?name=${username}`);
+     
       if(res.data){
         setUser(res.data.user);
         let handles = res.data.user.cfHandles?.join(',') ?? '';
         axios.get(`/api/external/cfuserinfo?user=${handles}`).then((res) => {
           if(res.data){
             setCfUser(res.data);
-            axios.post('/api/userinfo/addcache', {username : auth.user?.userName, info : res.data});
+            console.log(username);
+            console.log(res.data)
+            axios.post('/api/userinfo/addcache', {username : username, info : res.data});
           }
         }).catch((res)=>{
           setCfUser(null);
@@ -52,8 +58,11 @@ const UserInfoComponent = () => {
     }
     yo();
 
-  }, [auth]);
-  
+    
+  }, [username]);
+  useEffect(() => {
+    console.log(user);
+  }, [user]);
   return (
     <div className="flex flex-col items-center w-full pt-20 gap-20">
       <div className="flex flex-row flex-wrap w-full justify-center items-stretch gap-20">
@@ -125,5 +134,3 @@ const UserInfoComponent = () => {
     </div>
   );
 }
-
-export default UserInfoComponent;

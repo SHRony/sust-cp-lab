@@ -36,7 +36,7 @@ export default function Contests() {
           Create Contest
         </Button>
       </Link>
-      <div className="grid w-full gap-10 laptop:gap-4 desktop:gap-10 justify-center tablet:justify-between pt-20 rounded" style={{gridTemplateColumns: 'repeat(auto-fill, 20rem)'}}>
+      <div className="grid w-full gap-10 laptop:gap-8 desktop:gap-10 justify-center tablet:justify-between pt-20 rounded" style={{gridTemplateColumns: 'repeat(auto-fill, 20rem)'}}>
         {contests.map((contest) => (
           <ContestCard key={contest.id} contest={contest} />
         ))}
