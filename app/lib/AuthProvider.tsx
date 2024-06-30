@@ -30,7 +30,7 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
       return true;
     } catch (error) {
       // Handle authentication errors
-      console.log('coldnot login');
+      console.log('could not login');
       setLoading(false);
       return false;
     } finally {
@@ -43,7 +43,9 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
     setUser(null);
     setSignedIn(false);
     await axios.post('/api/logout');
-
+    //refresh the page
+    console.log('logging out');
+    window.location.reload();
   };
 
   const authValue: AuthContextType = {
@@ -58,8 +60,8 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
   useEffect(() => {
     async function yo(){
       const res = await axios.post('/api/isloggedin');
+      console.log(res);
       if(res.status == 200){
-        // console.log(res);
         setUser({ userName: res.data.user.username, userType: res.data.user.userType});
         setSignedIn(true);
       }
