@@ -15,10 +15,11 @@ import CFCompare from "@/app/ui/cfviz/CFCompare";
 export default function Page({params:{id}}:{params:{id:number}}) {
   const [contestId, setContestId] = useState<null|number>(id);
   const [users, setUsers] = useState<{username: string, maxRating: number, maxRank: number, id: string, avatar: string}[]>([]);
+  const [removedUsers, setRemovedUsers] = useState<{username: string, maxRating: number, maxRank: number, id: string, avatar: string}[]>([]);
   const [selectedUsers, setSelectedUsers] = useState<{username: string, maxRating: number, maxRank: number, id: string, avatar: string}[]>([]);
   const [rowSelectionModel, setRowSelectionModel] =
   React.useState<GridRowSelectionModel>([]);
-  const [teams, setTeams] = useState<string[][]>([]);
+  const [teams, setTeams] = useState<{teamName:string, team:string[]}[]>([]);
   const [open, setOpen] = React.useState(false);
   const [user1Name, setUser1Name] = React.useState('');
   const [user2Name, setUser2Name] = React.useState('');
@@ -76,18 +77,14 @@ export default function Page({params:{id}}:{params:{id:number}}) {
   };
 
   const handleCreateTeam = () => {
-    if (selectedUsers.length === 2) {
-      setOpen(true);
-      setUser1Name(selectedUsers[0].username);
-      setUser2Name(selectedUsers[1].username);
-    }
-    const newTeam = selectedUsers.map(user => user.username);
+    const newTeam = {teamName: `Team ${teams.length + 1}`, team: selectedUsers.map(user => user.username)};
     console.log(selectedUsers);
     const newTeams = [...teams, newTeam];
     const newUsers = users.filter(user => !selectedUsers.includes(user));
-    setSelectedUsers([]);
-    setTeams(newTeams);
+    setRemovedUsers([...removedUsers, ...selectedUsers]);
     setUsers(newUsers);
+    setTeams(newTeams);
+    setSelectedUsers([]);
   };
 
   const handleClose = () => {
@@ -102,6 +99,26 @@ export default function Page({params:{id}}:{params:{id:number}}) {
     }
   };
 
+  const handleDeleteTeam = ({team, teamName}:{team: string[], teamName:string}) => {
+    const newUsers = [...users, ...removedUsers.filter(user => team.includes(user.username))];
+    const newRemovedUsers = removedUsers.filter(user => !team.includes(user.username));
+    const newTeams = teams.filter(t => t.team !== team);
+    console.log(removedUsers);
+    setUsers(newUsers);
+    setRemovedUsers(newRemovedUsers);
+    setTeams(newTeams);
+    setOpen(false);
+  }
+  const handleRename = (team: string[], newTeamName:string) => {
+    const newTeams = teams.map(t => {
+      if (t.team === team) {
+        return {teamName: newTeamName, team: t.team};
+      } else {
+        return t;
+      }
+    })
+    setTeams(newTeams);
+  }
   const body = (
     <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: '100%' }}>
       
@@ -112,15 +129,23 @@ export default function Page({params:{id}}:{params:{id:number}}) {
           </IconButton>
           <CFCompare user1Name={user1Name} user2Name={user2Name}/>
         </div>
-        
       </div>
     </div>
   );
+  
+// have to find a better layout for the buttons
+
+
 
   return (
     <div className="flex flex-row justify-between w-full" >
       <div className="p-4 laptop:flex-grow" style={{ minWidth: '0', maxWidth: '100%', margin: '0 auto' }} >
-        <h2 className="text-2xl font-bold mb-4">Users</h2>
+        
+        <div className="flex flex-row gap-10 items-center justify-between mb-4 w-full">
+          <h2 className="text-2xl font-bold">Users</h2>
+          <Button variant="contained" onClick={handleCreateTeam}>Create Team</Button>
+          <Button variant="contained" onClick={handleCompare}>Compare</Button>
+        </div>
         <div style={{ overflowX: 'scroll', scrollbarWidth: 'none', width: '100%' }}>
           <DataGrid
             rows={users}
@@ -130,8 +155,6 @@ export default function Page({params:{id}}:{params:{id:number}}) {
             rowSelectionModel = {rowSelectionModel}
           />
         </div>
-        <Button variant="contained" onClick={handleCreateTeam}>Create Team</Button>
-        <Button variant="contained" onClick={handleCompare}>Compare</Button>
         <Modal
           open={open}
           onClose={handleClose}
@@ -141,16 +164,21 @@ export default function Page({params:{id}}:{params:{id:number}}) {
           {body}
         </Modal>
       </div>
-      <div className="p-4 w-64 flex-grow max-w-64">
-        <h2 className="text-2xl font-bold mb-4">Teams</h2>
-        <div className="flex flex-row flex-wrap gap-4">
-          {[...teams].reverse().map((team, index) => (
-            <TeamCard key={index} team={team} teamName={`Team ${teams.length - index}`} />
-          ))}
+      <div className="flex flex-col p-4 w-64 flex-grow max-w-64">
+        <div className="flex flex-row gap-10 items-center justify-between mb-4 w-full">
+          <h2 className="text-2xl font-bold">Teams</h2>
+          <Button variant="contained">Publish</Button>
+      
+        </div>
+        
+        <div className="gap-4 flex flex-col" style={{ overflowY: 'scroll', scrollbarWidth: 'none', height: 'calc(100vh - 60px)' }}>
+         {teams.map((team, index) => (
+           <TeamCard teamName={team.teamName} team={team.team} key={index} onClose={handleDeleteTeam} onRename={handleRename} />
+         ))}
         </div>
       </div>
-      
     </div>
   );
-}
+};
 
+    
