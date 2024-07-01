@@ -47,6 +47,20 @@ export default function Page({params:{id}}:{params:{id:number}}) {
           <p className="text-lg text-gray-600">
             Type: {contest.type}
           </p>
+          
+        </div>
+        <div className="flex justify-end w-full">
+          <Link href={`/contests/${contest.id}/createteams`} className="">
+            <Button variant="contained" className="w-48" sx={{
+                background: 'var(--primary)',
+                '&:hover': {
+                  background: 'var(--primary) !important',
+                  color: 'var(--onPrimary) !important',
+                },
+              }}>
+                Create Teams
+              </Button>
+          </Link>
         </div>
       </div>
       <p className="text-lg text-gray-600 text-left">{contest.description}</p>
