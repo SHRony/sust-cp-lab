@@ -4,6 +4,7 @@ import { addUser, addStudent } from "../auth";
 import { cookies } from "next/headers";
 import dbTables from '@/app/lib/dbTables';
 import client from '../dbclient';
+export const dynamic = 'force-dynamic';
 export async function POST(request:NextRequest) {
   try{
     const token = await cookies().get('token')?.value;

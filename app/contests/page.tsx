@@ -29,7 +29,14 @@ export default function Contests() {
         alert('please try again');
       });
   }, []);
-
+  const removeContest = async (id: number) => {
+    try {
+      axios.post("/api/contests/delete", { id: id });
+      setContests(contests.filter((contest) => contest.id !== id));
+    } catch (error) {
+      console.error("Error deleting contest:", error);
+    }
+  }
   return (
     <div className="flex flex-col items-left w-full">
       <AccessProvider permittedUsers={['admin', 'mentor']}>
@@ -41,7 +48,7 @@ export default function Contests() {
       </AccessProvider>
       <div className="grid w-full gap-10 laptop:gap-8 desktop:gap-10 justify-center tablet:justify-between pt-20 rounded" style={{gridTemplateColumns: 'repeat(auto-fill, 20rem)'}}>
         {contests.map((contest) => (
-          <ContestCard key={contest.id} contest={contest} />
+          <ContestCard key={contest.id} contest={contest} onClose={removeContest} />
         ))}
       </div>
     </div>

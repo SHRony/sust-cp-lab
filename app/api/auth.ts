@@ -5,6 +5,7 @@ import client from "./dbclient";
 import dbTables from "@/app/lib/dbTables";
 import jwt from 'jsonwebtoken';
 const JWT_KEY:string = process.env.JWT_KEY!;
+export const dynamic = 'force-dynamic';
 export const addUser = async (user : userType) => {
   user.password = await bcrypt.hash(user.password, 10);
   try{

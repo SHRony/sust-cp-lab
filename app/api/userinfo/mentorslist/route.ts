@@ -1,7 +1,7 @@
 import dbTables from "@/app/lib/dbTables";
 import { NextRequest, NextResponse } from "next/server";
 import client from "@/app/api/dbclient";
-
+export const dynamic = 'force-dynamic';
 export async function GET(request:NextRequest) {
   try{
     const response = await client.query(`

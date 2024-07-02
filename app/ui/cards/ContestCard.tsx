@@ -4,8 +4,9 @@ import Image from "next/image";
 import Link from "next/link";
 import Card from "./Card";
 import { contestType } from "@/app/lib/types";
-
-export default function ContestCard({ contest }: { contest: contestType }) {
+import AccessProvider from "@/app/lib/AccessProvider";
+import CloseIcon from "@mui/icons-material/Close";
+export default function ContestCard({ contest, onClose }: { contest: contestType, onClose: (id: number) => void }) {
   const contestPath = `/contests/${contest.id}`;
   return (
     <Card
@@ -13,6 +14,13 @@ export default function ContestCard({ contest }: { contest: contestType }) {
         contest.poster ? "row-span-2" : ""
       }`}
     >
+      <AccessProvider permittedUsers={['admin', 'mentor']}>
+        <div className="w-full flex justify-end">
+          <button onClick={() => onClose(contest.id)}>
+            <CloseIcon />
+          </button>
+        </div>
+      </AccessProvider>
       {contest.poster && (
         <div className="">
             <Image

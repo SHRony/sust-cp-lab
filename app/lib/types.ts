@@ -51,5 +51,5 @@ export type contestType = {
   date: string;
   type: string;
   poster?: string|null;
-  id?: number;
+  id: number;
 }
