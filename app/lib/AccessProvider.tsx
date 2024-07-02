@@ -5,7 +5,7 @@ export default function AccessProvider({ permittedUsers, children }: { permitted
   const auth = useContext(authContext);
   const [permition, setPermision] = useState(false);
   useEffect(() => {
-    console.log(auth);
+    setPermision(false);
     if(auth && auth.signedIn && (permittedUsers.includes(auth.user?.userType || ''))) setPermision(true);
     if(auth && (auth.signedIn == false) && auth.loading == false && permittedUsers.length == 0) setPermision(true);
   },[auth, permittedUsers])

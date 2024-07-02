@@ -80,6 +80,7 @@ export default function Page({params : {username}} : {params : {username : strin
               registrationNumber={user.registrationNumber}
               addCFHandle={addCFHandle}
               removeCFHandle={removeCFHandle}
+              userType={user.userType}
               >
                 
               </UserCard>
