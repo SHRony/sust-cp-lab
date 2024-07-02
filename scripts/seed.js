@@ -126,6 +126,17 @@ async function seedContests(client) {
     console.error('Error seeding contests:', error);
     throw error;
   }
+
+  try {
+    const alterTable = await client.query(`
+      ALTER TABLE ${dbTables.contests}
+      ADD COLUMN IF NOT EXISTS author VARCHAR(255) NOT NULL DEFAULT 'Rony';
+    `);
+    console.log(`Added author column to contests table`);
+  } catch (error) {
+    console.error('Error adding author column to contests table:', error);
+    throw error;
+  }
 }
 // async function seedInvoices(client) {
 //   try {

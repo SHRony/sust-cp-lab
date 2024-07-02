@@ -2,13 +2,14 @@
 
 'use client'
 import { contestType } from "@/app/lib/types";
-import { useState, useEffect } from "react";  
+import { useState, useEffect, useContext } from "react";  
 import Button from '@mui/material/Button';
 import { TextField } from "@mui/material";
 import Card from "@/app/ui/cards/Card";
 import ImageUploader from "@/app/ui/input/ImageUploader";
 import DoubleClickInput from "@/app/ui/input/DoubleClickInput";
 import axios from "axios";
+import { authContext } from "@/app/lib/AuthProvider";
 export default function CreateContestPage() {
   const [name, setName] = useState("Random Inter University Programming Contest");
   const [venue, setVenue] = useState("Random University");
@@ -16,7 +17,7 @@ export default function CreateContestPage() {
   const [type, setType] = useState("Onsite IUPC");
   const [date, setDate] = useState(new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split("T")[0]);
   const [poster, setPoster] = useState("");
-  
+  const auth = useContext(authContext);
   const handleCreateContest = async () => {
     const newContest: contestType = {
       name,
@@ -26,8 +27,8 @@ export default function CreateContestPage() {
       type,
       poster,
       id: 0,
+      author: auth?.user?.userName || '',
     };
-    console.log(newContest)
     try {
       axios.post("/api/contests/create", newContest)
         .then((res) => {

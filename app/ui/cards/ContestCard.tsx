@@ -6,6 +6,7 @@ import Card from "./Card";
 import { contestType } from "@/app/lib/types";
 import AccessProvider from "@/app/lib/AccessProvider";
 import CloseIcon from "@mui/icons-material/Close";
+import IconButton from "@mui/material/IconButton/IconButton";
 export default function ContestCard({ contest, onClose }: { contest: contestType, onClose: (id: number) => void }) {
   const contestPath = `/contests/${contest.id}`;
   return (
@@ -14,13 +15,7 @@ export default function ContestCard({ contest, onClose }: { contest: contestType
         contest.poster ? "row-span-2" : ""
       }`}
     >
-      <AccessProvider permittedUsers={['admin', 'mentor']}>
-        <div className="w-full flex justify-end">
-          <button onClick={() => onClose(contest.id)}>
-            <CloseIcon />
-          </button>
-        </div>
-      </AccessProvider>
+
       {contest.poster && (
         <div className="">
             <Image
@@ -48,6 +43,13 @@ export default function ContestCard({ contest, onClose }: { contest: contestType
           </p>
         </div>
       </div>
+      <AccessProvider permittedUsers={['admin', '_'+contest.author]}>
+        <div className="w-full flex justify-end">
+          <IconButton onClick={() => onClose(contest.id)}>
+            <CloseIcon color="error" />
+          </IconButton>
+        </div>
+      </AccessProvider>
     </Card>
   );
 }

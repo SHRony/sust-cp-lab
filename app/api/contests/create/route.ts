@@ -31,11 +31,10 @@ export async function POST(request: NextRequest) {
   } else {
     contest.poster = null;
   }
-  console.log(contest);
   try {
     const response = await dbclient.query(`
-      INSERT INTO ${dbTables.contests} (name, venue, description, date, type, poster) VALUES($1, $2, $3, $4, $5, $6)
-    `, [contest.name, contest.venue, contest.description, contest.date, contest.type, contest.poster]);
+      INSERT INTO ${dbTables.contests} (name, venue, description, date, type, poster, author) VALUES($1, $2, $3, $4, $5, $6, $7)
+    `, [contest.name, contest.venue, contest.description, contest.date, contest.type, contest.poster, contest.author]);
     if(response.rowCount == 0) return NextResponse.json({ error: "Contest not created" }, { status: 500 });
     return NextResponse.json({ message: "Contest created successfully" });  
   } catch (error) {

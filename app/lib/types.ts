@@ -52,4 +52,5 @@ export type contestType = {
   type: string;
   poster?: string|null;
   id: number;
+  author: string;
 }
