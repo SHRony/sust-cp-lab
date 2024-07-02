@@ -71,6 +71,7 @@ const UserInfoComponent = () => {
               registrationNumber={user.registrationNumber}
               addCFHandle={addCFHandle}
               removeCFHandle={removeCFHandle}
+              userType='student'
               >
                 
               </UserCard>
