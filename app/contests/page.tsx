@@ -9,6 +9,7 @@ import { useState, useEffect } from "react";
 import Button from '@mui/material/Button';
 import { useRouter } from "next/router";
 import axios from "axios";
+import AccessProvider from "../lib/AccessProvider";
 
 export default function Contests() {
   const [contests, setContests] = useState<contestType[]>([]);
@@ -31,11 +32,13 @@ export default function Contests() {
 
   return (
     <div className="flex flex-col items-left w-full">
-      <Link href="/contests/create" className="mt-10">
+      <AccessProvider permittedUsers={['admin', 'mentor']}>
+        <Link href="/contests/create" className="mt-10">
         <Button variant="contained" color="primary">
           Create Contest
         </Button>
       </Link>
+      </AccessProvider>
       <div className="grid w-full gap-10 laptop:gap-8 desktop:gap-10 justify-center tablet:justify-between pt-20 rounded" style={{gridTemplateColumns: 'repeat(auto-fill, 20rem)'}}>
         {contests.map((contest) => (
           <ContestCard key={contest.id} contest={contest} />

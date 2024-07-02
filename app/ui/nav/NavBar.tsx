@@ -5,6 +5,7 @@ import logoutIcon from '@/public/logout_white.png'
 import profileIcon from '@/public/profile.svg'
 import Image from "next/image";
 import { authContext } from "@/app/lib/AuthProvider";
+import AccessProvider from "@/app/lib/AccessProvider";
 export default function NavBar(){
   const auth = useContext(authContext);
   const handleLogout = async () => {
@@ -66,6 +67,9 @@ export default function NavBar(){
       
     </div>
     <div className='h-full flex flex-row justify-evenly items-center'>
+      {/* {<AccessProvider permittedUsers={['admin', 'student', 'mentor', 'pending_mentor']}>{logOutButtonSet()}</AccessProvider>}
+      {<AccessProvider permittedUsers={[]}>{logInButtonSet()}</AccessProvider>} */}
+
       {(!auth || auth.loading) ? <></> : (auth?.signedIn ? logOutButtonSet() : logInButtonSet())}
     </div>
   </div>
