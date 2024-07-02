@@ -9,6 +9,7 @@ export async function GET(request: NextRequest) {
       `SELECT * FROM ${dbTables.contests} ORDER BY date DESC`
     );
     const contests = response.rows.map((row) => row);
+    console.log(contests);
     return NextResponse.json(contests);
   } catch (error) {
     console.error('Error querying database:', error);

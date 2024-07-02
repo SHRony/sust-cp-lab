@@ -25,6 +25,7 @@ export default function CreateContestPage() {
       date,
       type,
       poster,
+      id: 0,
     };
     console.log(newContest)
     try {
