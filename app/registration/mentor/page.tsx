@@ -6,25 +6,18 @@ import SubmitButton from "@/app/ui/buttons/SubmitButton";
 import Link from "next/link";
 import regIcon from "@/public/registration.svg";
 import axios from 'axios';
-import Card from "../ui/cards/Card";
+import Card from "@/app/ui/cards/Card";
 import spinnerIcon from '@/public/spinner.gif'
 
 export default function Register() {
   const [userName, setUserName] = useState('');
-  const [fullName, setFullName] = useState('');
-  const [registrationNumber, setRegistrationNumber] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
   function handleUserNameChange(e:React.ChangeEvent<HTMLInputElement>){
     setUserName(e.target.value);
-  }
-  function handleFullNameChange(e:React.ChangeEvent<HTMLInputElement>){
-    setFullName(e.target.value);
-  }
-  function handleRegistrationNumberChange(e:React.ChangeEvent<HTMLInputElement>){
-    setRegistrationNumber(e.target.value);
+    console.log(userName);
   }
   function handleEmailChange(e:React.ChangeEvent<HTMLInputElement>){
     setEmail(e.target.value);
@@ -38,7 +31,8 @@ export default function Register() {
   const validate = async () => {
     // add the validation logic here
     if(password != confirmPassword) return false;
-    if(userName == '' || fullName == '' || registrationNumber == '' || email == '' || password == '' || confirmPassword == '') return false;
+    console.log(userName, email, password);
+    if(userName == '' || email == '' || password == '' || confirmPassword == '') return false;
     //validate email
     const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if(!regex.test(email)) return false;
@@ -51,14 +45,17 @@ export default function Register() {
       setLoading(false);
       return;
     }
+    
     try {
+      console.log(userName, email, password);
       const res = await axios.post('/api/registration', {
         userName: userName,
-        fullName: fullName,
-        registrationNumber: registrationNumber,
+        fullName: 'fokka',
+        registrationNumber: 'fokka',
         email: email,
         password: password,
-        userType: "student",
+        userType: "pending_mentor",
+
       });
       if (res.status == 200) {
         console.log(res.data);
@@ -69,7 +66,7 @@ export default function Register() {
       }
     } catch (error) {
       console.error("Error registering user:", error);
-      alert('please try again');
+      alert('please try again later');
     }
 
     setLoading(false);
@@ -93,25 +90,13 @@ export default function Register() {
 
             </Image>
             <p className="pl-5">
-            Register
+            Mentor Registration
             </p>
           </div>
           <TextField
             label="User name"
             variant="standard"
             onChange={handleUserNameChange}
-            className="w-full"
-          />
-          <TextField
-            label="Full Name"
-            variant="standard"
-            onChange={handleFullNameChange}
-            className="w-full"
-          />
-          <TextField
-            label="Registration Number"
-            variant="standard"
-            onChange={handleRegistrationNumberChange}
             className="w-full"
           />
           <TextField
@@ -142,3 +127,4 @@ export default function Register() {
       </Card>
   </div>
 }
+

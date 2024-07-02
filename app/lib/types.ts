@@ -30,6 +30,7 @@ export type userType = {
   vjudgeHandle: string | null;
   cfHandles: string[] | null;
   password: string;
+  userType: string;
 };
 export type AuthContextType = {
   signedIn: boolean;

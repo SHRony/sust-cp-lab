@@ -7,9 +7,13 @@ import jwt from 'jsonwebtoken';
 const JWT_KEY:string = process.env.JWT_KEY!;
 export const addUser = async (user : userType) => {
   user.password = await bcrypt.hash(user.password, 10);
-  const response =  await client.query(`
-    INSERT INTO ${dbTables.users} (username, email, password) VALUES($1, $2, $3)
-  `, [user.userName, user.email, user.password]);
+  try{
+    const response =  await client.query(`
+    INSERT INTO ${dbTables.users} (username, email, password, user_type) VALUES($1, $2, $3, $4)
+  `, [user.userName, user.email, user.password, user.userType]);
+  }catch(e){
+    console.log(e);
+  }
 }
 export const addStudent = async (user : userType) => {
   const response =  await client.query(`
@@ -22,5 +26,5 @@ export async function getUser(userName: string) {
 }
 
 export async function generateAuthToken(user: any) {
-  return jwt.sign({ username: user.username, userType: user.user_type }, JWT_KEY, { expiresIn: '720h' });
+  return jwt.sign({ username: user.username}, JWT_KEY, { expiresIn: '720h' });
 }
