@@ -34,7 +34,7 @@ export default function DoubleClickInput({ initialValue, onChange, inputClassNam
   return (
     <div className="flex flex-row items-center cursor-text" onDoubleClick={handleDoubleClick}>
       <div className={`flex flex-row items-center ${isEditing ? 'hidden' : ''}`}>
-        <p className={`select-none p-1 ${textClassName}`} style={textStyle}>{value}</p>
+        <p  className={`select-none p-1 ${textClassName}`} style={textStyle}>{value}</p>
       </div>
       <input
         ref={inputRef}
