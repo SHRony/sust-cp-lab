@@ -54,3 +54,10 @@ export type contestType = {
   id: number;
   author: string;
 }
+
+export type teamType = {
+  id?: number;
+  contest?: number;
+  name: string;
+  members: string[];
+}

@@ -5,11 +5,14 @@ import { Card, Button } from '@mui/material';
 import Link from 'next/link';
 import Image from 'next/image';
 import vjudge from '@/public/vjudge.png'
-import { contestType } from '@/app/lib/types';
+import { contestType, teamType, userType } from '@/app/lib/types';
+import { GridColDef, GridCellParams, DataGrid } from '@mui/x-data-grid';
+import TeamCard from '@/app/ui/cards/TeamCard';
 
 export default function Page({params:{id}}:{params:{id:number}}) {
   const [contest, setContest] = useState<contestType | null>(null);
-
+  const [users, setUsers] = useState<userType[]>([]);
+  const [teams, setTeams] = useState<teamType[]>([]);
   useEffect(() => {
     const fetchContest = async () => {
       try {
@@ -25,14 +28,57 @@ export default function Page({params:{id}}:{params:{id:number}}) {
         setContest(null);
       }
     };
+    const fetchUsers = async () => {
+        const response = await axios.get(`/api/contests/${id}/users`);
+        const data = response.data;
+        setUsers(data.users.map((user: {username: string, info: {maxRating: number, maxRank: number, avatar: string, contribution: number}}) => {return {userName: user.username, maxRating: user.info.maxRating, maxRank: user.info.maxRank, id: user.username, avatar: user.info.avatar, contribution: user.info.contribution}}));
+    }
+    const fetchTeams = async () => {
+        const response = await axios.get(`/api/contests/${id}/teams`);
+        const data = response.data;
+        setTeams(data);
+    }
     fetchContest();
+    fetchUsers();
+    fetchTeams();
   }, [id]);
+    const columns: GridColDef[] = [
+    { 
+      field: 'avatar', 
+      headerName: '', 
+      flex: 1, 
+      minWidth: 50,
+      maxWidth: 50,
+      renderCell: (params: GridCellParams) => (
+        
+        <div className='h-full flex justify-center items-center w-8'>
+          <Image style={{borderRadius: '50%', height: '30px', width: '30px', objectFit: 'cover'}} src={params.row.avatar} alt={params.row.username} width={30} height={30}/>
+        </div>
+      ),
+    },
+    { 
+      field: 'username', 
+      headerName: 'Username', 
+      flex: 1, 
+      minWidth: 150,
+      renderCell: (params: GridCellParams) => (
+        <Link href={`/profile/${params.row.userName}`}>
+          {params.row.userName}
+        </Link>
+      ),
+    },
+    { field: 'maxRating', headerName: 'Max Rating', flex: 1, minWidth: 150 },
+    { field: 'maxRank', headerName: 'Max Rank', flex: 1, minWidth: 150 },
+    { field: 'contribution', headerName: 'Contribution', flex: 1, minWidth: 150 },
+  ];
+
 
   if (!contest) {
     return <div>Contest not found</div>
   }
 
   return (
+    <div>
     <Card className="flex flex-col gap-4 mt-20 p-4">
       <div className="flex flex-col">
         <h2 className="text-3xl font-bold text-left w-full">{contest.name}</h2>
@@ -102,7 +148,26 @@ export default function Page({params:{id}}:{params:{id:number}}) {
           <p className="text-lg p-1 rounded" style={{backgroundColor: 'var(--primaryContainer)', color: 'var(--primary)'}}>Team Forming Contest 3</p>
         </div>
       </div>
+
     </Card>
+    <h3 className="text-2xl font-semibold mt-10">Teams</h3>
+    <div className='flex flex-row flex-wrap p-4 gap-4'>
+      {teams.map((team, index) => (
+        <div key={index} className="mb-4 w-48">
+          <TeamCard team = {team} onClose={() =>{}} onRename={()=>{}} />
+        </div>
+    ))}
+    </div>
+    <h3 className="text-2xl font-semibold mt-10">Registered Users</h3>
+    <div style={{ overflowX: 'scroll', scrollbarWidth: 'none', width: '100%' }}>
+      <DataGrid
+        rows={users}
+        columns={columns}
+      />
+    </div>
+
+
+  </div>
   )
 }
 

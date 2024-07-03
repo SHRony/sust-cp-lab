@@ -60,7 +60,7 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
   useEffect(() => {
     async function yo(){
       const res = await axios.post('/api/isloggedin');
-      console.log(res);
+      // console.log(res);
       if(res.status == 200){
         setUser({ userName: res.data.user.username, userType: res.data.user.userType});
         setSignedIn(true);
