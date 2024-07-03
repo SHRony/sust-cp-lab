@@ -6,36 +6,46 @@ import axios from "axios";
 import { DataGrid, GridCellParams, GridColDef, GridPaginationModel, GridRowId, GridRowSelectionModel } from '@mui/x-data-grid';
 import Image from 'next/image'
 import Modal from '@mui/material/Modal';
-import { Button, IconButton } from '@mui/material';
+import { Button, CircularProgress, IconButton } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import React from "react";
 import Link from "next/link";
 import CFCompare from "@/app/ui/cfviz/CFCompare";
-
+import { teamType, userType } from "@/app/lib/types";
 export default function Page({params:{id}}:{params:{id:number}}) {
   const [contestId, setContestId] = useState<null|number>(id);
-  const [users, setUsers] = useState<{username: string, maxRating: number, maxRank: number, id: string, avatar: string}[]>([]);
-  const [removedUsers, setRemovedUsers] = useState<{username: string, maxRating: number, maxRank: number, id: string, avatar: string}[]>([]);
-  const [selectedUsers, setSelectedUsers] = useState<{username: string, maxRating: number, maxRank: number, id: string, avatar: string}[]>([]);
+  const [users, setUsers] = useState<userType[]>([]);
+  const [removedUsers, setRemovedUsers] = useState<userType[]>([]);
+  const [selectedUsers, setSelectedUsers] = useState<userType[]>([]);
   const [rowSelectionModel, setRowSelectionModel] =
   React.useState<GridRowSelectionModel>([]);
-  const [teams, setTeams] = useState<{teamName:string, team:string[]}[]>([]);
+  const [teams, setTeams] = useState<teamType[]>([]);
   const [open, setOpen] = React.useState(false);
   const [user1Name, setUser1Name] = React.useState('');
   const [user2Name, setUser2Name] = React.useState('');
-
+  const [creatingTeam, setCreatingTeam] = React.useState(false);
   useEffect(() => {
-    axios.get(`/api/contests/${id}/users`)
-      .then((res) => {
-        if (res.status == 200) {
-          setUsers(res.data.users.map((user: {username: string, info: {maxRating: number, maxRank: number, avatar: string, contribution: number}}) => ({username: user.username, maxRating: user.info.maxRating, maxRank: user.info.maxRank, id: user.username, avatar: user.info.avatar, contribution: user.info.contribution})));
+    Promise.all([
+      axios.get(`/api/contests/${id}/teams`),
+      axios.get(`/api/contests/${id}/users`),
+    ])
+      .then(async ([teamsRes, usersRes]) => {
+        if (teamsRes.status == 200 && usersRes.status == 200) {
+
+          const teams: teamType[] = teamsRes.data;
+          let users: userType[] = usersRes.data.users.map((user: {username: string, info: {maxRating: number, maxRank: number, avatar: string, contribution: number}}) => {return {userName: user.username, maxRating: user.info.maxRating, maxRank: user.info.maxRank, id: user.username, avatar: user.info.avatar, contribution: user.info.contribution}});
+          let removedUsers = users.filter((user:userType) => teams.some((team:teamType) => team.members.includes(user.userName)));
+          users = users.filter((user:userType) => !(teams.some((team:teamType) => team.members.includes(user.userName))));
+          setRemovedUsers(removedUsers);
+          setUsers(users);
+          console.log(users);
+          setTeams(teams);
         } else {
-          console.log(res.data.error);
           alert('please try again');
         }
       })
       .catch((error) => {
-        console.error("Error fetching users:", error);
+        console.error("Error fetching users or teams:", error);
         alert('please try again');
       });
   }, [id]);
@@ -60,8 +70,8 @@ export default function Page({params:{id}}:{params:{id:number}}) {
       flex: 1, 
       minWidth: 150,
       renderCell: (params: GridCellParams) => (
-        <Link href={`/profile/${params.row.username}`}>
-          {params.row.username}
+        <Link href={`/profile/${params.row.userName}`}>
+          {params.row.userName}
         </Link>
       ),
     },
@@ -73,18 +83,31 @@ export default function Page({params:{id}}:{params:{id:number}}) {
   const handleSelectionChange = (newSelection: GridRowSelectionModel) => {
     console.log(newSelection);
     setRowSelectionModel(newSelection);
-    setSelectedUsers(newSelection.map((id) => users.find((user) => user.id === id) as {username: string, maxRating: number, maxRank: number, id: string, avatar: string}));
+    setSelectedUsers(newSelection.map((id) => users.find((user) => user.userName === id) as userType));
   };
 
   const handleCreateTeam = () => {
-    const newTeam = {teamName: `Team ${teams.length + 1}`, team: selectedUsers.map(user => user.username)};
-    console.log(selectedUsers);
-    const newTeams = [...teams, newTeam];
-    const newUsers = users.filter(user => !selectedUsers.includes(user));
-    setRemovedUsers([...removedUsers, ...selectedUsers]);
-    setUsers(newUsers);
-    setTeams(newTeams);
-    setSelectedUsers([]);
+    const newTeam: teamType = {name: `Team ${teams.length + 1}`, members: selectedUsers.map(user => user.userName)};
+    if(newTeam.members.length < 1) {
+      return ;
+    }
+    setCreatingTeam(true);
+    axios.post(`/api/contests/${id}/teams/add`, {name : newTeam.name, members: newTeam.members}).then(res => {
+      if (res.status == 200) {
+        newTeam.id = res.data.id;
+        const newTeams = [...teams, newTeam];
+        const newUsers = users.filter(user => !selectedUsers.includes(user));
+        setRemovedUsers([...removedUsers, ...selectedUsers]);
+        setUsers(newUsers);
+        setTeams(newTeams);
+        setSelectedUsers([]);
+        setCreatingTeam(false);
+      }
+    }).catch(error => {
+      console.log(error);
+      setCreatingTeam(false);
+    })
+    
   };
 
   const handleClose = () => {
@@ -94,25 +117,31 @@ export default function Page({params:{id}}:{params:{id:number}}) {
   const handleCompare = () => {
     if (selectedUsers.length === 2) {
       setOpen(true);
-      setUser1Name(selectedUsers[0].username);
-      setUser2Name(selectedUsers[1].username);
+      setUser1Name(selectedUsers[0].userName);
+      setUser2Name(selectedUsers[1].userName);
     }
   };
 
-  const handleDeleteTeam = ({team, teamName}:{team: string[], teamName:string}) => {
-    const newUsers = [...users, ...removedUsers.filter(user => team.includes(user.username))];
-    const newRemovedUsers = removedUsers.filter(user => !team.includes(user.username));
-    const newTeams = teams.filter(t => t.team !== team);
-    console.log(removedUsers);
-    setUsers(newUsers);
-    setRemovedUsers(newRemovedUsers);
-    setTeams(newTeams);
-    setOpen(false);
+  const handleDeleteTeam = (team: teamType) => {
+    axios.post(`/api/contests/${id}/teams/${team.id}/remove`).then(res => {
+      if (res.status == 200) {
+        console.log(res);
+        const newUsers = [...users, ...removedUsers.filter(user => team.members.includes(user.userName))];
+        const newRemovedUsers = removedUsers.filter(user => !team.members.includes(user.userName));
+        const newTeams = teams.filter(t => t.members !== team.members);
+        setUsers(newUsers);
+        setRemovedUsers(newRemovedUsers);
+        setTeams(newTeams);
+        setOpen(false);
+      }
+    }).catch(error => {
+      console.log(error);
+    })
   }
-  const handleRename = (team: string[], newTeamName:string) => {
+  const handleRename = (members: string[], newTeamName:string) => {
     const newTeams = teams.map(t => {
-      if (t.team === team) {
-        return {teamName: newTeamName, team: t.team};
+      if (t.members === members) {
+        return {name: newTeamName, members: t.members};
       } else {
         return t;
       }
@@ -143,7 +172,10 @@ export default function Page({params:{id}}:{params:{id:number}}) {
         
         <div className="flex flex-row gap-10 items-center justify-between mb-4 w-full">
           <h2 className="text-2xl font-bold">Users</h2>
-          <Button variant="contained" onClick={handleCreateTeam}>Create Team</Button>
+          <Button variant="contained" disabled={creatingTeam} onClick={handleCreateTeam}
+            startIcon={creatingTeam ? <CircularProgress size={20} /> : null}>
+            {creatingTeam ? 'Creating Team...' : 'Create Team'}
+          </Button>
           <Button variant="contained" onClick={handleCompare}>Compare</Button>
         </div>
         <div style={{ overflowX: 'scroll', scrollbarWidth: 'none', width: '100%' }}>
@@ -167,13 +199,13 @@ export default function Page({params:{id}}:{params:{id:number}}) {
       <div className="flex flex-col p-4 w-64 flex-grow max-w-64">
         <div className="flex flex-row gap-10 items-center justify-between mb-4 w-full">
           <h2 className="text-2xl font-bold">Teams</h2>
-          <Button variant="contained">Publish</Button>
+          {/* <Button variant="contained">Publish</Button> */}
       
         </div>
         
         <div className="gap-4 flex flex-col" style={{ overflowY: 'scroll', scrollbarWidth: 'none', height: 'calc(100vh - 60px)' }}>
          {teams.map((team, index) => (
-           <TeamCard teamName={team.teamName} team={team.team} key={index} onClose={handleDeleteTeam} onRename={handleRename} />
+           <TeamCard team = {team} key={index} onClose={handleDeleteTeam} onRename={handleRename} />
          ))}
         </div>
       </div>

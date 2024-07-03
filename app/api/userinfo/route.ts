@@ -1,5 +1,6 @@
 import { NextResponse, NextRequest } from "next/server";
 import { getUserInfo } from "../queries";
+export const dynamic = 'force-dynamic';
 
 export async function GET(request:NextRequest) {
   try{

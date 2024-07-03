@@ -7,7 +7,9 @@ const dbTables = {
   mentor_info: 'sust_cp_lab_mentor_info',
   cf_cache: 'sust_cp_lab_cf_cache',
   contests: 'sust_cp_lab_contests',
-  contest_registrations: 'sust_cp_lab_contestregistrations'
+  contest_registrations: 'sust_cp_lab_contestregistrations',
+  teams : 'sust_cp_lab_teams',
+  team_members: 'sust_cp_lab_team_members',
 }
 const client = new Client({
   connectionString: process.env.POSTGRES_URL ,
@@ -145,8 +147,8 @@ async function seedContestRegistrations(client) {
     const createTable = await client.query(`
       CREATE TABLE IF NOT EXISTS ${dbTables.contest_registrations} (
         contest_id INT NOT NULL,
-        username VARCHAR(255) NOT NULL,
-        PRIMARY KEY (contest_id, username)
+        user_name VARCHAR(255) NOT NULL,
+        PRIMARY KEY (contest_id, user_name)
       );
     `);
     console.log(`Created "contest_registrations" table`);
@@ -156,119 +158,37 @@ async function seedContestRegistrations(client) {
   }
   
 }
-// async function seedInvoices(client) {
-//   try {
-//     await client.query(`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`);
+async function seedTeams(client) {
+  try {
+    const createTable = await client.query(`
+      CREATE TABLE IF NOT EXISTS ${dbTables.teams} (
+        id SERIAL PRIMARY KEY,
+        name VARCHAR(255) NOT NULL,
+        contest VARCHAR(255) NOT NULL
+      );
+    `);
+    console.log(`Created "teams" table`);
+  } catch (error) {
+    console.error('Error seeding teams:', error);
+    throw error;
+  }
+}
+async function seedTeamMembers(client) {
+  try {
+    const createTable = await client.query(`
+      CREATE TABLE IF NOT EXISTS ${dbTables.team_members} (
+        team_id INT NOT NULL,
+        user_name VARCHAR(255) NOT NULL,
+        UNIQUE (team_id, user_name)
+      );
+    `);
+    console.log(`Created "team_members" table`);
+  } catch (error) {
+    console.error('Error seeding team_members:', error);
+    throw error;
+  }
+}
 
-//     // Create the "invoices" table if it doesn't exist
-//     const createTable = await client.query(`
-//     CREATE TABLE IF NOT EXISTS invoices (
-//     id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
-//     customer_id UUID NOT NULL,
-//     amount INT NOT NULL,
-//     status VARCHAR(255) NOT NULL,
-//     date DATE NOT NULL
-//   );
-// `);
-
-//     console.log(`Created "invoices" table`);
-
-//     // Insert data into the "invoices" table
-//     const insertedInvoices = await Promise.all(
-//       invoices.map(
-//         (invoice) => client.query(`
-//         INSERT INTO invoices (customer_id, amount, status, date)
-//         VALUES ($1, $2, $3, $4)
-//         ON CONFLICT (id) DO NOTHING;
-//       `, [invoice.customer_id, invoice.amount, invoice.status, invoice.date]),
-//       ),
-//     );
-
-//     console.log(`Seeded ${insertedInvoices.length} invoices`);
-
-//     return {
-//       createTable,
-//       invoices: insertedInvoices,
-//     };
-//   } catch (error) {
-//     console.error('Error seeding invoices:', error);
-//     throw error;
-//   }
-// }
-
-// async function seedCustomers(client) {
-//   try {
-//     await client.query(`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`);
-
-//     // Create the "customers" table if it doesn't exist
-//     const createTable = await client.query(`
-//       CREATE TABLE IF NOT EXISTS customers (
-//         id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
-//         name VARCHAR(255) NOT NULL,
-//         email VARCHAR(255) NOT NULL,
-//         image_url VARCHAR(255) NOT NULL
-//       );
-//     `);
-
-//     console.log(`Created "customers" table`);
-
-//     // Insert data into the "customers" table
-//     const insertedCustomers = await Promise.all(
-//       customers.map(
-//         (customer) => client.query(`
-//         INSERT INTO customers (id, name, email, image_url)
-//         VALUES ($1, $2, $3, $4)
-//         ON CONFLICT (id) DO NOTHING;
-//       `, [customer.id, customer.name, customer.email, customer.image_url])
-//       ),
-//     );
-
-//     console.log(`Seeded ${insertedCustomers.length} customers`);
-
-//     return {
-//       createTable,
-//       customers: insertedCustomers,
-//     };
-//   } catch (error) {
-//     console.error('Error seeding customers:', error);
-//     throw error;
-//   }
-// }
-
-// async function seedRevenue(client) {
-//   try {
-//     // Create the "revenue" table if it doesn't exist
-//     const createTable = await client.query(`
-//       CREATE TABLE IF NOT EXISTS revenue (
-//         month VARCHAR(4) NOT NULL UNIQUE,
-//         revenue INT NOT NULL
-//       );
-//     `);
-
-//     console.log(`Created "revenue" table`);
-
-//     // Insert data into the "revenue" table
-//     const insertedRevenue = await Promise.all(
-//       revenue.map(
-//         (rev) => client.query(`
-//         INSERT INTO revenue (month, revenue)
-//         VALUES ($1, $2)
-//         ON CONFLICT (month) DO NOTHING;
-//       `, [rev.month, rev.revenue]),
-//       ),
-//     );
-
-//     console.log(`Seeded ${insertedRevenue.length} revenue`);
-
-//     return {
-//       createTable,
-//       revenue: insertedRevenue,
-//     };
-//   } catch (error) {
-//     console.error('Error seeding revenue:', error);
-//     throw error;
-//   }
-// }
 // write a function which whill take table name and client as parameter and then drop that table if exists
 async function dropTable(tableName, client) {
   try {
@@ -294,6 +214,8 @@ async function main() {
   await seedCFCache(client);
   await seedContests(client);
   await seedContestRegistrations(client);
+  await seedTeams(client);
+  await seedTeamMembers(client);
   await client.end();
 }
 
