@@ -8,7 +8,7 @@ import vjudge from '@/public/vjudge.png'
 import { contestType, teamType, userType } from '@/app/lib/types';
 import { GridColDef, GridCellParams, DataGrid } from '@mui/x-data-grid';
 import TeamCard from '@/app/ui/cards/TeamCard';
-
+import AddIcon from '@mui/icons-material/Add';
 export default function Page({params:{id}}:{params:{id:number}}) {
   const [contest, setContest] = useState<contestType | null>(null);
   const [users, setUsers] = useState<userType[]>([]);
@@ -81,11 +81,25 @@ export default function Page({params:{id}}:{params:{id:number}}) {
     <div>
     <Card className="flex flex-col gap-4 mt-20 p-4">
       <div className="flex flex-col">
-        <h2 className="text-3xl font-bold text-left w-full">{contest.name}</h2>
-        <div className="flex flex-row flex-wrap gap-4">
-          <div className="flex flex-col items-center justify-center w-12">
-            <Image src={vjudge} alt="Vjudge Logo" width={30} height={30} />
+         <div className='flex flex-row'>
+          <div className="text-3xl font-bold text-left grow">{contest.name}</div>
+          <div className="flex justify-end">
+            <Link href={`/contests/${contest.id}/createteams`} className="">
+              <Button variant="contained" className="w-48" sx={{
+                  background: 'var(--primary)',
+                  '&:hover': {
+                    background: 'var(--primary) !important',
+                    color: 'var(--onPrimary) !important',
+                  },
+                }}
+                startIcon = {<AddIcon/>}
+                >
+                  Create Teams
+                </Button>
+            </Link>
           </div>
+         </div>
+        <div className="flex flex-row flex-wrap gap-4">
           <p className="text-lg text-gray-600">Venue : {contest.venue}</p>
           <p className="text-lg text-gray-600">
             Date: {new Date(contest.date).toLocaleDateString()}
@@ -95,25 +109,13 @@ export default function Page({params:{id}}:{params:{id:number}}) {
           </p>
           
         </div>
-        <div className="flex justify-end w-full">
-          <Link href={`/contests/${contest.id}/createteams`} className="">
-            <Button variant="contained" className="w-48" sx={{
-                background: 'var(--primary)',
-                '&:hover': {
-                  background: 'var(--primary) !important',
-                  color: 'var(--onPrimary) !important',
-                },
-              }}>
-                Create Teams
-              </Button>
-          </Link>
-        </div>
+       
       </div>
       <p className="text-lg text-gray-600 text-left">{contest.description}</p>
       <div className="flex flex-row justify-between">
-        <h3 className="text-2xl font-semibold text-left w-full">Team Forming Contests</h3>
+        {/* <h3 className="text-2xl font-semibold text-left w-full">Team Forming Contests</h3> */}
         <Link href={`/contests/${contest.id}/createteams`} className="">
-          <Button
+          {/* <Button
           variant="contained"
           className="w-48 m-2"
           sx={{
@@ -125,10 +127,10 @@ export default function Page({params:{id}}:{params:{id:number}}) {
           }}
         >
             Add TFC
-          </Button>
+          </Button> */}
         </Link>
       </div>
-      <div className="flex flex-col gap-4 p-4">
+      {/* <div className="flex flex-col gap-4 p-4">
         <div className="flex items-center gap-4 rounded" >
           <div className="flex items-center justify-center w-12 h-full" >
             <Image src={vjudge} alt="Vjudge Logo" width={30} height={30} />
@@ -147,13 +149,13 @@ export default function Page({params:{id}}:{params:{id:number}}) {
           </div>
           <p className="text-lg p-1 rounded" style={{backgroundColor: 'var(--primaryContainer)', color: 'var(--primary)'}}>Team Forming Contest 3</p>
         </div>
-      </div>
+      </div> */}
 
     </Card>
     <h3 className="text-2xl font-semibold mt-10">Teams</h3>
     <div className='flex flex-row flex-wrap p-4 gap-4'>
       {teams.map((team, index) => (
-        <div key={index} className="mb-4 w-48">
+        <div key={index} className="mb-4 w-64 items-stretch">
           <TeamCard team = {team} onClose={() =>{}} onRename={()=>{}} />
         </div>
     ))}

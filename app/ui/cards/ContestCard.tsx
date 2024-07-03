@@ -100,7 +100,7 @@ export default function ContestCard({ contest, onClose, registered}: { contest: 
         <DialogTitle>Close Contest</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            Are you sure you want to close this contest?
+            Are you sure you want to delete this contest?
           </DialogContentText>
         </DialogContent>
         <DialogActions>
