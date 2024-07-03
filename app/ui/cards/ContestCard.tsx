@@ -41,7 +41,7 @@ export default function ContestCard({ contest, onClose, registered}: { contest: 
           contest.poster ? "row-span-2" : ""
         }`}
       >
-        <div className="flex absolute right-0 rounded-bl-3xl shadow-2xl border border-gray-300" style={{ backgroundColor: "rgba(255, 255, 255, 1)" }}>
+        <div className="flex absolute right-0 rounded-bl-3xl shadow-2xl border border-gray-300" style={{ backgroundColor: "rgba(255, 255, 255, 0.5)" }}>
           <AccessProvider permittedUsers={['admin', '_'+contest.author]}>
             <IconButton onClick={handleOpen}>
               <CloseIcon color="error" />
