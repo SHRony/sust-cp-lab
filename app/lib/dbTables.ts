@@ -5,5 +5,6 @@ const dbTables = {
   mentor_info : 'sust_cp_lab_mentor_info',
   cf_cache: 'sust_cp_lab_cf_cache',
   contests: 'sust_cp_lab_contests',
+  contest_registrations: 'sust_cp_lab_contestregistrations',
 }
 export default dbTables;

@@ -1,5 +1,5 @@
 import { NextResponse, NextRequest } from "next/server";
-import { ratingChangeType } from "@/app/lib/types";
+import { cfUserType, ratingChangeType } from "@/app/lib/types";
 import { borderColors, backgroundColors } from "@/app/lib/colors";
 
 
@@ -191,15 +191,25 @@ async function fetchRatingInfo(users : string[]){
     return ratingChanges;
 }
 
-
-
-export async function GET(request:NextRequest) {
-  
-  try{
-    let param = request.nextUrl.searchParams.get('user');
-    if(!param || param == '') return NextResponse.json({ error: 'Missing parameters' }, { status: 500 });
-    const users:string[] = param?.split(",");
-
+export async function getCFInfo(users:string[]){
+    if(users == null || users.length == 0){
+      //return empty user
+      let ret:cfUserType = {
+        contribution : 0,
+        lastActive : 'never',
+        maxRating : 0,
+        maxRank : 'none',
+        registered : 'never',
+        avatar : "https://userpic.codeforces.org/no-title.jpg",
+        name : "",
+        acTime : [],
+        calenderSubmissions : [],
+        diffData : [],
+        catData : [],
+        ratingChanges : {labels: [], datasets: []}
+      }
+      return NextResponse.json(ret);
+    }
     const [maxRating, maxRank, registered, lastActive, avatar, name, contribution] = await fetchUserInfo(users);
     const [acTime, calenderSubmissions, diffData, catData] = await fetchSubmissionsInfo(users);
     const ratingChanges = await fetchRatingInfo(users);
@@ -217,9 +227,34 @@ export async function GET(request:NextRequest) {
       catData : catData,
       ratingChanges : ratingChanges
     };
-    
+    return user;
+}
+
+export async function GET(request:NextRequest) {
+  try{
+    let param = request.nextUrl.searchParams.get('user');
+    if(!param){
+      let ret:cfUserType = {
+        contribution : 0,
+        lastActive : 'never',
+        maxRating : 0,
+        maxRank : 'none',
+        registered : 'never',
+        avatar : "https://userpic.codeforces.org/no-title.jpg",
+        name : "",
+        acTime : [],
+        calenderSubmissions : [],
+        diffData : [],
+        catData : [],
+        ratingChanges : {labels: [], datasets: []}
+      }
+      return NextResponse.json(ret);
+    }
+    const users:string[] = param?.split(",");
+    const user = await getCFInfo(users);
     return NextResponse.json(user);
-  }catch{
+  }catch(e){
+    console.log(e);
     return NextResponse.json({ error: 'An error occurred' }, { status: 500 });
   }
 }

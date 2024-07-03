@@ -25,7 +25,7 @@ export default function Page({params:{id}}:{params:{id:number}}) {
   const [user2Name, setUser2Name] = React.useState('');
 
   useEffect(() => {
-    axios.get('/api/userinfo/userslist')
+    axios.get(`/api/contests/${id}/users`)
       .then((res) => {
         if (res.status == 200) {
           setUsers(res.data.users.map((user: {username: string, info: {maxRating: number, maxRank: number, avatar: string, contribution: number}}) => ({username: user.username, maxRating: user.info.maxRating, maxRank: user.info.maxRank, id: user.username, avatar: user.info.avatar, contribution: user.info.contribution})));
@@ -38,7 +38,7 @@ export default function Page({params:{id}}:{params:{id:number}}) {
         console.error("Error fetching users:", error);
         alert('please try again');
       });
-  }, []);
+  }, [id]);
 
   const columns: GridColDef[] = [
     { 

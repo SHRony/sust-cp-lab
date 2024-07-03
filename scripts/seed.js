@@ -7,6 +7,7 @@ const dbTables = {
   mentor_info: 'sust_cp_lab_mentor_info',
   cf_cache: 'sust_cp_lab_cf_cache',
   contests: 'sust_cp_lab_contests',
+  contest_registrations: 'sust_cp_lab_contestregistrations'
 }
 const client = new Client({
   connectionString: process.env.POSTGRES_URL ,
@@ -24,7 +25,7 @@ async function seedUsers(client) {
     // Create the "users" table if it doesn't exist
     await client.query(`
       CREATE TABLE IF NOT EXISTS ${dbTables.users} (
-        username VARCHAR(255) PRIMARY KEY NOT NULL UNIQUE,
+        user_name VARCHAR(255) PRIMARY KEY NOT NULL UNIQUE,
         email TEXT NOT NULL UNIQUE,
         password TEXT NOT NULL
       );
@@ -137,6 +138,23 @@ async function seedContests(client) {
     console.error('Error adding author column to contests table:', error);
     throw error;
   }
+}
+async function seedContestRegistrations(client) {
+  try {
+    // Create the "contest_registrations" table if it doesn't exist
+    const createTable = await client.query(`
+      CREATE TABLE IF NOT EXISTS ${dbTables.contest_registrations} (
+        contest_id INT NOT NULL,
+        username VARCHAR(255) NOT NULL,
+        PRIMARY KEY (contest_id, username)
+      );
+    `);
+    console.log(`Created "contest_registrations" table`);
+  } catch (error) {
+    console.error('Error seeding contest_registrations:', error);
+    throw error;
+  }
+  
 }
 // async function seedInvoices(client) {
 //   try {
@@ -275,7 +293,7 @@ async function main() {
   await seedCFHandles(client);
   await seedCFCache(client);
   await seedContests(client);
-
+  await seedContestRegistrations(client);
   await client.end();
 }
 

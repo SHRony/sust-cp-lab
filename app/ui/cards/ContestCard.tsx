@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import Card from "./Card";
@@ -7,10 +7,12 @@ import AccessProvider from "@/app/lib/AccessProvider";
 import CloseIcon from "@mui/icons-material/Close";
 import IconButton from "@mui/material/IconButton/IconButton";
 import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from "@mui/material";
-
-export default function ContestCard({ contest, onClose }: { contest: contestType, onClose: (id: number) => void }) {
+import CheckIcon from '@mui/icons-material/Check';
+import axios from "axios";
+import { authContext } from "@/app/lib/AuthProvider";
+export default function ContestCard({ contest, onClose, registered}: { contest: contestType, onClose: (id: number) => void , registered: boolean}) {
   const [open, setOpen] = useState(false);
-
+  const auth = useContext(authContext);
   const handleOpen = () => {
     setOpen(true);
   };
@@ -23,7 +25,15 @@ export default function ContestCard({ contest, onClose }: { contest: contestType
     onClose(contest.id);
     handleClose();
   };
-
+  
+  const handleRegister = async () => {
+    try {
+      await axios.post(`/api/contests/${contest.id}/registration`, { username: auth?.user?.userName || '' });
+    } catch (error) {
+      console.error('Error registering for contest:', error);
+      alert('Error registering for contest. Please try again.');
+    }
+  };
   return (
     <>
       <Card
@@ -58,13 +68,29 @@ export default function ContestCard({ contest, onClose }: { contest: contestType
             </p>
           </div>
         </div>
-        <AccessProvider permittedUsers={['admin', '_'+contest.author]}>
-          <div className="w-full flex justify-end">
+          <div className="w-full flex">
+          <AccessProvider permittedUsers={['student']}>
+            {registered ? (
+              <Button disabled
+                variant="outlined"
+                startIcon={<CheckIcon />}
+                color="success"
+              >
+                Registered
+              </Button>
+            ) : (
+              <Button variant="outlined" onClick={handleRegister}>
+                Register
+              </Button>
+            )}
+          </AccessProvider>
+          <AccessProvider permittedUsers={['admin', '_'+contest.author]}>
             <IconButton onClick={handleOpen}>
               <CloseIcon color="error" />
             </IconButton>
-          </div>
-        </AccessProvider>
+          </AccessProvider>
+        </div>
+
       </Card>
       <Dialog open={open} onClose={handleClose}>
         <DialogTitle>Close Contest</DialogTitle>

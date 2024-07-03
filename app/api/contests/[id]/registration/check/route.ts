@@ -8,7 +8,7 @@ export async function GET(request:NextRequest) {
     if(!id || id == '') return NextResponse.json({ error: 'Missing parameters' }, { status: 500 });
     const {username} = await request.json();
     const response = await dbclient.query(`
-      SELECT * FROM ${dbTables.contestRegistrations} WHERE contest_id = $1 AND user_name = $2
+      SELECT * FROM ${dbTables.contest_registrations} WHERE contest_id = $1 AND user_name = $2
     `, [id, username]);
     if(response.rowCount == 0) return NextResponse.json({ registered: false });
     return NextResponse.json({ registered: true });  
