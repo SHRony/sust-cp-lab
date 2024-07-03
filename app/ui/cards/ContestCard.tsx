@@ -37,12 +37,20 @@ export default function ContestCard({ contest, onClose, registered}: { contest: 
   return (
     <>
       <Card
-        className={`flex flex-col items-start md:items-center gap-4 bg-white ${
+        className={`flex relative flex-col items-start md:items-center gap-4 bg-white ${
           contest.poster ? "row-span-2" : ""
         }`}
       >
-        {contest.poster && (
-          <div className="">
+        <div className="flex absolute right-0 rounded-bl-3xl shadow-2xl border border-gray-300" style={{ backgroundColor: "rgba(255, 255, 255, 1)" }}>
+          <AccessProvider permittedUsers={['admin', '_'+contest.author]}>
+            <IconButton onClick={handleOpen}>
+              <CloseIcon color="error" />
+            </IconButton>
+          </AccessProvider>
+        </div>
+        <div className="min-h-4">
+          {contest.poster && (
+            
             <Image
               src={contest.poster}
               alt="Contest logo"
@@ -51,8 +59,9 @@ export default function ContestCard({ contest, onClose, registered}: { contest: 
               height={100}
               style={{ maxHeight: "220px" }}
             />
-          </div>
-        )}
+            
+          )}
+        </div>
         <div className="flex-1 flex flex-col justify-center items-start min-h-48 w-full p-4 bg-white overflow-y-scroll gap-3 grow" style={{ scrollbarWidth: "none" }}>
           <Link href={`/contests/${contest.id}`}>
             <h2 className="text-2xl font-bold text-center w-full">{contest.name}</h2>
@@ -83,11 +92,6 @@ export default function ContestCard({ contest, onClose, registered}: { contest: 
                 Register
               </Button>
             )}
-          </AccessProvider>
-          <AccessProvider permittedUsers={['admin', '_'+contest.author]}>
-            <IconButton onClick={handleOpen}>
-              <CloseIcon color="error" />
-            </IconButton>
           </AccessProvider>
         </div>
 
