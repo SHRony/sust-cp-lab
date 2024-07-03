@@ -1,8 +1,8 @@
 import client from "@/app/api/dbclient";
-import { getCFInfo } from "@/app/api/external/cfuserinfo/route";
 import dbTables from "@/app/lib/dbTables";
 import { cfUserType } from "@/app/lib/types";
 import { NextRequest, NextResponse } from "next/server";
+import { getCFInfo } from "@/app/api/queries";
 export const dynamic = 'force-dynamic';
 async function addCFCache(username:string, cfUser:any) {
   console.log(username);
