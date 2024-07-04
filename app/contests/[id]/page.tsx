@@ -9,6 +9,7 @@ import { contestType, teamType, userType } from '@/app/lib/types';
 import { GridColDef, GridCellParams, DataGrid } from '@mui/x-data-grid';
 import TeamCard from '@/app/ui/cards/TeamCard';
 import AddIcon from '@mui/icons-material/Add';
+import AccessProvider from '@/app/lib/AccessProvider';
 export default function Page({params:{id}}:{params:{id:number}}) {
   const [contest, setContest] = useState<contestType | null>(null);
   const [users, setUsers] = useState<userType[]>([]);
@@ -84,19 +85,21 @@ export default function Page({params:{id}}:{params:{id:number}}) {
          <div className='flex flex-row'>
           <div className="text-3xl font-bold text-left grow">{contest.name}</div>
           <div className="flex justify-end">
-            <Link href={`/contests/${contest.id}/createteams`} className="">
-              <Button variant="contained" className="w-48" sx={{
-                  background: 'var(--primary)',
-                  '&:hover': {
-                    background: 'var(--primary) !important',
-                    color: 'var(--onPrimary) !important',
-                  },
-                }}
-                startIcon = {<AddIcon/>}
-                >
-                  Create Teams
-                </Button>
-            </Link>
+            <AccessProvider permittedUsers={['admin', 'mentor']}>
+              <Link href={`/contests/${contest.id}/createteams`} className="">
+                <Button variant="contained" className="w-48" sx={{
+                    background: 'var(--primary)',
+                    '&:hover': {
+                      background: 'var(--primary) !important',
+                      color: 'var(--onPrimary) !important',
+                    },
+                  }}
+                  startIcon = {<AddIcon/>}
+                  >
+                    Create Teams
+                  </Button>
+              </Link>
+            </AccessProvider>
           </div>
          </div>
         <div className="flex flex-row flex-wrap gap-4">

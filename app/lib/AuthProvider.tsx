@@ -8,11 +8,10 @@ import axios from "axios";
 // Create the context with the defined type
 export const authContext = createContext<AuthContextType | undefined>(undefined);
 
-export default function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [signedIn, setSignedIn] = useState(false);
-  const [loading, setLoading] = useState(true);
-  const [user, setUser] = useState<null | userStateType>(null);
-
+export default function AuthProvider({ children, userProps }: { children: React.ReactNode, userProps: userStateType|null }) {
+  const [signedIn, setSignedIn] = useState(userProps != null);
+  const [loading, setLoading] = useState(false);
+  const [user, setUser] = useState<null | userStateType>(userProps);
   const signIn = async (userName: string, password: string) => {
     setLoading(true);
     try {
@@ -46,6 +45,7 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
     //refresh the page
     console.log('logging out');
     window.location.reload();
+
   };
 
   const authValue: AuthContextType = {
@@ -55,23 +55,6 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
     signIn: signIn,
     signOut: signOut,
   };
-
-
-  useEffect(() => {
-    async function yo(){
-      const res = await axios.post('/api/isloggedin');
-      // console.log(res);
-      if(res.status == 200){
-        setUser({ userName: res.data.user.username, userType: res.data.user.userType});
-        setSignedIn(true);
-      }
-      setLoading(false);
-    }
-    yo();
-  }, []);
-  // useEffect(() => {
-  //   console.log(user);
-  // });
 
   return (
     <authContext.Provider value={authValue}>
