@@ -25,6 +25,35 @@ export const getUserInfo = async (username: string) => {
   return user;
 } 
 
+
+
+export const getUsersList = async () => {
+  try{
+    const response = await client.query(`
+      SELECT username, info FROM ${dbTables.cf_cache}
+    `);
+    return response.rows;
+  }catch{
+    return [];
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 function getTime(s : number){
   let m = Math.floor(s / 60);
   let h = Math.floor(m / 60);
