@@ -47,8 +47,6 @@ export default function Page({params : {username}} : {params : {username : strin
         axios.get(`/api/external/cfuserinfo?user=${handles}`).then((res) => {
           if(res.data){
             setCfUser(res.data);
-            console.log(username);
-            console.log(res.data)
             axios.post('/api/userinfo/addcache', {username : username, info : res.data});
           }
         }).catch((res)=>{

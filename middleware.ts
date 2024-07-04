@@ -8,7 +8,7 @@ const isAdminOnly = (request: NextRequest) => {
   return routes.some((route) => request.nextUrl.pathname.startsWith(route));
 }
 const isGuestOnly = (request: NextRequest) => {
-  let routes = ['/login', '/register'];
+  let routes = ['/login', '/registration', 'registration/mentor'];
   return routes.some((route) => request.nextUrl.pathname.startsWith(route));
 }
 const isAdminAndMentorOnly = (request: NextRequest) => {

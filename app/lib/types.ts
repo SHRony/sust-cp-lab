@@ -61,3 +61,11 @@ export type teamType = {
   name: string;
   members: string[];
 }
+export type userTableEntryType = {
+  userName: string;
+  maxRating: string | number;
+  maxRank: string;
+  id: string;
+  avatar: string;
+  contribution: string | number;
+};
