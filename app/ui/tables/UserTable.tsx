@@ -1,19 +1,12 @@
 'use client'
-import { cfUserType } from "@/app/lib/types";
+import { cfUserType, userTableEntryType } from "@/app/lib/types";
 import { DataGrid, GridCellParams, GridColDef, GridPaginationModel } from "@mui/x-data-grid";
 import Link from "next/link";
 import React from "react";
 import Image from "next/image";
 
 type UserTableProps = {
-  users: {
-    userName: string;
-    maxRating: string | number;
-    maxRank: string;
-    id: string;
-    avatar: string;
-    contribution: string | number;
-  }[];
+  users: userTableEntryType[];
 };
 export default function UserTable({users}: UserTableProps) {
     const paginationModel: GridPaginationModel = { page: 0, pageSize: 10 };
@@ -37,8 +30,8 @@ export default function UserTable({users}: UserTableProps) {
       flex: 1, 
       minWidth: 150,
       renderCell: (params: GridCellParams) => (
-        <Link href={`/profile/${params.row.username}`}>
-          {params.row.username}
+        <Link href={`/profile/${params.row.userName}`}>
+          {params.row.userName}
         </Link>
       ),
     },
