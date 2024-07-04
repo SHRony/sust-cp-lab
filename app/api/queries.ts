@@ -1,10 +1,12 @@
 import { NextResponse, NextRequest } from "next/server";
 import bcrypt from 'bcrypt';
 import {cfUserType, ratingChangeType, userType} from '@/app/lib/types'
-import client from "./dbclient";
+import client from "@/app/api/dbclient";
 import dbTables from "@/app/lib/dbTables";
 import { borderColors, backgroundColors } from "../lib/colors";
-
+import Jwt, { JwtPayload } from 'jsonwebtoken';
+import { cookies } from "next/headers";
+export const dynamic = 'force-dynamic';
 // must update this for other user types too
 export const getUserInfo = async (username: string) => {
   const userResult = await client.query(`SELECT * FROM ${dbTables.users} WHERE username = $1`, [username]);
@@ -39,9 +41,33 @@ export const getUsersList = async () => {
 }
 
 
+export const isLoggedIn = async () => {
+  try{
+    const token = await cookies().get('token')?.value;
+    if(token == undefined) return null;
+    const decoaded = await Jwt.verify(token!, process.env.JWT_KEY!);
+    if(!decoaded) return null;
+    let user = decoaded as JwtPayload;
+    const response = await client.query(`
+      SELECT user_type FROM ${dbTables.users} WHERE username = $1
+    `, [user.username]);
+    let ret = {
+      userName:user.username,
+      userType: response.rows[0].user_type
+    }
+    return ret;
+  }catch{
+    return null;
+  }
+}
 
-
-
+export const getContests = async () => {
+  const response = await client.query(
+      `SELECT * FROM ${dbTables.contests} ORDER BY date DESC`
+    );
+    const contests = response.rows.map((row) => row);
+    return contests;
+}
 
 
 

@@ -6,10 +6,7 @@ export const dynamic = 'force-dynamic';
 import { getUsersList } from '@/app/api/queries';
 export async function GET(request:NextRequest) {
   try{
-    const response = await client.query(`
-      SELECT username, info FROM ${dbTables.cf_cache}
-    `);
-    return NextResponse.json({users: response.rows});
+    return NextResponse.json({users: getUsersList()});
   }catch{
     return NextResponse.json({ error: 'An error occurred' }, { status: 500 });
   }

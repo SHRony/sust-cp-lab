@@ -12,8 +12,9 @@ const isGuestOnly = (request: NextRequest) => {
   return routes.some((route) => request.nextUrl.pathname.startsWith(route));
 }
 const isAdminAndMentorOnly = (request: NextRequest) => {
-  let routes = ['/contests/create', 'contests/[id]/createteams'];
-  return routes.some((route) => request.nextUrl.pathname==(route));
+  let routes = ['/contests/create', '/createteams'];
+  const createteamsRoute = /\/contests\/\w+\/createteams/;
+  return routes.some((route) => request.nextUrl.pathname.startsWith(route)) || createteamsRoute.test(request.nextUrl.pathname);
 }
 const isStudentOnly = (request: NextRequest) => {
   let routes = ['/profile'];
