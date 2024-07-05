@@ -1,18 +1,20 @@
 import dbTables from "@/app/lib/dbTables";
 import { NextRequest, NextResponse } from "next/server";
-import dbclient from "../../dbclient";
+import dbclient from "@/app/api/dbclient";
 
 export async function POST(request:NextRequest) {
+const {id} = await request.json();
+// console.log(id);
   try{
-    const data = await request.json();
-    const id = data.id;
+    
+    if(!id || id == '') return NextResponse.json({ error: 'Missing parameters' }, { status: 500 });
     const response = await dbclient.query(`
       DELETE FROM ${dbTables.contests} WHERE id = $1
     `, [id]);
-    if(response.rowCount == 0) return NextResponse.json({ error: "Contest not found" }, { status: 404 });
+    
     return NextResponse.json({ message: "Contest deleted successfully" });  
-  }catch{
-    console.error("Error deleting contest");
+  }catch(e){
+    console.log(e)
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
