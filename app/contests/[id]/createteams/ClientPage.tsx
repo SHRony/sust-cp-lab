@@ -55,7 +55,6 @@ export default function CreateTeams({usersParams, teamsParams, id}: {usersParams
   ];
 
   const handleSelectionChange = (newSelection: GridRowSelectionModel) => {
-    console.log(newSelection);
     setRowSelectionModel(newSelection);
     setSelectedUsers(newSelection.map((id) => users.find((user) => user.userName === id) as userTableEntryType));
   };
@@ -180,7 +179,7 @@ export default function CreateTeams({usersParams, teamsParams, id}: {usersParams
         <div className="gap-4 flex flex-col" style={{ overflowY: 'scroll', scrollbarWidth: 'none', height: 'calc(100vh - 60px)' }}>
           <AnimatePresence>
           {teams.map((team, index) => (
-              <motion.div layout key={index} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.5 }}>
+              <motion.div layout = 'position' key={team.id} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.5 }}>
                 <TeamCard team = {team} key={team.id} onClose={handleDeleteTeam} onRename={handleRename} closable />
               </motion.div>
           ))}
