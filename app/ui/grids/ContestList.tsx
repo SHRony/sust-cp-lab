@@ -8,7 +8,8 @@ import { authContext } from '@/app/lib/AuthProvider';
 
 export default function ContestList({contestsParams, registeredContestsParams}: {contestsParams: contestType[], registeredContestsParams: number[]}) {
   const [contests, setContests] = useState(contestsParams);
-  const [registeredContests, setRegisteredContests] = useState<number[]>(registeredContestsParams);
+  const [registeredContests, setRegisteredContests] = useState(registeredContestsParams);
+  
   const [hoveredContest, setHoveredContest] = useState(-1);
   const [shadow, setShadow] = useState(false);
   const auth = useContext(authContext);
@@ -23,10 +24,10 @@ export default function ContestList({contestsParams, registeredContestsParams}: 
         }
       })
   }
-  // useEffect(() => {
-  //   console.log(registeredContests);
-  //   console.log(registeredContests.includes(22));
-  // })
+  useEffect(() => {
+    setRegisteredContests(registeredContestsParams);
+  },[registeredContestsParams]);
+
   const register = async (id:number) => {
     try {
       const res = await axios.post(`/api/contests/${id}/registration`, { username: auth?.user?.userName || '' });
@@ -61,7 +62,7 @@ export default function ContestList({contestsParams, registeredContestsParams}: 
               />
             )}
           </AnimatePresence>
-              <ContestCard contest={contest} onClose={removeContest} registered={registeredContests.includes(contest.id)} onRegister={()=>{register(contest.id)}}  />
+              <ContestCard contest={contest} onClose={removeContest} registered={registeredContests.some(id => id === contest.id)} onRegister={()=>{register(contest.id)}}  />
           </motion.div>
         ))}
       </AnimatePresence>

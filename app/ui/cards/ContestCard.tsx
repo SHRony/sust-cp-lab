@@ -14,7 +14,6 @@ import CircularProgress from '@mui/material/CircularProgress';
 export default function ContestCard({ contest, onClose, onRegister, registered}: { contest: contestType, onClose: (id: number) => void, onRegister: () => void , registered: boolean}) {
   const [open, setOpen] = useState(false);
   const [removing, setRemoving] = useState(false);
-  if(contest.id == 22) console.log(registered);
   const handleOpen = () => {
     setOpen(true);
   };
