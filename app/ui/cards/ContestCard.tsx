@@ -11,10 +11,10 @@ import CheckIcon from '@mui/icons-material/Check';
 import axios from "axios";
 import { authContext } from "@/app/lib/AuthProvider";
 import CircularProgress from '@mui/material/CircularProgress';
-export default function ContestCard({ contest, onClose, registered}: { contest: contestType, onClose: (id: number) => void , registered: boolean}) {
+export default function ContestCard({ contest, onClose, onRegister, registered}: { contest: contestType, onClose: (id: number) => void, onRegister: () => void , registered: boolean}) {
   const [open, setOpen] = useState(false);
-  const auth = useContext(authContext);
   const [removing, setRemoving] = useState(false);
+  if(contest.id == 22) console.log(registered);
   const handleOpen = () => {
     setOpen(true);
   };
@@ -30,15 +30,10 @@ export default function ContestCard({ contest, onClose, registered}: { contest: 
   const handleCancel = () => {
     handleClose();
   };
-  
-  const handleRegister = async () => {
-    try {
-      await axios.post(`/api/contests/${contest.id}/registration`, { username: auth?.user?.userName || '' });
-    } catch (error) {
-      console.error('Error registering for contest:', error);
-      alert('Error registering for contest. Please try again.');
-    }
+  const handleRegister = () => {
+    onRegister();
   };
+ 
   return (
     <>
       <Card
@@ -82,6 +77,8 @@ export default function ContestCard({ contest, onClose, registered}: { contest: 
             </p>
           </div>
         </div>
+          
+      </Link>
           <div className="w-full flex">
           <AccessProvider permittedUsers={['student']}>
             {registered ? (
@@ -99,8 +96,6 @@ export default function ContestCard({ contest, onClose, registered}: { contest: 
             )}
           </AccessProvider>
         </div>
-      </Link>
-
       </Card>
       <Dialog open={open} onClose={handleClose}>
         <DialogTitle>Close Contest</DialogTitle>

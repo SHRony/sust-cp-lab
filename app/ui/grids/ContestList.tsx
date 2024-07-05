@@ -1,18 +1,18 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import {contestType} from "@/app/lib/types";
 import ContestCard from '@/app/ui/cards/ContestCard';
 import axios from 'axios';
 import { AnimatePresence, motion } from 'framer-motion';
 import Link from 'next/link';
+import { authContext } from '@/app/lib/AuthProvider';
 
 export default function ContestList({contestsParams, registeredContestsParams}: {contestsParams: contestType[], registeredContestsParams: number[]}) {
   const [contests, setContests] = useState(contestsParams);
   const [registeredContests, setRegisteredContests] = useState<number[]>(registeredContestsParams);
   const [hoveredContest, setHoveredContest] = useState(-1);
   const [shadow, setShadow] = useState(false);
-  useEffect(() => {
-    console.log(hoveredContest);
-  });
+  const auth = useContext(authContext);
+
   const removeContest = (id: number) => {
       const updatedContests = [...contests];
       axios.post(`/api/contests/delete`, {id : id}).then(res => {
@@ -23,7 +23,21 @@ export default function ContestList({contestsParams, registeredContestsParams}: 
         }
       })
   }
-
+  // useEffect(() => {
+  //   console.log(registeredContests);
+  //   console.log(registeredContests.includes(22));
+  // })
+  const register = async (id:number) => {
+    try {
+      const res = await axios.post(`/api/contests/${id}/registration`, { username: auth?.user?.userName || '' });
+      if(res.status == 200){
+        setRegisteredContests([...registeredContests, id]);
+      }
+    } catch (error) {
+      console.error('Error registering for contest:', error);
+      alert('Error registering for contest. Please try again.');
+    }
+  };
   return (
     <div className="grid w-full gap-10 laptop:gap-2 desktop:gap-8 justify-center tablet:justify-between pt-20 items-stretch" style={{gridTemplateColumns: 'repeat(auto-fill, 21rem)'}}> 
       <AnimatePresence>
@@ -47,7 +61,7 @@ export default function ContestList({contestsParams, registeredContestsParams}: 
               />
             )}
           </AnimatePresence>
-              <ContestCard contest={contest} onClose={removeContest} registered={registeredContests.includes(contest.id)}  />
+              <ContestCard contest={contest} onClose={removeContest} registered={registeredContests.includes(contest.id)} onRegister={()=>{register(contest.id)}}  />
           </motion.div>
         ))}
       </AnimatePresence>
