@@ -9,6 +9,7 @@ import { useRouter } from "next/router";
 import axios from "axios";
 import AccessProvider from "../lib/AccessProvider";
 import { authContext } from "../lib/AuthProvider";
+import { AnimatePresence, motion } from "framer-motion";
 
 export default function Contests({contestsProps}: {contestsProps: contestType[]}) {
   const [contests, setContests] = useState<contestType[]>(contestsProps);
@@ -34,13 +35,15 @@ export default function Contests({contestsProps}: {contestsProps: contestType[]}
         });
     }
   }, [auth]);
-  const removeContest = async (id: number) => {
-    try {
-      axios.post("/api/contests/delete", { id: id });
-      setContests(contests.filter((contest) => contest.id !== id));
-    } catch (error) {
-      console.error("Error deleting contest:", error);
-    }
+  const removeContest = (id: number) => {
+      const updatedContests = [...contests];
+      axios.post(`/api/contests/delete`, {id : id}).then(res => {
+        if(res.status == 200){
+          const index = updatedContests.findIndex((contest) => contest.id === id);
+          updatedContests.splice(index, 1);
+          setContests(updatedContests);
+        }
+      })
   }
   return (
     <div className="flex flex-col items-left w-full">
@@ -52,9 +55,13 @@ export default function Contests({contestsProps}: {contestsProps: contestType[]}
       </Link>
       </AccessProvider>
       <div className="grid w-full gap-10 laptop:gap-8 desktop:gap-10 justify-center tablet:justify-between pt-20 rounded" style={{gridTemplateColumns: 'repeat(auto-fill, 20rem)'}}>
+        <AnimatePresence>
         {contests.map((contest) => (
-          <ContestCard key={contest.id} contest={contest} onClose={removeContest} registered={registeredContests.includes(contest.id)} />
+          <motion.div className={contest.poster ? "row-span-2" : ""} layout key={contest.id} initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+            <ContestCard contest={contest} onClose={() => removeContest(contest.id)} registered={registeredContests.includes(contest.id)} />
+          </motion.div>
         ))}
+        </AnimatePresence>
       </div>
     </div>
   );

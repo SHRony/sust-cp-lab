@@ -19,6 +19,7 @@ export default function ContestCard({ contest, onClose, registered}: { contest: 
 
   const handleClose = () => {
     setOpen(false);
+    onClose(contest.id);
   };
 
   const handleConfirmClose = () => {

@@ -12,6 +12,7 @@ import React from "react";
 import Link from "next/link";
 import CFCompare from "@/app/ui/cfviz/CFCompare";
 import { teamType, userTableEntryType, userType } from "@/app/lib/types";
+import { AnimatePresence, motion } from "framer-motion";
 export default function CreateTeams({usersParams, teamsParams, id}: {usersParams: userTableEntryType[], teamsParams: teamType[], id: string}) {
   const [users, setUsers] = useState<userTableEntryType[]>(usersParams.filter((user:userTableEntryType) => !(teamsParams.some((team:teamType) => team.members.includes(user.userName)))));
   const [removedUsers, setRemovedUsers] = useState<userTableEntryType[]>(usersParams.filter((user:userTableEntryType) => teamsParams.some((team:teamType) => team.members.includes(user.userName))));
@@ -177,9 +178,13 @@ export default function CreateTeams({usersParams, teamsParams, id}: {usersParams
         </div>
         
         <div className="gap-4 flex flex-col" style={{ overflowY: 'scroll', scrollbarWidth: 'none', height: 'calc(100vh - 60px)' }}>
-         {teams.map((team, index) => (
-           <TeamCard team = {team} key={index} onClose={handleDeleteTeam} onRename={handleRename} />
-         ))}
+          <AnimatePresence>
+          {teams.map((team, index) => (
+              <motion.div layout key={index} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.5 }}>
+                <TeamCard team = {team} key={index} onClose={handleDeleteTeam} onRename={handleRename} />
+              </motion.div>
+          ))}
+          </AnimatePresence>
         </div>
       </div>
     </div>

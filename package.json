@@ -24,8 +24,10 @@
     "bcrypt": "^5.1.1",
     "chart.js": "^4.4.2",
     "cloudinary": "^2.2.0",
+    "clsx": "^2.1.1",
     "date-fns": "^3.6.0",
     "dotenv": "^16.4.5",
+    "framer-motion": "^11.2.12",
     "jsonwebtoken": "^9.0.2",
     "next": "14.1.4",
     "pg": "^8.11.5",
@@ -37,6 +39,7 @@
     "react-tooltip": "^5.26.3",
     "react-uploader": "^3.43.0",
     "styled-components": "^6.1.8",
+    "tailwind-merge": "^2.3.0",
     "uploader": "^3.48.3"
   },
   "devDependencies": {
