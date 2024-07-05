@@ -10,20 +10,22 @@ import { Button, Dialog, DialogActions, DialogContent, DialogContentText, Dialog
 import CheckIcon from '@mui/icons-material/Check';
 import axios from "axios";
 import { authContext } from "@/app/lib/AuthProvider";
+import CircularProgress from '@mui/material/CircularProgress';
 export default function ContestCard({ contest, onClose, registered}: { contest: contestType, onClose: (id: number) => void , registered: boolean}) {
   const [open, setOpen] = useState(false);
   const auth = useContext(authContext);
+  const [closing, setClosing] = useState(false);
   const handleOpen = () => {
     setOpen(true);
   };
 
   const handleClose = () => {
+    setClosing(true);
     setOpen(false);
     onClose(contest.id);
   };
 
   const handleConfirmClose = () => {
-    onClose(contest.id);
     handleClose();
   };
   
@@ -44,8 +46,8 @@ export default function ContestCard({ contest, onClose, registered}: { contest: 
       >
         <div className="flex absolute right-0 rounded-bl-3xl shadow-2xl border border-gray-300" style={{ backgroundColor: "rgba(255, 255, 255, 0.5)" }}>
           <AccessProvider permittedUsers={['admin', '_'+contest.author]}>
-            <IconButton onClick={handleOpen}>
-              <CloseIcon color="error" />
+            <IconButton onClick={handleOpen} disabled={closing}>
+              {closing ? <CircularProgress size={24} /> : <CloseIcon color="error" />}
             </IconButton>
           </AccessProvider>
         </div>
