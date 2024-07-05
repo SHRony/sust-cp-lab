@@ -2,15 +2,23 @@
 import { cfUserType, userTableEntryType } from "@/app/lib/types";
 import { DataGrid, GridCellParams, GridColDef, GridPaginationModel } from "@mui/x-data-grid";
 import Link from "next/link";
-import React from "react";
+import React, { useState } from "react";
 import Image from "next/image";
 
 type UserTableProps = {
   users: userTableEntryType[];
 };
 export default function UserTable({users}: UserTableProps) {
-    const paginationModel: GridPaginationModel = { page: 0, pageSize: 10 };
-    const columns: GridColDef[] = [
+  const [page, setPage] = useState(0);
+  const [pageSize, setPageSize] = useState(10);
+
+  const rows = users;
+
+  const handlePageChange = (_: React.SyntheticEvent, newPage: number) => {
+    setPage(newPage);
+  };
+
+  const columns: GridColDef[] = [
     { 
       field: 'avatar', 
       headerName: '', 
@@ -42,11 +50,14 @@ export default function UserTable({users}: UserTableProps) {
   return (
     <div className='p-10'>
       {
-        users.length > 0 ? (
+        rows.length > 0 ? (
           <DataGrid
-            rows={users}
+            rows={rows}
             columns={columns}
-            paginationModel={paginationModel}
+            initialState={{
+              pagination: { paginationModel: { pageSize: 10 } },
+            }}
+            pageSizeOptions={[10, 20, 50]}
           />
         ) : (
           <> </>
@@ -55,3 +66,4 @@ export default function UserTable({users}: UserTableProps) {
     </div>
   );
 }
+

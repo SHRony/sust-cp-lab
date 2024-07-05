@@ -33,9 +33,11 @@ export default function CreateTeams({usersParams, teamsParams, id}: {usersParams
       maxWidth: 50,
       renderCell: (params: GridCellParams) => (
         
-        <div className='h-full flex justify-center items-center w-8'>
-          <Image style={{borderRadius: '50%', height: '30px', width: '30px', objectFit: 'cover'}} src={params.row.avatar} alt={params.row.userName} width={30} height={30}/>
-        </div>
+        <AnimatePresence>
+          <motion.div key={params.row.userName} className='h-full flex justify-center items-center w-8'>
+            <Image style={{borderRadius: '50%', height: '30px', width: '30px', objectFit: 'cover'}} src={params.row.avatar} alt={''} width={30} height={30}/>
+          </motion.div>
+        </AnimatePresence>
       ),
     },
     { 
@@ -158,6 +160,10 @@ export default function CreateTeams({usersParams, teamsParams, id}: {usersParams
             checkboxSelection 
             onRowSelectionModelChange = {handleSelectionChange} 
             rowSelectionModel = {rowSelectionModel}
+            initialState={{
+              pagination: { paginationModel: { pageSize: 10 } },
+            }}
+            pageSizeOptions={[10, 20, 50]}
           />
         </div>
         <Modal
