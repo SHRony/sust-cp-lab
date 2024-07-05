@@ -6,7 +6,7 @@ import NavBar from '@/app/ui/nav/NavBar';
 import AuthProvider from "./lib/AuthProvider";
 import { isLoggedIn } from '@/app/api/queries';
 import { userStateType } from "@/app/lib/types";
-import bgPattern from '@/public/bgPattern.svg';
+
 export const metadata: Metadata = {
   title: "Sust Competitive Programming Lab",
   description: "A platform for competitive programming community of SUST",
