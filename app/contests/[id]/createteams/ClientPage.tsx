@@ -17,13 +17,13 @@ export default function CreateTeams({usersParams, teamsParams, id}: {usersParams
   const [users, setUsers] = useState<userTableEntryType[]>(usersParams.filter((user:userTableEntryType) => !(teamsParams.some((team:teamType) => team.members.includes(user.userName)))));
   const [removedUsers, setRemovedUsers] = useState<userTableEntryType[]>(usersParams.filter((user:userTableEntryType) => teamsParams.some((team:teamType) => team.members.includes(user.userName))));
   const [selectedUsers, setSelectedUsers] = useState<userTableEntryType[]>([]);
-  const [rowSelectionModel, setRowSelectionModel] = React.useState<GridRowSelectionModel>([]);
+  const [rowSelectionModel, setRowSelectionModel] = useState<GridRowSelectionModel>([]);
   const [teams, setTeams] = useState<teamType[]>(teamsParams);
-  const [open, setOpen] = React.useState(false);
-  const [user1Name, setUser1Name] = React.useState('');
-  const [user2Name, setUser2Name] = React.useState('');
-  const [creatingTeam, setCreatingTeam] = React.useState(false);
-
+  const [open, setOpen] = useState(false);
+  const [user1Name, setUser1Name] = useState('');
+  const [user2Name, setUser2Name] = useState('');
+  const [creatingTeam, setCreatingTeam] = useState(false);
+  const [hoveredCard, setHoveredCard] = useState<number | null>(null);
   const columns: GridColDef[] = [
     { 
       field: 'avatar', 

@@ -4,7 +4,7 @@
 import { contestType } from "@/app/lib/types";
 import { useState, useEffect, useContext } from "react";  
 import Button from '@mui/material/Button';
-import { TextField } from "@mui/material";
+import { CircularProgress, TextField } from "@mui/material";
 import Card from "@/app/ui/cards/Card";
 import ImageUploader from "@/app/ui/input/ImageUploader";
 import DoubleClickInput from "@/app/ui/input/DoubleClickInput";
@@ -18,6 +18,8 @@ export default function CreateContestPage() {
   const [date, setDate] = useState(new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split("T")[0]);
   const [poster, setPoster] = useState("");
   const auth = useContext(authContext);
+  const [creating, setCreating] = useState(false);
+
   const handleCreateContest = async () => {
     const newContest: contestType = {
       name,
@@ -29,6 +31,7 @@ export default function CreateContestPage() {
       id: 0,
       author: auth?.user?.userName || '',
     };
+
     try {
       axios.post("/api/contests/create", newContest)
         .then((res) => {
@@ -38,16 +41,22 @@ export default function CreateContestPage() {
           } else {
             console.log(res.data.error);
             alert('please try again');
+            setCreating(false);
           }
         })
         .catch((error) => {
           console.error("Error creating contest:", error);
           alert('please try again');
+          setCreating(false);
         });
     } catch (error) {
       console.error("Error creating contest:", error);
+      setCreating(false);
     }
   };
+  useEffect(() => {
+    console.log(creating);
+  });
 
 
   return (
@@ -88,8 +97,8 @@ export default function CreateContestPage() {
         
         <Button
           variant="contained"
-          onClick={handleCreateContest}
-          className="w-48 m-2"
+          onClick={() => {setCreating(true);handleCreateContest();}}
+          className={`w-48 m-2 ${creating ? 'opacity-50 cursor-not-allowed' : ''}`}
           sx={{
             background: 'var(--primary)',
             '&:hover': {
@@ -97,8 +106,14 @@ export default function CreateContestPage() {
               color: 'var(--onPrimary) !important',
             },
           }}
+          disabled={creating}
         >
-          Create Contest
+          {creating ? (
+            <CircularProgress size={20}></CircularProgress>
+          ) : null}
+          {
+            creating ? 'Creating...' : 'Create Contest'
+          }
         </Button>
       </div>
     </Card>

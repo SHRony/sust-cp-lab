@@ -10,12 +10,12 @@ import axios from "axios";
 import AccessProvider from "../lib/AccessProvider";
 import { authContext } from "../lib/AuthProvider";
 import { AnimatePresence, motion } from "framer-motion";
+import ContestList from "../ui/grids/ContestList";
 
 export default function Contests({contestsProps}: {contestsProps: contestType[]}) {
   const [contests, setContests] = useState<contestType[]>(contestsProps);
   const [registeredContests, setRegisteredContests] = useState<number[]>([]);
   const auth = useContext(authContext);
-
   useEffect(() => {
     const username = auth?.user?.userName || '';
     if(username){
@@ -54,7 +54,7 @@ export default function Contests({contestsProps}: {contestsProps: contestType[]}
         </Button>
       </Link>
       </AccessProvider>
-      <div className="grid w-full gap-10 laptop:gap-8 desktop:gap-10 justify-center tablet:justify-between pt-20 rounded" style={{gridTemplateColumns: 'repeat(auto-fill, 20rem)'}}>
+      {/* <div className="grid w-full gap-10 laptop:gap-8 desktop:gap-10 justify-center tablet:justify-between pt-20 rounded" style={{gridTemplateColumns: 'repeat(auto-fill, 20rem)'}}>
         <AnimatePresence>
         {contests.map((contest) => (
           <motion.div className={contest.poster ? "row-span-2" : ""} layout key={contest.id} initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
@@ -62,7 +62,8 @@ export default function Contests({contestsProps}: {contestsProps: contestType[]}
           </motion.div>
         ))}
         </AnimatePresence>
-      </div>
+      </div> */}
+      <ContestList contestsParams={contests} registeredContestsParams={registeredContests}></ContestList>
     </div>
   );
 }
