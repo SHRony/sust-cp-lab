@@ -12,23 +12,26 @@ import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import DialogActions from "@mui/material/DialogActions";
-import { Button } from "@mui/material";
+import { Button, CircularProgress } from "@mui/material";
 
 interface TeamCardProps {
   team: teamType;
   onClose: (team: teamType) => void;
   onRename: (team: string[], newTeamName: string) => void;
+  closable?: boolean;
 }
 
-const TeamCard = ({ team, onClose, onRename }: TeamCardProps) => {
+const TeamCard = ({ team, onClose, onRename, closable}: TeamCardProps) => {
   const [open, setOpen] = useState(false);
-
+  const [closing, setClosing] = useState(false);
   const handleClose = () => {
+    setClosing(true);
     setOpen(false);
+    onClose(team);
+
   };
 
   const handleConfirmClose = () => {
-    onClose(team);
     handleClose();
   };
 
@@ -38,9 +41,20 @@ const TeamCard = ({ team, onClose, onRename }: TeamCardProps) => {
     >
       <AccessProvider permittedUsers={["mentor", "admin"]}>
         <div className="flex justify-end absolute top-0 right-0 rounded-bl-3xl shadow-2xl border border-gray-300">
-          <IconButton onClick={() => setOpen(true)}>
-            <CloseIcon color="error" />
-          </IconButton>
+          {
+            closable && (
+              <IconButton
+                onClick={() => setOpen(true)}
+                disabled={closing}
+              >
+                {closing ? (
+                  <CircularProgress size={24} />
+                ) : (
+                  <CloseIcon />
+                )}
+              </IconButton>
+            )
+          }
         </div>
         <Dialog open={open} onClose={handleClose}>
           <DialogTitle>Confirm close</DialogTitle>

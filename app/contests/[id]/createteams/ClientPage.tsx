@@ -181,7 +181,7 @@ export default function CreateTeams({usersParams, teamsParams, id}: {usersParams
           <AnimatePresence>
           {teams.map((team, index) => (
               <motion.div layout key={index} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.5 }}>
-                <TeamCard team = {team} key={index} onClose={handleDeleteTeam} onRename={handleRename} />
+                <TeamCard team = {team} key={team.id} onClose={handleDeleteTeam} onRename={handleRename} closable />
               </motion.div>
           ))}
           </AnimatePresence>
