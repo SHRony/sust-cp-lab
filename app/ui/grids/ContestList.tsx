@@ -1,30 +1,39 @@
-import { contestType } from "@/app/lib/types";
-import { cn } from "@/utils/cn";
-import { Card } from "@mui/material";
-import { AnimatePresence, motion } from "framer-motion";
-import Link from "next/link";
-import { useState } from "react";
+import React, { useState, useEffect } from 'react';
+import {contestType} from "@/app/lib/types";
+import ContestCard from '@/app/ui/cards/ContestCard';
+import axios from 'axios';
+import { AnimatePresence, motion } from 'framer-motion';
+import Link from 'next/link';
 
-export const HoverEffect = ({contests}:{contests: contestType[]}) => {
-  let [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+export default function ContestList({contestsParams, registeredContestsParams}: {contestsParams: contestType[], registeredContestsParams: number[]}) {
+  const [contests, setContests] = useState(contestsParams);
+  const [registeredContests, setRegisteredContests] = useState<number[]>(registeredContestsParams);
+  const [hoveredContest, setHoveredContest] = useState(-1);
+  const [shadow, setShadow] = useState(false);
+  useEffect(() => {
+    console.log(hoveredContest);
+  });
+  const removeContest = (id: number) => {
+      const updatedContests = [...contests];
+      axios.post(`/api/contests/delete`, {id : id}).then(res => {
+        if(res.status == 200){
+          const index = updatedContests.findIndex((contest) => contest.id === id);
+          updatedContests.splice(index, 1);
+          setContests(updatedContests);
+        }
+      })
+  }
 
   return (
-    <div
-      className={cn(
-        "grid grid-cols-1 md:grid-cols-2  lg:grid-cols-3  py-10",
-      )}
-    >
-      {contests.map((contest, idx) => (
-        <div
-          key={idx}
-          className="relative group  block p-2 h-full w-full"
-          onMouseEnter={() => setHoveredIndex(idx)}
-          onMouseLeave={() => setHoveredIndex(null)}
-        >
-          <AnimatePresence>
-            {hoveredIndex === idx && (
+    <div className="grid w-full gap-10 laptop:gap-2 desktop:gap-8 justify-center tablet:justify-between pt-20 items-stretch" style={{gridTemplateColumns: 'repeat(auto-fill, 21rem)'}}> 
+      <AnimatePresence>
+        {contests.map((contest) => (
+          <motion.div layout key={contest.id} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className={`p-1 relative ${contest.poster ? "row-span-2" : "row-span-1"}`} onMouseEnter={() => {setHoveredContest(contest.id), setShadow(true)}}
+          onMouseLeave={() => setShadow(false)}>
+            <AnimatePresence>
+            {hoveredContest === contest.id && (
               <motion.span
-                className="absolute inset-0 h-full w-full bg-neutral-200 dark:bg-slate-800/[0.8] block  rounded-3xl"
+                className={`absolute inset-0 h-full w-full bg-neutral-200 dark:bg-slate-800/[0.8] block rounded-2xl  z-0  ${shadow ? "visible" : "invisible"}`}
                 layoutId="hoverBackground"
                 initial={{ opacity: 0 }}
                 animate={{
@@ -38,15 +47,10 @@ export const HoverEffect = ({contests}:{contests: contestType[]}) => {
               />
             )}
           </AnimatePresence>
-          <Card>
-            <div>
-              yo bro
-            </div>
-            {/* <CardTitle>{item.title}</CardTitle> */}
-            {/* <CardDescription>{item.description}</CardDescription> */}
-          </Card>
-        </div>
-      ))}
+              <ContestCard contest={contest} onClose={removeContest} registered={registeredContests.includes(contest.id)}  />
+          </motion.div>
+        ))}
+      </AnimatePresence>
     </div>
   );
-};
+}

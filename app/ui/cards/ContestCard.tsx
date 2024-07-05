@@ -14,18 +14,20 @@ import CircularProgress from '@mui/material/CircularProgress';
 export default function ContestCard({ contest, onClose, registered}: { contest: contestType, onClose: (id: number) => void , registered: boolean}) {
   const [open, setOpen] = useState(false);
   const auth = useContext(authContext);
-  const [closing, setClosing] = useState(false);
+  const [removing, setRemoving] = useState(false);
   const handleOpen = () => {
     setOpen(true);
   };
 
   const handleClose = () => {
-    setClosing(true);
+    setOpen(false);
+  };
+  const handleConfirm = () => {
+    setRemoving(true);
     setOpen(false);
     onClose(contest.id);
-  };
-
-  const handleConfirmClose = () => {
+  }
+  const handleCancel = () => {
     handleClose();
   };
   
@@ -40,35 +42,35 @@ export default function ContestCard({ contest, onClose, registered}: { contest: 
   return (
     <>
       <Card
-        className={`flex relative flex-col items-start md:items-center gap-4 bg-white ${
+        className={`flex relative flex-col items-start md:items-center gap-4 bg-white h-full z-10 rounded-2xl overflow-hidden ${
           contest.poster ? "row-span-2" : ""
         }`}
       >
         <div className="flex absolute right-0 rounded-bl-3xl shadow-2xl border border-gray-300" style={{ backgroundColor: "rgba(255, 255, 255, 0.5)" }}>
           <AccessProvider permittedUsers={['admin', '_'+contest.author]}>
-            <IconButton onClick={handleOpen} disabled={closing}>
-              {closing ? <CircularProgress size={24} /> : <CloseIcon color="error" />}
+            <IconButton onClick={handleOpen} disabled={removing}>
+              {removing ? <CircularProgress size={24} /> : <CloseIcon color="error" />}
             </IconButton>
           </AccessProvider>
         </div>
+        <Link href={`/contests/${contest.id}`}>
+
         <div className="min-h-4">
           {contest.poster && (
             
             <Image
               src={contest.poster}
               alt="Contest logo"
-              layout={'responsive'}
+              layout='responsive'
               width={340}
               height={100}
-              style={{ maxHeight: "220px" }}
+              style={{ maxHeight: "220px",objectFit: "contain" }}
             />
             
           )}
         </div>
         <div className="flex-1 flex flex-col justify-center items-start min-h-48 w-full p-4 bg-white overflow-y-scroll gap-3 grow" style={{ scrollbarWidth: "none" }}>
-          <Link href={`/contests/${contest.id}`}>
             <h2 className="text-2xl font-bold text-center w-full">{contest.name}</h2>
-          </Link>
           <div className="flex flex-col justify-center items-start gap-2">
             <p className="text-lg font-semibold text-gray-600">{contest.venue}</p>
             <p className="text-sm text-gray-600">{contest.description}</p>
@@ -97,6 +99,7 @@ export default function ContestCard({ contest, onClose, registered}: { contest: 
             )}
           </AccessProvider>
         </div>
+      </Link>
 
       </Card>
       <Dialog open={open} onClose={handleClose}>
@@ -107,8 +110,8 @@ export default function ContestCard({ contest, onClose, registered}: { contest: 
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose}>Cancel</Button>
-          <Button onClick={handleConfirmClose} autoFocus>Confirm</Button>
+          <Button onClick={handleCancel}>Cancel</Button>
+          <Button onClick={handleConfirm} autoFocus>Confirm</Button>
         </DialogActions>
       </Dialog>
     </>
