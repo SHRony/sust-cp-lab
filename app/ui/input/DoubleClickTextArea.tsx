@@ -1,3 +1,4 @@
+import { TextareaAutosize, Tooltip } from '@mui/material';
 import React, { useRef, useState, ReactNode } from 'react';
 export default function DoubleClickTextArea({ initialValue, onChange, textClassName, textStyle, textAreaClassName, textAreaStyle }: DoubleClickTextAreaProps) {
   const [isEditing, setIsEditing] = useState(false);
@@ -24,15 +25,17 @@ export default function DoubleClickTextArea({ initialValue, onChange, textClassN
   return (
     <div className="flex flex-row items-center cursor-text" onDoubleClick={handleDoubleClick}>
       <div className={`flex flex-row items-center ${isEditing ? 'hidden' : ''}`}>
-        <p className={`select-none p-1 ${textClassName}`} style={textStyle}>{value}</p>
+        <Tooltip followCursor arrow title={'double click to edit'}>
+          <p className={`select-none p-1 ${textClassName}`} style={textStyle}>{value}</p>
+        </Tooltip>
       </div>
-      <textarea
+      <TextareaAutosize
         ref={textAreaRef}
         className={`w-full p-0 border-0 outline-none ${isEditing ? '' : 'hidden'} ${textAreaClassName}`}
         onChange={handleChange}
         value={value}
         onBlur={handleBlur}
-        style={textAreaStyle}
+        style={{ ...textAreaStyle, height: 'min-content', overflowY: 'hidden' }}
       />
     </div>
   );

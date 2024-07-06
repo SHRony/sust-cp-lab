@@ -10,6 +10,7 @@ import ImageUploader from "@/app/ui/input/ImageUploader";
 import DoubleClickInput from "@/app/ui/input/DoubleClickInput";
 import axios from "axios";
 import { authContext } from "@/app/lib/AuthProvider";
+import DoubleClickTextArea from "@/app/ui/input/DoubleClickTextArea";
 export default function CreateContestPage() {
   const [name, setName] = useState("Random Inter University Programming Contest");
   const [venue, setVenue] = useState("Random University");
@@ -81,7 +82,7 @@ export default function CreateContestPage() {
         </div>
         <div className="p-2">
           <span className="text-gray-400">Description</span>
-          <DoubleClickInput textClassName="text-black" inputClassName="text-black" initialValue= {description} onChange = {(value) => {setDescription(value)}} />
+          <DoubleClickTextArea textClassName="text-black" textAreaClassName="text-black" initialValue= {description} onChange = {(value) => {setDescription(value)}} />
         </div>
         <div className="p-2">
           <span className="text-gray-400">Type</span>
