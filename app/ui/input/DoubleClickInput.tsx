@@ -1,3 +1,4 @@
+import { Tooltip } from '@mui/material';
 import React, { useRef, useState } from 'react';
 
 interface DoubleClickInputProps {
@@ -34,7 +35,9 @@ export default function DoubleClickInput({ initialValue, onChange, inputClassNam
   return (
     <div className="flex flex-row items-center cursor-text" onDoubleClick={handleDoubleClick}>
       <div className={`flex flex-row items-center ${isEditing ? 'hidden' : ''}`}>
-        <p  className={`select-none p-1 ${textClassName}`} style={textStyle}>{value}</p>
+        <Tooltip followCursor arrow title={'double click to edit'}>
+          <p  className={`select-none p-1 ${textClassName}`} style={textStyle}>{value}</p>
+        </Tooltip>
       </div>
       <input
         ref={inputRef}
