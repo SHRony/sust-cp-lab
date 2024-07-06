@@ -15,7 +15,7 @@ export const getUserInfo = async (username: string) => {
   if(!studentResult.rows[0]) return null;
   const cfResult = await client.query(`SELECT handle FROM ${dbTables.cf_handles} WHERE username = $1`, [username]);
   const cfHandles = cfResult.rows.map(row => row.handle);
-  const user = {
+  const user:userType = {
     userName: userResult.rows[0].username,
     fullName: studentResult.rows[0].full_name,
     registrationNumber: studentResult.rows[0].registration_no,
@@ -23,6 +23,8 @@ export const getUserInfo = async (username: string) => {
     vjudgeHandle: studentResult.rows[0].vjudge_handle,
     cfHandles: cfHandles,
     password: '',
+    userType: userResult.rows[0].user_type,
+    phone: studentResult.rows[0].phone,
   }
   return user;
 } 
@@ -206,7 +208,7 @@ async function fetchUserInfo(users:string[]){
 async function fetchSubmissionsInfo(users:string[]) {
   let solvedProblems:any = [];
   let mn = 1000000;
-  let acTime = [];
+  let acTime:{x:number, y:number}[] = []; 
   let dateCnt = new Map();
   let stProblems = new Map();
   let iteration:number = 0;
@@ -274,7 +276,7 @@ async function fetchSubmissionsInfo(users:string[]) {
     });
   });
   diffData.sort(cmpdif);
-  return [acTime, calenderSubmissions, diffData, catData];
+  return {acTime, calenderSubmissions, diffData, catData};
 }
 
 async function fetchRatingInfo(users : string[]){
@@ -320,40 +322,47 @@ async function fetchRatingInfo(users : string[]){
 }
 
 export async function getCFInfo(users:string[]){
+  let fokka:cfUserType = {
+    contribution : 0,
+    lastActive : 'never',
+    maxRating : 0,
+    maxRank : 'none',
+    registered : 'never',
+    avatar : "https://userpic.codeforces.org/no-title.jpg",
+    name : "",
+    acTime : [],
+    calenderSubmissions : [],
+    diffData : [],
+    catData : [],
+    ratingChanges : {labels: [], datasets: []}
+  }
     if(users == null || users.length == 0){
       //return empty user
-      let ret:cfUserType = {
-        contribution : 0,
-        lastActive : 'never',
-        maxRating : 0,
-        maxRank : 'none',
-        registered : 'never',
-        avatar : "https://userpic.codeforces.org/no-title.jpg",
-        name : "",
-        acTime : [],
-        calenderSubmissions : [],
-        diffData : [],
-        catData : [],
-        ratingChanges : {labels: [], datasets: []}
-      }
-      return NextResponse.json(ret);
+      
+      return fokka;
     }
-    const [maxRating, maxRank, registered, lastActive, avatar, name, contribution] = await fetchUserInfo(users);
-    const [acTime, calenderSubmissions, diffData, catData] = await fetchSubmissionsInfo(users);
-    const ratingChanges = await fetchRatingInfo(users);
-    let user = {
-      contribution : contribution,
-      lastActive : lastActive,
-      maxRating : maxRating,
-      maxRank : maxRank,
-      registered : registered,
-      avatar : avatar,
-      name : name,
-      acTime : acTime,
-      calenderSubmissions : calenderSubmissions,
-      diffData : diffData,
-      catData : catData,
-      ratingChanges : ratingChanges
-    };
-    return user;
+    try{
+      const {acTime, calenderSubmissions, diffData, catData} = await fetchSubmissionsInfo(users);
+        const [maxRating, maxRank, registered, lastActive, avatar, name, contribution] = await fetchUserInfo(users);
+        // const [acTime] = await fetchSubmissionsInfo(users);
+        const ratingChanges = await fetchRatingInfo(users);
+        let user:cfUserType = {
+          contribution : contribution,
+          lastActive : lastActive,
+          maxRating : maxRating,
+          maxRank : maxRank,
+          registered : registered,
+          avatar : avatar,
+          name : name,
+          acTime : acTime,
+          calenderSubmissions : calenderSubmissions,
+          diffData : diffData,
+          catData : catData,
+          ratingChanges : ratingChanges
+        };
+     return user;
+    }catch{
+      return fokka;
+    }
+    
 }

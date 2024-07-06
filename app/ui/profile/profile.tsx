@@ -14,10 +14,10 @@ import ScatterChart from '@/app/ui/cfviz/ScatterChart';
 import UserCard from '@/app/ui/cards/UserCard';
 import UserCardSkeleton from '@/app/ui/cards/UserCardSkeleton';
 
-const UserInfoComponent = () => {
+const Profile = ({userParams, cfUserParams}:{userParams : userType|null, cfUserParams : cfUserType|null}) => {
   const auth = useContext(authContext);
-  const [user, setUser] = useState<userType|null>(null);
-  const [cfUser, setCfUser] = useState<cfUserType|null>(null);
+  const [user, setUser] = useState<userType|null>(userParams);
+  const [cfUser, setCfUser] = useState<cfUserType|null>(cfUserParams);
   const [trigger, setTrigger] = useState(false);
   const addCFHandle = async (handle : string) => {
     if(user && user.cfHandles && !user.cfHandles.includes(handle)){
@@ -34,25 +34,20 @@ const UserInfoComponent = () => {
 
   useEffect(() => {
     const yo = async() => {
-      if(!auth?.user?.userName) return ;
-      console.log(auth.user.userName);
-      const res = await axios.get(`/api/userinfo?name=${auth.user.userName}`);
-      if(res.data){
-        setUser(res.data.user);
-        let handles = res.data.user.cfHandles?.join(',') ?? '';
-        axios.get(`/api/external/cfuserinfo?user=${handles}`).then((res) => {
-          if(res.data){
-            setCfUser(res.data);
-            axios.post('/api/userinfo/addcache', {username : auth.user?.userName, info : res.data});
-          }
-        }).catch((res)=>{
-          setCfUser(null);
-        });
-      }
+    
+      let handles = user?.cfHandles?.join(',') ?? '';
+      axios.get(`/api/external/cfuserinfo?user=${handles}`).then((res) => {
+        if(res.data){
+          setCfUser(res.data);
+          axios.post('/api/userinfo/addcache', {username : user?.userName, info : res.data});
+        }
+      }).catch((res)=>{
+        setCfUser(null);
+      });
     }
     yo();
 
-  }, [auth]);
+  }, [user?.cfHandles, user?.userName]);
   
   return (
     <div className="flex flex-col items-center w-full pt-20 gap-20">
@@ -127,4 +122,4 @@ const UserInfoComponent = () => {
   );
 }
 
-export default UserInfoComponent;
+export default Profile;
