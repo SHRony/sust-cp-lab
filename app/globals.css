@@ -50,7 +50,8 @@ body {
       rgb(var(--background-end-rgb))
     )
     rgb(var(--background-start-rgb)); */
-    background-color: var(--surface);
+  background-image: url('/bgPattern.svg');
+  background-repeat: repeat;
   min-height: 100vh;
   background-attachment: fixed;
 }

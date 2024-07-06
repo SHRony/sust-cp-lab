@@ -9,6 +9,7 @@ import { useContext, useEffect, useState } from "react";
 import {authContext} from "@/app/lib/AuthProvider";
 import axios from "axios";
 import CloseIcon from "@mui/icons-material/Close";
+import AccessProvider from "@/app/lib/AccessProvider";
 export default function UserCard({userName, fullName, registrationNumber, email, vjudgeHandle, cfHandles, phone, addCFHandle, removeCFHandle} : userType & {addCFHandle : (handle : string) => void, removeCFHandle : (handle : string) => void}) {
   const auth = useContext(authContext);
   const [editVjudge, setEditVjudge] = useState(false);
@@ -112,11 +113,9 @@ export default function UserCard({userName, fullName, registrationNumber, email,
                   {vjudgeState} 
                 </p>
                   {/* this edit icon is visible only if the user is visiting his own profile */}
-                  {auth?.user?.userName == userName ? (
-                    <Image className="cursor-pointer" alt = 'edit' height={20} src = {editIcon} onClick={()=> {setEditVjudge(true)}}/>
-                  ):(
-                    <></>
-                  )}
+                  <AccessProvider permittedUsers={[`_${userName}`]}>
+                      <Image className="cursor-pointer" alt = 'edit' height={20} src = {editIcon} onClick={()=> {setEditVjudge(true)}}/>
+                  </AccessProvider>
               </div>
             )
           }
@@ -142,11 +141,10 @@ export default function UserCard({userName, fullName, registrationNumber, email,
                         {handle}
                     </a>
                     {/* if the user is visiting his own profile, then show the close icon to delete the handle */}
-                    {auth?.user?.userName == userName ? (
+                    <AccessProvider permittedUsers={[`_${userName}`]}>
                       <Image className="cursor-pointer ml-2" alt = 'close' height={20} src = {closeIcon} onClick={()=> {deleteCFhandle(handle)}}/>
-                    ):(
-                      <></>
-                    )}
+                    </AccessProvider>
+                  
                 </div>
               )
             })
