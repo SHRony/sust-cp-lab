@@ -11,7 +11,8 @@ import CheckIcon from '@mui/icons-material/Check';
 import axios from "axios";
 import { authContext } from "@/app/lib/AuthProvider";
 import CircularProgress from '@mui/material/CircularProgress';
-export default function ContestCard({ contest, onClose, onRegister, registered}: { contest: contestType, onClose: (id: number) => void, onRegister: () => void , registered: boolean}) {
+import { DirectionAwareHover } from "../aceternity/direction-aware-hover";
+export default function ContestCard({ contest, onClose, onRegister, registered, closable = true}: { contest: contestType, onClose: (id: number) => void, onRegister: () => void , registered: boolean, closable?: boolean}) {
   const [open, setOpen] = useState(false);
   const [removing, setRemoving] = useState(false);
   const handleOpen = () => {
@@ -36,42 +37,46 @@ export default function ContestCard({ contest, onClose, onRegister, registered}:
   return (
     <>
       <Card
-        className={`flex relative flex-col items-start md:items-center gap-4 bg-white h-full z-10 rounded-2xl overflow-hidden ${
+        className={`flex relative flex-col items-start md:items-center gap-4 bg-card h-full z-10 rounded-2xl overflow-hidden ${
           contest.poster ? "row-span-2" : ""
         }`}
       >
-        <div className="flex absolute right-0 rounded-bl-3xl shadow-2xl border border-gray-300" style={{ backgroundColor: "rgba(255, 255, 255, 0.5)" }}>
-          <AccessProvider permittedUsers={['admin', '_'+contest.author]}>
-            <IconButton onClick={handleOpen} disabled={removing}>
-              {removing ? <CircularProgress size={24} /> : <CloseIcon color="error" />}
-            </IconButton>
-          </AccessProvider>
+        <div className="bg-card flex absolute right-0 rounded-bl-3xl shadow-2xl border border-gray-300" style={{ backgroundColor: "rgba(255, 255, 255, 0.5)" }}>
+          {
+            closable && <AccessProvider permittedUsers={['admin', '_'+contest.author]}>
+             <IconButton onClick={handleOpen} disabled={removing}>
+                {removing ? <CircularProgress size={24} /> : <CloseIcon color="error" />}
+              </IconButton>
+            </AccessProvider>
+          }
         </div>
         <Link href={`/contests/${contest.id}`}>
 
         <div className="min-h-4">
           {contest.poster && (
-            
+            // <div className="" style={{ width: "340px", maxHeight: "220px",objectFit: "contain" }}>
+            //   <DirectionAwareHover imageUrl={contest.poster}><></></DirectionAwareHover>
+            // </div>
             <Image
               src={contest.poster}
               alt="Contest logo"
               layout='responsive'
               width={340}
               height={100}
-              style={{ maxHeight: "220px",objectFit: "contain" }}
+              style={{ width: "340px", maxHeight: "220px",objectFit: "contain" }}
             />
             
           )}
         </div>
-        <div className="flex-1 flex flex-col justify-center items-start min-h-48 w-full p-4 bg-white overflow-y-scroll gap-3 grow" style={{ scrollbarWidth: "none" }}>
+        <div className="flex-1 flex flex-col justify-center items-start min-h-48 w-full p-4 overflow-y-scroll gap-3 grow" style={{ scrollbarWidth: "none" }}>
             <h2 className="text-2xl font-bold text-center w-full">{contest.name}</h2>
           <div className="flex flex-col justify-center items-start gap-2">
-            <p className="text-lg font-semibold text-gray-600">{contest.venue}</p>
-            <p className="text-sm text-gray-600">{contest.description}</p>
-            <p className="text-sm text-gray-600">
+            <p className="text-lg font-semibold text-dim ">{contest.venue}</p>
+            <p className="text-sm text-dim">{contest.description}</p>
+            <p className="text-sm text-dim">
               Date: {new Date(contest.date).toLocaleDateString()}
             </p>
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-dim">
               Type: {contest.type}
             </p>
           </div>

@@ -26,7 +26,7 @@ export default function CalenderHeatmap({user}:{user : cfUserType}){
     alert(`${value.count}`);
   };
   return (
-     <Card className="bg-white w-full mt-10 flex flex-col justify-center items-center">
+     <Card className="bg-card w-full mt-10 flex flex-col justify-center items-center">
       {
           Array.from({ length: new Date().getFullYear() - startYear + 1 }, (_, i) => i + startYear).reverse().map(year => (
             <div style={{maxWidth : "1200px"}} key={year} className="w-full h-60 p-2">

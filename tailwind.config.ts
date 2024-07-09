@@ -9,21 +9,35 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      colors: {
+        'card': 'var(--card-border)',
+        'text-dim': 'var(--text-dim)',
+        'text' : 'var(--text)',
+      },
       backgroundColor:{
-        'primary' : 'var(--primary)'
+        'background' : 'var(--background)',
+        'primary' : 'var(--primary)',
+        'card' : 'var(--card-bg)',
+        'hover' : 'var(--card-hover)',
+        'nav' : 'var(--nav-bg)',
+
         
       },
       textColor: {
-        onPrimary : 'var(--onPrimary)'
+        onPrimary : 'var(--onPrimary)',
+        'dim' : 'var(--text-dim)',
       },
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
         "gradient-conic":
           "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
       },
-      dropShadow: {
-        '3xl': '10px 10px 10px rgba(0, 0, 0, 0.2)',
+      boxShadow: {
+        '3xl': '0 35px 60px -15px rgba(0, 0, 0, 0.3)',
+        'card' : 'var(--card-shadow)',
+
       },
+
       width:{
         '300-px' : '300px',
         '400-px' : '400px',
@@ -93,3 +107,4 @@ const config: Config = {
   plugins: [],
 };
 export default config;
+

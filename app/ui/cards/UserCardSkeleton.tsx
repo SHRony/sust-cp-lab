@@ -4,7 +4,7 @@ import { Skeleton } from "@mui/material";
 
 export default function UserCardSkeleton(){
   return (
-    <Card className="flex flex-col items-center bg-white w-170 min-h-10 py-8 rounded">
+    <Card className="flex flex-col items-center bg-card w-170 min-h-10 py-8 rounded">
       <div 
         className="flex justify-center items-center text-2xl font-bold text-gray-700 text-shadow-2xl text-center px-10 mb-5"
         style={{backgroundColor : 'var(--primaryContainer)', color : 'var(--primary)', borderRadius : '50px'}}

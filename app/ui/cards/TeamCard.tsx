@@ -37,7 +37,7 @@ const TeamCard = ({ team, onClose, onRename, closable}: TeamCardProps) => {
 
   return (
     <Card
-      className={`flex flex-col  px-3 w-full justify-center items-center bg-white relative`}
+      className={`flex flex-col  px-3 w-full justify-center items-center bg-card relative`}
     >
       <AccessProvider permittedUsers={["mentor", "admin"]}>
         <div className="flex justify-end absolute top-0 right-0 rounded-bl-3xl shadow-2xl border border-gray-300">
@@ -83,7 +83,7 @@ const TeamCard = ({ team, onClose, onRename, closable}: TeamCardProps) => {
       <div className="mt-2 flex flex-col flex-wrap gap-4 w-full">
         {team.members.map((username) => (
           <Link key={username} href={`/profile/${username}`}>
-            <p style={{ color: "var(--primary)" }} className="cursor-pointer">
+            <p style={{ color: "var(--text)" }} className="cursor-pointer">
               {username}
             </p>
           </Link>

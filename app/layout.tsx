@@ -17,7 +17,7 @@ export default async function RootLayout({children} : Readonly<{children:React.R
   const user = await isLoggedIn();
   return (
     <html lang="en">
-      <body style={{display : "flex"}} className={inter.className + "flex flex-col items-center"}>
+      <body style={{display : "flex"}} className={inter.className + "flex flex-col items-center theme-light"}>
         <AuthProvider userProps={user}>
           <NavBar></NavBar>
           <div className="flex flex-col items-center w-100 mobile:w-106 tablet:w-192 laptop:w-256 desktop:w-360">

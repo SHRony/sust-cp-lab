@@ -41,7 +41,7 @@ export default function DifficultyBarChart({barData} : {barData:{ x: string; y: 
   let yCumSum : number[] = yArray.reverse().reduce((arr:number[], x)=>{arr.push(x + (arr.length != 0 ? arr[arr.length - 1] : 0)); return arr},[]).reverse();
   yArray.reverse();
   return (
-    <Card className="bg-white w-full flex flex-col justify-center items-center max-h-600 p-8">
+    <Card className="bg-card w-full flex flex-col justify-center items-center max-h-600 p-8">
       <p 
       className='px-5 m-4 text-lg'
       style={{backgroundColor : 'var(--primaryContainer)', color : 'var(--primary)', borderRadius : '50px', fontWeight : 'bold'}}
