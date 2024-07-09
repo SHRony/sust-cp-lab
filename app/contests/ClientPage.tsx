@@ -63,7 +63,7 @@ export default function Contests({contestsProps}: {contestsProps: contestType[]}
         ))}
         </AnimatePresence>
       </div> */}
-      <ContestList contestsParams={contests} registeredContestsParams={registeredContests}></ContestList>
+      <ContestList contestsParams={contests} registeredContestsParams={registeredContests} closable = {true}></ContestList>
     </div>
   );
 }
