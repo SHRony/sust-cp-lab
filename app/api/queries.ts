@@ -81,6 +81,20 @@ export const getContests = async () => {
     const contests = response.rows.map((row) => row);
     return contests;
 }
+export const getRegisteredContests = async (username: string) => {
+  try{
+    const response = await client.query(`SELECT contest_id FROM ${dbTables.contest_registrations} WHERE user_name = $1`, [username]);
+    const contests = response.rows.map((row) => row.contest_id);
+    return contests;
+  }catch{
+    return [];
+  }
+}
+export const getRegisteredContestsList = async () => {
+  const user = await isLoggedIn();
+  if(!user?.userName) return [];
+  return getRegisteredContests(user.userName);
+}
 
 
 export const getContest = async (contestId: string) => {

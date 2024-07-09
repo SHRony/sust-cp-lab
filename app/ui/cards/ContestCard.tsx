@@ -15,6 +15,7 @@ import { DirectionAwareHover } from "../aceternity/direction-aware-hover";
 export default function ContestCard({ contest, onClose, onRegister, registered, closable = true}: { contest: contestType, onClose: (id: number) => void, onRegister: () => void , registered: boolean, closable?: boolean}) {
   const [open, setOpen] = useState(false);
   const [removing, setRemoving] = useState(false);
+  const auth = useContext(authContext);
   const handleOpen = () => {
     setOpen(true);
   };
@@ -22,16 +23,32 @@ export default function ContestCard({ contest, onClose, onRegister, registered, 
   const handleClose = () => {
     setOpen(false);
   };
-  const handleConfirm = () => {
-    setRemoving(true);
-    setOpen(false);
-    onClose(contest.id);
+  const handleConfirm = async () => {
+    try {
+      setRemoving(true);
+      setOpen(false);
+      const res = await axios.post(`/api/contests/delete`, {id : contest.id})
+      if(res.status == 200) onClose(contest.id);
+      else setRemoving(false);
+    } catch(error) {
+      console.error(error);
+      setRemoving(false);
+    }
   }
   const handleCancel = () => {
     handleClose();
   };
-  const handleRegister = () => {
-    onRegister();
+  const handleRegister = async () => {
+    try {
+      const res = await axios.post(`/api/contests/${contest.id}/registration`, { username: auth?.user?.userName || '' });
+      if(res.status == 200){
+        onRegister();
+      }
+    } catch (error) {
+      console.error('Error registering for contest:', error);
+      alert('Error registering for contest. Please try again.');
+    }
+    
   };
  
   return (

@@ -13,7 +13,7 @@ type cfUserType = Readonly<{
 
 export default function cfUserInfo({maxRating, maxRank, lastActive, registered, contribution, avatar, name}:cfUserType){
   return (
-    <Card style={{backgroundImage : 'url(profile_bg.png)', backgroundSize : '100% 100%'} } className="flex flex-col items-center bg-white w-170 min-h-10 py-8 rounded">
+    <Card style={{backgroundImage : 'url(profile_bg.png)', backgroundSize : '100% 100%'} } className="flex flex-col items-center bg-card w-170 min-h-10 py-8 rounded">
       <div className="">
         <Image
         src={avatar}
@@ -27,48 +27,48 @@ export default function cfUserInfo({maxRating, maxRank, lastActive, registered, 
       />
       </div>
       <div 
-        className="flex justify-center items-center text-2xl font-bold text-gray-700 text-shadow-2xl text-center px-10 mb-5"
+        className="flex justify-center items-center text-2xl font-bold text-text text-shadow-2xl text-center px-10 mb-5"
         style={{backgroundColor : 'var(--primaryContainer)', color : 'var(--primary)', borderRadius : '50px'}}
       >
         {name}
       </div>
       <div className="flex flex-row justify-start w-full p-2 pl-40">
-        <div className="font-bold text-gray-700 w-40">
+        <div className="font-bold text-text w-40">
           Max Rating :
         </div>
-        <div className="text-gray-600">
+        <div className="text-dim">
           {maxRating}
         </div>
       </div>
       <div className="flex flex-row justify-start w-full p-2 pl-40">
-        <div className="font-bold text-gray-700 w-40">
+        <div className="font-bold text-text w-40">
           Max Rank :
         </div>
-        <div className="text-gray-600">
+        <div className="text-dim">
           {maxRank}
         </div>
       </div>
       <div className="flex flex-row justify-start w-full p-2 pl-40">
-        <div className="font-bold text-gray-700 w-40">
+        <div className="font-bold text-text w-40">
           Last Active :
         </div>
-        <div className="text-gray-600">
+        <div className="text-dim">
           {lastActive}
         </div>
       </div>
       <div className="flex flex-row justify-start w-full p-2 pl-40">
-        <div className="font-bold text-gray-700 w-40">
+        <div className="font-bold text-text w-40">
           Registered :
         </div>
-        <div className="text-gray-600">
+        <div className="text-dim">
           {registered}
         </div>
       </div>
       <div className="flex flex-row justify-start w-full p-2 pl-40">
-        <div className="font-bold text-gray-700 w-40">
+        <div className="font-bold text-text w-40">
           Contribution :
         </div>
-        <div className="text-gray-600">
+        <div className="text-dim">
           {contribution}
         </div>
       </div>

@@ -1,7 +1,7 @@
 'use client'
 import axios from 'axios';
 import { useState } from 'react';
-import { Card, Button } from '@mui/material';
+import {Button } from '@mui/material';
 import Link from 'next/link';
 import { contestType, teamType, userTableEntryType } from '@/app/lib/types';
 import TeamCard from '@/app/ui/cards/TeamCard';
@@ -9,6 +9,7 @@ import AddIcon from '@mui/icons-material/Add';
 import AccessProvider from '@/app/lib/AccessProvider';
 import UserTable from '@/app/ui/tables/UserTable';
 import Image from 'next/image';
+import Card from '@/app/ui/cards/Card';
 export default function Contest({contest, users, teams}:{contest: contestType|null, users: userTableEntryType[], teams: teamType[]}) {
   if (!contest) {
     return <div>Contest not found</div>
@@ -16,10 +17,10 @@ export default function Contest({contest, users, teams}:{contest: contestType|nu
 
   return (
     <div>
-    <Card className="flex flex-col gap-4 mt-20 p-4">
+    <Card className="flex flex-col gap-4 mt-20 p-4 bg-card">
       <div className="flex flex-col">
          <div className='flex flex-row'>
-          <div className="text-3xl font-bold text-left grow">{contest.name}</div>
+          <div className="text-3xl font-bold text-left grow text-text">{contest.name}</div>
           <div className="flex justify-end">
             <AccessProvider permittedUsers={['admin', 'mentor']}>
               <Link href={`/contests/${contest.id}/createteams`} className="">
@@ -39,11 +40,11 @@ export default function Contest({contest, users, teams}:{contest: contestType|nu
           </div>
          </div>
         <div className="flex flex-row flex-wrap gap-4">
-          <p className="text-lg text-gray-600">Venue : {contest.venue}</p>
-          <p className="text-lg text-gray-600">
+          <p className="text-lg text-dim">Venue : {contest.venue}</p>
+          <p className="text-lg text-dim">
             Date: {new Date(contest.date).toLocaleDateString()}
           </p>
-          <p className="text-lg text-gray-600">
+          <p className="text-lg text-dim">
             Type: {contest.type}
           </p>
           
@@ -51,7 +52,7 @@ export default function Contest({contest, users, teams}:{contest: contestType|nu
        
       </div>
       <div className="flex flex-row gap-20">
-        <p className="text-lg text-gray-600 text-left ">{contest.description}</p>
+        <p className="text-lg text-dim text-left ">{contest.description}</p>
         {contest.poster && <Image src={contest.poster} alt="poster" width={300} height={300}></Image>}
       </div>
       <div className="flex flex-row justify-between">

@@ -38,7 +38,7 @@ export const options = {
 export default function RatingLineChart({lineData} : {lineData : ratingChangeType}){
   
   return (
-    <Card className="bg-white w-full flex flex-col justify-center items-center max-h-700 p-8">
+    <Card className="bg-card w-full flex flex-col justify-center items-center max-h-700 p-8">
       <p 
       className='px-5 m-4 text-lg'
       style={{backgroundColor : 'var(--primaryContainer)', color : 'var(--primary)', borderRadius : '50px', fontWeight : 'bold'}}

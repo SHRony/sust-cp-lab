@@ -16,28 +16,16 @@ export default function ContestList({contestsParams, registeredContestsParams, c
 
   const removeContest = (id: number) => {
       const updatedContests = [...contests];
-      axios.post(`/api/contests/delete`, {id : id}).then(res => {
-        if(res.status == 200){
-          const index = updatedContests.findIndex((contest) => contest.id === id);
-          updatedContests.splice(index, 1);
-          setContests(updatedContests);
-        }
-      })
+      const index = updatedContests.findIndex((contest) => contest.id === id);
+      updatedContests.splice(index, 1);
+      setContests(updatedContests);
   }
-  useEffect(() => {
-    setRegisteredContests(registeredContestsParams);
-  },[registeredContestsParams]);
+  // useEffect(() => {
+  //   setRegisteredContests(registeredContestsParams);
+  // },[registeredContestsParams]);
 
   const register = async (id:number) => {
-    try {
-      const res = await axios.post(`/api/contests/${id}/registration`, { username: auth?.user?.userName || '' });
-      if(res.status == 200){
         setRegisteredContests([...registeredContests, id]);
-      }
-    } catch (error) {
-      console.error('Error registering for contest:', error);
-      alert('Error registering for contest. Please try again.');
-    }
   };
   return (
     <div className="grid w-full gap-10 laptop:gap-2 desktop:gap-8 justify-center tablet:justify-between pt-20 items-stretch" style={{gridTemplateColumns: 'repeat(auto-fill, 21rem)'}}> 

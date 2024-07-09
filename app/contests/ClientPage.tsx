@@ -12,39 +12,7 @@ import { authContext } from "../lib/AuthProvider";
 import { AnimatePresence, motion } from "framer-motion";
 import ContestList from "../ui/grids/ContestList";
 
-export default function Contests({contestsProps}: {contestsProps: contestType[]}) {
-  const [contests, setContests] = useState<contestType[]>(contestsProps);
-  const [registeredContests, setRegisteredContests] = useState<number[]>([]);
-  const auth = useContext(authContext);
-  useEffect(() => {
-    const username = auth?.user?.userName || '';
-    if(username){
-      axios.get(`/api/profile/${username}/contests`)
-        .then((res) => {
-          if (res.status == 200) {
-            setRegisteredContests(res.data.contests);
-            console.log(res.data.contests);
-          } else {
-            console.log(res.data.error);
-            alert('please try again');
-          }
-        })
-        .catch((error) => {
-          console.error("Error fetching registered contests:", error);
-          alert('please try again');
-        });
-    }
-  }, [auth]);
-  const removeContest = (id: number) => {
-      const updatedContests = [...contests];
-      axios.post(`/api/contests/delete`, {id : id}).then(res => {
-        if(res.status == 200){
-          const index = updatedContests.findIndex((contest) => contest.id === id);
-          updatedContests.splice(index, 1);
-          setContests(updatedContests);
-        }
-      })
-  }
+export default function Contests({contestsProps, registeredContestsProps}: {contestsProps: contestType[], registeredContestsProps: number[]}) {
   return (
     <div className="flex flex-col items-left w-full">
       <AccessProvider permittedUsers={['admin', 'mentor']}>
@@ -63,7 +31,7 @@ export default function Contests({contestsProps}: {contestsProps: contestType[]}
         ))}
         </AnimatePresence>
       </div> */}
-      <ContestList contestsParams={contests} registeredContestsParams={registeredContests} closable = {true}></ContestList>
+      <ContestList contestsParams={contestsProps} registeredContestsParams={registeredContestsProps} closable = {true}></ContestList>
     </div>
   );
 }
