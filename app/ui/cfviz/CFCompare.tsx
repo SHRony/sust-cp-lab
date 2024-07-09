@@ -121,7 +121,7 @@ export default function CFCompare ({user1Name, user2Name} : {user1Name : string,
   }
 
   return (
-    <div className="flex flex-col gap-20 bg-white">
+    <div className="flex flex-col gap-20 bg-card">
       {user1 && user2 && (
         <>
           <div className="flex flex-row flex-wrap w-full justify-center items-stretch gap-20">

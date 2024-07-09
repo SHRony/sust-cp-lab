@@ -8,6 +8,7 @@ import TeamCard from '@/app/ui/cards/TeamCard';
 import AddIcon from '@mui/icons-material/Add';
 import AccessProvider from '@/app/lib/AccessProvider';
 import UserTable from '@/app/ui/tables/UserTable';
+import Image from 'next/image';
 export default function Contest({contest, users, teams}:{contest: contestType|null, users: userTableEntryType[], teams: teamType[]}) {
   if (!contest) {
     return <div>Contest not found</div>
@@ -49,7 +50,10 @@ export default function Contest({contest, users, teams}:{contest: contestType|nu
         </div>
        
       </div>
-      <p className="text-lg text-gray-600 text-left">{contest.description}</p>
+      <div className="flex flex-row gap-20">
+        <p className="text-lg text-gray-600 text-left ">{contest.description}</p>
+        {contest.poster && <Image src={contest.poster} alt="poster" width={300} height={300}></Image>}
+      </div>
       <div className="flex flex-row justify-between">
         <Link href={`/contests/${contest.id}/createteams`} className="">
         </Link>

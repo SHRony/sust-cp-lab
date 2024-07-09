@@ -6,7 +6,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import Link from 'next/link';
 import { authContext } from '@/app/lib/AuthProvider';
 
-export default function ContestList({contestsParams, registeredContestsParams}: {contestsParams: contestType[], registeredContestsParams: number[]}) {
+export default function ContestList({contestsParams, registeredContestsParams, closable = true}: {contestsParams: contestType[], registeredContestsParams: number[], closable: boolean}) {
   const [contests, setContests] = useState(contestsParams);
   const [registeredContests, setRegisteredContests] = useState(registeredContestsParams);
   
@@ -48,7 +48,7 @@ export default function ContestList({contestsParams, registeredContestsParams}: 
             <AnimatePresence>
             {hoveredContest === contest.id && (
               <motion.span
-                className={`absolute inset-0 h-full w-full bg-neutral-200 dark:bg-slate-800/[0.8] block rounded-2xl  z-0  ${shadow ? "visible" : "invisible"}`}
+                className={`absolute inset-0 h-full w-full bg-hover block rounded-2xl  z-0  ${shadow ? "visible" : "invisible"}`}
                 layoutId="hoverBackground"
                 initial={{ opacity: 0 }}
                 animate={{
@@ -62,7 +62,7 @@ export default function ContestList({contestsParams, registeredContestsParams}: 
               />
             )}
           </AnimatePresence>
-              <ContestCard contest={contest} onClose={removeContest} registered={registeredContests.some(id => id === contest.id)} onRegister={()=>{register(contest.id)}}  />
+              <ContestCard contest={contest} onClose={removeContest} registered={registeredContests.some(id => id === contest.id)} onRegister={()=>{register(contest.id)}} closable={closable}  />
           </motion.div>
         ))}
       </AnimatePresence>

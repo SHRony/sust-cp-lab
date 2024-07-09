@@ -164,6 +164,7 @@ export default function CreateTeams({usersParams, teamsParams, id}: {usersParams
               pagination: { paginationModel: { pageSize: 10 } },
             }}
             pageSizeOptions={[10, 20, 50]}
+            className="text-text"
           />
         </div>
         <Modal

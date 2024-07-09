@@ -58,6 +58,7 @@ export default function UserTable({users}: UserTableProps) {
               pagination: { paginationModel: { pageSize: 10 } },
             }}
             pageSizeOptions={[10, 20, 50]}
+            className="text-text"
           />
         ) : (
           <> </>
