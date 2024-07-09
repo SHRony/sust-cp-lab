@@ -76,9 +76,9 @@ body {
   background: linear-gradient(
       to bottom,
       transparent,
-      rgb(var(--background-end))
+      var(--background-end)
     )
-    rgb(var(--background-start));
+    var(--background-start);
   /* background-image: url('/bgPattern.svg'); */
   /* background-repeat: repeat; */
   min-height: 100vh;
@@ -100,14 +100,23 @@ body {
 input{
   padding: 5px !important;
 }
+.color-empty{
+  fill: transparent !important;
+  border: 1px solid var(--shade) !important;
+
+}
 
 
-
-
-
-
-
-
+.css-yrdy0g-MuiDataGrid-columnHeaderRow{
+  background-color: var(--card-bg)!important;
+  color : var(--text) !important;
+}
+.MuiInput-input{
+  color : var(--text) !important;
+}
+.MuiFormLabel-root{
+  color : var(--text) !important;
+}
 
 
 

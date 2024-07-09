@@ -6,6 +6,7 @@ import profileIcon from '@/public/profile.svg'
 import Image from "next/image";
 import { authContext } from "@/app/lib/AuthProvider";
 import AccessProvider from "@/app/lib/AccessProvider";
+import Brightness4Icon from '@mui/icons-material/Brightness4';
 export default function NavBar(){
   const auth = useContext(authContext);
   const handleLogout = async () => {
@@ -18,6 +19,9 @@ export default function NavBar(){
       </NavButton>
       <NavButton url="/registration" type="text">
         Registration
+      </NavButton>
+      <NavButton url="" type="icon" onClick={() => {document.body.classList.toggle('theme-dark'), document.body.classList.toggle('theme-light')}}>
+        <Brightness4Icon sx={{color: 'white'}} />
       </NavButton>
     </>
   }
@@ -41,6 +45,9 @@ export default function NavBar(){
           alt="Logout"
           
         />
+      </NavButton>
+      <NavButton url="" type="icon" onClick={() => {document.body.classList.toggle('theme-dark'), document.body.classList.toggle('theme-light')}}>
+        <Brightness4Icon sx={{color: 'white'}} />
       </NavButton>
     </>
   }

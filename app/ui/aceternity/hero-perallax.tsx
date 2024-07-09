@@ -17,6 +17,7 @@ import ContestCard from "../cards/ContestCard";
 export const HeroParallax = ({
   products,
   contests,
+  registeredContests,
 }: {
   products: {
     title: string;
@@ -24,6 +25,7 @@ export const HeroParallax = ({
     thumbnail: string;
   }[];
   contests: contestType[];
+  registeredContests: number[];
 }) => {
   const firstRow = products.slice(0, 5);
   const secondRow = products.slice(5, 10);
@@ -102,7 +104,7 @@ export const HeroParallax = ({
                     contest={contest}
                     onClose={() => {}}
                     onRegister={() => {}}
-                    registered = {false}
+                    registered = {registeredContests.some((id) => id === contest.id)}
                     closable = {false}
                   />
                 </div>

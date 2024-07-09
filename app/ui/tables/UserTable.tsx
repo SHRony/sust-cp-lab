@@ -59,6 +59,7 @@ export default function UserTable({users}: UserTableProps) {
             }}
             pageSizeOptions={[10, 20, 50]}
             className="text-text"
+            
           />
         ) : (
           <> </>

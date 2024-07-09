@@ -25,7 +25,7 @@ export default function ScatterChart({user} : {user : cfUserType}){
           width : '100%'
         }
       }
-      className="flex flex-col justify-center items-center bg-white p-8 rounded max-h-600">
+      className="flex flex-col justify-center items-center bg-card p-8 rounded max-h-600">
         <p 
         className='px-5 m-4 text-lg'
         style={{backgroundColor : 'var(--primaryContainer)', color : 'var(--primary)', borderRadius : '50px', fontWeight : 'bold'}}

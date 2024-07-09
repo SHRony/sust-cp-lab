@@ -70,7 +70,7 @@ export default function HandleInput({changeUser}:Readonly<{changeUser: (newUser:
   }
   return (
     <Card style={null} className="
-    flex flex-col justify-between items-center bg-white w-170 rounded pb-32">
+    flex flex-col justify-between items-center bg-card w-170 rounded pb-32">
       <Image
         src={cfLogo}
         width={80}
