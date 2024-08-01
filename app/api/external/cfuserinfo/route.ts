@@ -1,7 +1,7 @@
 import { NextResponse, NextRequest } from "next/server";
 import { cfUserType, ratingChangeType } from "@/app/lib/types";
 import { borderColors, backgroundColors } from "@/app/lib/colors";
-import { getCFInfo } from "@/app/api/queries";
+import { getCFInfo } from "@/app/api/queries/cf_queries";
 
 
 

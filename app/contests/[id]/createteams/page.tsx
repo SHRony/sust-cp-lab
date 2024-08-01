@@ -12,7 +12,7 @@ import Link from "next/link";
 import CFCompare from "@/app/ui/cfviz/CFCompare";
 import { teamType, userType } from "@/app/lib/types";
 import CreateTeams from "./ClientPage";
-import { getContestUsers, getContestTeams } from "@/app/api/queries";
+import { getContestUsers, getContestTeams } from "@/app/api/queries/contest_queries";
 export default async function Page({params:{id}}:{params:{id:string}}) {
   const users = await getContestUsers(id);
   const teams = await getContestTeams(id);

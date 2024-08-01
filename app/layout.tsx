@@ -4,7 +4,7 @@ import {inter} from '@/app/ui/fonts';
 import React from "react";
 import NavBar from '@/app/ui/nav/NavBar';
 import AuthProvider from "./lib/AuthProvider";
-import { isLoggedIn } from '@/app/api/queries';
+import { isLoggedIn } from '@/app/api/queries/user_queries';
 import { userStateType } from "@/app/lib/types";
 
 export const metadata: Metadata = {

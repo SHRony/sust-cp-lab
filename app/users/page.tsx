@@ -4,8 +4,8 @@ import { DataGrid, GridCellParams, GridColDef, GridPaginationModel } from '@mui/
 import Image from 'next/image'
 
 import Link from 'next/link'
-import { getUsersList } from '../api/queries';
-import UserTable from '../ui/tables/UserTable';
+import { getUsersList } from '@/app/api/queries/user_queries';
+import UserTable from '@/app/ui/tables/UserTable';
 
 export default async function Page() {
 
