@@ -1,6 +1,6 @@
 import Jwt, { JwtPayload } from 'jsonwebtoken';
 import { NextResponse, NextRequest } from "next/server";
-import { isLoggedIn } from '../queries';
+import { isLoggedIn } from '@/app/api/queries/user_queries';
 export const dynamic = 'force-dynamic';
 export async function POST(request:NextRequest) {
   try{

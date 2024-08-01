@@ -1,4 +1,4 @@
-import { getContests, getRegisteredContestsList } from "@/app/api/queries";
+import { getContests, getRegisteredContestsList } from "@/app/api/queries/contest_queries";
 import { contestType } from "@/app/lib/types";
 import Contests from "@/app/contests/ClientPage";
 export default async function Page() {

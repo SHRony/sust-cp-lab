@@ -9,7 +9,7 @@ import { GridColDef, GridCellParams, DataGrid } from '@mui/x-data-grid';
 import TeamCard from '@/app/ui/cards/TeamCard';
 import AddIcon from '@mui/icons-material/Add';
 import AccessProvider from '@/app/lib/AccessProvider';
-import { getContest, getContestTeams, getContestUsers } from '@/app/api/queries';
+import { getContest, getContestTeams, getContestUsers } from '@/app/api/queries/contest_queries';
 import Contest from './ClientPage';
 export default async function Page({params:{id}}:{params:{id:string}}) {
   const contest = await getContest(id);
