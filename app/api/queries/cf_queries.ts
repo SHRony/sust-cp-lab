@@ -1,6 +1,6 @@
-import {cfUserType, ratingChangeType, userTableEntryType, userType} from '@/app/lib/types'
+import {cfUserType, ratingChangeType} from '@/app/lib/types'
 import { borderColors, backgroundColors } from "@/app/lib/colors";
-import { prisma } from '@/app/api/dbclient';
+import prisma from '@/app/api/dbclient';
 export const dynamic = 'force-dynamic';
 
 

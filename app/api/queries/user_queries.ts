@@ -1,4 +1,4 @@
-import client, { prisma } from "@/app/api/dbclient";
+import prisma from "@/app/api/dbclient";
 import { userTableEntryType, userType } from "@/app/lib/types";
 import Jwt from 'jsonwebtoken';
 import { cookies } from "next/headers";

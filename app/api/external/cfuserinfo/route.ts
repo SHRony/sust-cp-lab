@@ -1,5 +1,5 @@
 import { NextResponse, NextRequest } from "next/server";
-import { cfUserType, ratingChangeType } from "@/app/lib/types";
+import { cfUserType } from "@/app/lib/types";
 import { getCFInfo } from "@/app/api/queries/cf_queries";
 
 

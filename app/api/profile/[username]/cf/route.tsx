@@ -1,6 +1,4 @@
-import client from "@/app/api/dbclient";
-import dbTables from "@/app/lib/dbTables";
-import { cfUserType } from "@/app/lib/types";
+import prisma from "@/app/api/dbclient";
 import { NextRequest, NextResponse } from "next/server";
 import { getCFInfo } from "@/app/api/queries/cf_queries";
 export const dynamic = 'force-dynamic';
@@ -9,11 +7,19 @@ async function addCFCache(username:string, cfUser:any) {
   cfUser.calenderSubmissions = [], cfUser.diffData = [], cfUser.catData = [], cfUser.ratingChanges = {labels: [], datasets: []}, cfUser.acTime = [];
     if(!username || !cfUser) return NextResponse.json({ error: "Invalid user data" }, { status: 400 });
     let info = JSON.stringify(cfUser);
-    const response = await client.query(`
-      INSERT INTO ${dbTables.cf_cache} (username, info) VALUES($1, $2)
-      ON CONFLICT (username) DO UPDATE SET info = EXCLUDED.info
-    `, [username, info]);
-    if(response.rowCount == 0) return NextResponse.json({ error: "User not found" }, { status: 404 });
+    const response = await prisma.sust_cp_lab_cf_cache.upsert({
+      where: {
+        username: username
+      },
+      create: {
+        username: username,
+        info: info
+      },
+      update: {
+        username: username,
+        info: info
+      }
+    });
     return NextResponse.json({ message: "Codeforces handle added successfully" });  
   }
 
@@ -24,8 +30,8 @@ export async function GET(request:NextRequest) {
     tmp.pop();
     const username = tmp.pop();
     if(!username || username == '') return NextResponse.json({ error: 'Missing parameters' }, { status: 500 });
-    const response = await client.query(`SELECT handle FROM ${dbTables.cf_handles} WHERE username = $1`, [username]);
-    const cfHandles = response.rows.map((row) => row.handle);
+    const response = await prisma.sust_cp_lab_cf_handles.findMany({ where: { username: username } });
+    const cfHandles = response.map((row) => row.handle);
     let user = await getCFInfo(cfHandles);
     addCFCache(username, user);
     return NextResponse.json({user: user});
