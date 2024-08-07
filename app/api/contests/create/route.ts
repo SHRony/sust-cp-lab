@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { contestType } from "@/app/lib/types";
 import { v2 as cloudinary } from "cloudinary";
-import { prisma } from "@/app/api/dbclient";
+import prisma from "@/app/api/dbclient";
 cloudinary.config({
   cloud_name: process.env.CLOUD_NAME!,
   api_key: process.env.CLOUD_API_KEY!,

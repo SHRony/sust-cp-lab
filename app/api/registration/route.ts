@@ -2,7 +2,7 @@ import { NextResponse, NextRequest } from "next/server";
 import {userType} from '@/app/lib/types'
 import { PrismaClient } from "@prisma/client";
 import { ITXClientDenyList } from "@prisma/client/runtime/library";
-import { prisma } from "../dbclient";
+import prisma from "../dbclient";
 import {hashPassword} from "@/app/api/queries/utils";
 import { getUserbyEmail, getUserbyName } from "../queries/user_queries";
 
@@ -23,7 +23,7 @@ export async function POST(request:NextRequest) {
 }
 
 
-export async function performRegistration(user: userType) {
+async function performRegistration(user: userType) {
   try{
     await tryToPerformRegistration(user);
     return {success: true};
