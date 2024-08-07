@@ -1,15 +1,6 @@
 // dbClient.ts
-import { Client } from 'pg';
 import dotenv from 'dotenv';
-
+import { PrismaClient } from '@prisma/client';
 dotenv.config();
-
-const client = new Client({
-  connectionString: process.env.POSTGRES_URL,
-});
-
-client.connect()
-  .then(() => console.log("Connected to the database"))
-  .catch(err => console.error("Database connection error:", err));
-
-export default client;
+export const prisma = new PrismaClient();
+// export default client;

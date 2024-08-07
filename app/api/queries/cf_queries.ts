@@ -1,10 +1,16 @@
 import {cfUserType, ratingChangeType, userTableEntryType, userType} from '@/app/lib/types'
 import { borderColors, backgroundColors } from "@/app/lib/colors";
+import { prisma } from '@/app/api/dbclient';
 export const dynamic = 'force-dynamic';
 
 
+export async function addCFHandle(cfHandle : string, userName : string){
+  await prisma.sust_cp_lab_cf_handles.create({ data: { handle: cfHandle, username: userName } });
+}
 
-
+export async function removeCFHandle(cfHandle : string, userName : string){
+  await prisma.sust_cp_lab_cf_handles.deleteMany({ where: { handle: cfHandle, username: userName } });
+}
 
 
 

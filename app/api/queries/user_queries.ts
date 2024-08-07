@@ -1,44 +1,72 @@
-import dbTables from "@/app/lib/dbTables";
-import client from "@/app/api/dbclient";
+import client, { prisma } from "@/app/api/dbclient";
 import { userTableEntryType, userType } from "@/app/lib/types";
-import Jwt, { JwtPayload } from 'jsonwebtoken';
+import Jwt from 'jsonwebtoken';
 import { cookies } from "next/headers";
 
+
+export const updateVjudgeHandle = async (vjudgeHandle : string, userName : string) => {
+  await prisma.sust_cp_lab_student_info.update({
+    where: {
+      username: userName
+    },
+    data: {
+      vjudge_handle: vjudgeHandle
+    }
+  });
+}
 export const getUserInfo = async (username: string) => {
-    const userResult = await client.query(`SELECT * FROM ${dbTables.users} WHERE username = $1`, [username]);
-    if(!userResult.rows[0]) return null;
-    const studentResult = await client.query(`SELECT * FROM ${dbTables.student_info} WHERE username = $1`, [username]);
-    if(!studentResult.rows[0]) return null;
-    const cfResult = await client.query(`SELECT handle FROM ${dbTables.cf_handles} WHERE username = $1`, [username]);
-    const cfHandles = cfResult.rows.map(row => row.handle);
+    const userResult = await prisma.sust_cp_lab_users.findUnique({
+        where: {
+            username: username
+        }
+    });
+    if(userResult == null) return null;
+    const studentResult = await prisma.sust_cp_lab_student_info.findUnique({
+        where: {
+            username: username
+        }
+    });
+    if(!studentResult) return null;
+    const cfHandles = await getCFHandles(username);
     const user:userType = {
-      userName: userResult.rows[0].username,
-      fullName: studentResult.rows[0].full_name,
-      registrationNumber: studentResult.rows[0].registration_no,
-      email: userResult.rows[0].email,
-      vjudgeHandle: studentResult.rows[0].vjudge_handle,
+      userName: userResult.username,
+      fullName: studentResult.full_name,
+      registrationNumber: studentResult.registration_no,
+      email: userResult.email,
+      vjudgeHandle: studentResult.vjudge_handle,
       cfHandles: cfHandles,
       password: '',
-      userType: userResult.rows[0].user_type,
-      phone: studentResult.rows[0].phone,
+      userType: userResult.user_type,
+      phone: '',
     }
     return user;
 }
+async function getCFHandles(username: string) {
+  const cfResult = await prisma.sust_cp_lab_cf_handles.findMany({
+    where: {
+      username: username
+    }
+  });
+  return cfResult.map(row => row.handle);
+} 
 
-export const getUsersList = async () => {
+export const getUsersListWithBsicCFInfo = async () => {
     try{
-      const response = await client.query(`
-        SELECT username, info FROM ${dbTables.cf_cache}
-      `);
-      const users = response.rows.map((row) => row);
+      const response = await prisma.sust_cp_lab_cf_cache.findMany({});
+      const users = response.map((row) => row);
        const ret:userTableEntryType[] = users.map((row) => {
+          const info = row.info as {
+            maxRating: number;
+            maxRank: string;
+            avatar: string;
+            contribution: number;};
           return {
             userName: row.username,
-            maxRating: row.info.maxRating,
-            maxRank: row.info.maxRank,
+            maxRating: info.maxRating,
+            maxRank: info.maxRank,
             id: row.username,
-            avatar: row.info.avatar,
-            contribution: row.info.contribution
+            avatar: info.avatar,
+            contribution: info.contribution
           }
         });
       return ret;
@@ -51,15 +79,12 @@ export const getUsersList = async () => {
     try{
       const token = await cookies().get('token')?.value;
       if(token == undefined) return null;
-      const decoaded = await Jwt.verify(token!, process.env.JWT_KEY!);
-      if(!decoaded) return null;
-      let user = decoaded as JwtPayload;
-      const response = await client.query(`
-        SELECT user_type FROM ${dbTables.users} WHERE username = $1
-      `, [user.username]);
+      const user = await Jwt.verify(token!, process.env.JWT_KEY!) as {username: string};;
+      if(!user) return null;
+      const response = await getUserbyName(user.username);
       let ret = {
         userName:user.username,
-        userType: response.rows[0].user_type
+        userType: response?.user_type||null
       }
       return ret;
     }catch{
@@ -67,3 +92,20 @@ export const getUsersList = async () => {
     }
   }
   
+  
+  export async function getUserbyName(userName: string) {
+    const result = await prisma.sust_cp_lab_users.findUnique({
+      where: {
+        username: userName,
+      },
+    });
+    return result;
+  }
+  export async function getUserbyEmail(email: string) {
+    const result = await prisma.sust_cp_lab_users.findUnique({
+      where: {
+        email: email,
+      },
+    });
+    return result;
+  }

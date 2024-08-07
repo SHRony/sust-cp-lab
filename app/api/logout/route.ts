@@ -5,9 +5,7 @@ export async function POST(request:NextRequest) {
   try{
     cookies().delete('token');
     return NextResponse.json({message: "logout successful"});
-
   }catch{
-    console.error("Error createing user");
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

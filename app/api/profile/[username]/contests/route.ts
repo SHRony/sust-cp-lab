@@ -1,4 +1,4 @@
-import { getRegisteredContests } from "@/app/api/queries";
+import { getRegisteredContests } from "@/app/api/queries/contest_queries";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request:NextRequest) {

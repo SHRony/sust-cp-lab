@@ -1,27 +1,50 @@
-import dbclient from "@/app/api/dbclient";
+import { prisma } from "@/app/api/dbclient";
 import dbTables from "@/app/lib/dbTables";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
-  // const dbg = await request.json();
   try {
-    const tmp = request.nextUrl.pathname.split('/');
-    tmp.pop(), tmp.pop();
-    const id = tmp.pop();
-    if(!id || id == '') return NextResponse.json({ error: 'Missing parameters' }, { status: 500 });
+    const contestId = getContestId(request);
+    if(!contestId || contestId == -1) return NextResponse.json({ error: 'Missing parameters' }, { status: 500 });
     const {name, members} = await request.json();
-    const response = await dbclient.query(`
-      INSERT INTO ${dbTables.teams} (name, contest) VALUES ($1, $2) RETURNING id;
-    `, [name, id]);
-    const team_id = response.rows[0].id;
-    members.forEach(async (user:string) => {
-      await dbclient.query(`
-        INSERT INTO ${dbTables.team_members} (team_id, user_name) VALUES ($1, $2);
-      `, [team_id, user]);
-    }); 
-    return NextResponse.json({ id: team_id });
+    const teamId = await addTeamAndGetId(contestId, name, members);
+    return NextResponse.json({ id: teamId });
   } catch (error) {
     console.error('Error adding team:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
+}
+
+function getContestId(request:NextRequest){
+  let tmp = request.nextUrl.pathname.split('/');
+  tmp.pop();
+  tmp.pop();
+  let id = -1;
+  try{
+    id = Number(tmp.pop());
+  }catch{
+    id = -1;
+  }
+  return id;
+}
+
+async function addTeamAndGetId(contestId:number, name:string, members:string[]) {
+  let teamId = -1;
+  await prisma.$transaction(async (prisma) => {
+    const team = await prisma.sust_cp_lab_teams.create({
+      data: {
+        name: name,
+        contest: contestId
+      }
+    });
+
+    teamId = team.id;
+    await prisma.sust_cp_lab_team_members.createMany({
+      data: members.map((member) => ({
+        team_id: team.id,
+        user_name: member
+      }))
+    })
+  });
+  return teamId;
 }

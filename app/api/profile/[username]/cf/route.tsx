@@ -2,7 +2,7 @@ import client from "@/app/api/dbclient";
 import dbTables from "@/app/lib/dbTables";
 import { cfUserType } from "@/app/lib/types";
 import { NextRequest, NextResponse } from "next/server";
-import { getCFInfo } from "@/app/api/queries";
+import { getCFInfo } from "@/app/api/queries/cf_queries";
 export const dynamic = 'force-dynamic';
 async function addCFCache(username:string, cfUser:any) {
   console.log(username);
@@ -25,11 +25,9 @@ export async function GET(request:NextRequest) {
     const username = tmp.pop();
     if(!username || username == '') return NextResponse.json({ error: 'Missing parameters' }, { status: 500 });
     const response = await client.query(`SELECT handle FROM ${dbTables.cf_handles} WHERE username = $1`, [username]);
-    // console.log(name);
-    // if(response.rowCount == 0) return NextResponse.json({ error: "User not found" }, { status: 404 });
     const cfHandles = response.rows.map((row) => row.handle);
     let user = await getCFInfo(cfHandles);
-    // addCFCache(username, user);
+    addCFCache(username, user);
     return NextResponse.json({user: user});
   }catch(e){
     console.log(e);

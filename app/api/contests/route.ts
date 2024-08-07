@@ -1,14 +1,11 @@
 import { NextResponse, NextRequest } from 'next/server';
-import dbclient from '@/app/api/dbclient';
-import dbTables from '@/app/lib/dbTables';
-import { getContests } from '@/app/api/queries';
+import { getContests } from '@/app/api/queries/contest_queries';
 export const dynamic = 'force-dynamic';
 
 export async function GET(request: NextRequest) {
   try {
-    return NextResponse.json(getContests);
+    return NextResponse.json({contests:await getContests()});
   } catch (error) {
-    console.error('Error querying database:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

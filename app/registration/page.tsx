@@ -62,7 +62,7 @@ export default function Register() {
       });
       if (res.status == 200) {
         console.log(res.data);
-        window.location.href = '/login';
+        // window.location.href = '/login';
       } else {
         console.log(res.data.error);
         alert('please try again');
