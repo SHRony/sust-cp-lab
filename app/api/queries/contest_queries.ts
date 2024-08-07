@@ -1,19 +1,26 @@
-import dbTables from "@/app/lib/dbTables";
 import { userTableEntryType } from "@/app/lib/types";
-import client from "@/app/api/dbclient";
+import { prisma } from "@/app/api/dbclient";
 import { isLoggedIn } from "./user_queries";
 
 export const getContests = async () => {
-    const response = await client.query(
-        `SELECT * FROM ${dbTables.contests} ORDER BY date DESC`
-      );
-      const contests = response.rows.map((row) => row);
-      return contests;
+    const contests = await prisma.sust_cp_lab_contests.findMany({
+        orderBy: {
+            date: 'desc'
+        }
+    });
+    return contests;
   }
   export const getRegisteredContests = async (username: string) => {
     try{
-      const response = await client.query(`SELECT contest_id FROM ${dbTables.contest_registrations} WHERE user_name = $1`, [username]);
-      const contests = response.rows.map((row) => row.contest_id);
+      const response = await prisma.sust_cp_lab_contestregistrations.findMany({
+        where: {
+          user_name: username
+        },
+        select: {
+          contest_id: true
+        }
+      })
+      const contests = response.map((row) => row.contest_id);
       return contests;
     }catch{
       return [];
@@ -26,49 +33,77 @@ export const getContests = async () => {
   }
   
   
-  export const getContest = async (contestId: string) => {
-    const response = await client.query(
-        `SELECT * FROM ${dbTables.contests} WHERE id = $1`, [contestId]
-      );
-      const contest = response.rows[0];
-      return contest;
+  export const getContestInfo = async (contestId: number) => {
+    const contest = prisma.sust_cp_lab_contests.findUnique({
+      where: {
+        id: contestId
+      }
+    });
+    return contest;
   }
   
   
   
-  export const getContestUsers = async (id: string) => {
-        const registrationResults = await client.query(`SELECT user_name FROM ${dbTables.contest_registrations} WHERE contest_id = $1`, [id]);
-        const registeredUsers = registrationResults.rows.map((row) => row.user_name);
-        const cfResult = await client.query(`SELECT * FROM ${dbTables.cf_cache}`);
-        const users = cfResult.rows.filter((row) => registeredUsers.includes(row.username));
-        const ret:userTableEntryType[] = users.map((row) => {
+  export const getContestUsers = async (contestId: number) => {
+        const contestRegistrationLog = await prisma.sust_cp_lab_contestregistrations.findMany({
+          where: {
+            contest_id: contestId
+          },
+          select: {
+            user_name: true
+          }
+        });
+        const registeredUsers = contestRegistrationLog.map((row) => row.user_name);
+        const cfResult = await prisma.sust_cp_lab_cf_cache.findMany({
+          where: {
+            username: {
+              in: registeredUsers
+            }
+          },
+          select: {
+            username: true,
+            info: true
+          }
+        });
+        const ret:userTableEntryType[] = cfResult.map((row) => {
+          const info = row.info as {
+            maxRating: number;
+            maxRank: string;
+            avatar: string;
+            contribution: number;
+          };
           return {
             userName: row.username,
-            maxRating: row.info.maxRating,
-            maxRank: row.info.maxRank,
+            maxRating: info.maxRating,
+            maxRank: info.maxRank,
             id: row.username,
-            avatar: row.info.avatar,
-            contribution: row.info.contribution
+            avatar: info.avatar,
+            contribution: info.contribution
           }
         });
       return ret;
   }
   
   
-  export const getContestTeams = async (id: string) => {
-    const response = await client.query(`
-        SELECT * FROM ${dbTables.teams} WHERE contest = $1
-      `, [id]);
+  export const getContestTeams = async (contestId: number) => {
+    // console.log(typeof contestId);
+      const registeredTeamIds = await prisma.sust_cp_lab_teams.findMany({
+        where: {
+          contest: contestId
+        }
+      })
       let teams:any = [];
-      for(const row of response.rows){
-        const memberRes = await client.query(`
-            SELECT * FROM ${dbTables.team_members} WHERE team_id = $1
-          `, [row.id]);
+      for(const row of registeredTeamIds){
+        const teamMembers = await prisma.sust_cp_lab_team_members.findMany({
+          where: {
+            team_id: row.id
+          }
+        });
         
         teams.push({
           id: row.id,
           name: row.name,
-          members: memberRes.rows.map((r) => r.user_name),
+          members: teamMembers.map((member) => member.user_name),
         });
       }
       return teams;

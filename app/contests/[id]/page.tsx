@@ -9,12 +9,12 @@ import { GridColDef, GridCellParams, DataGrid } from '@mui/x-data-grid';
 import TeamCard from '@/app/ui/cards/TeamCard';
 import AddIcon from '@mui/icons-material/Add';
 import AccessProvider from '@/app/lib/AccessProvider';
-import { getContest, getContestTeams, getContestUsers } from '@/app/api/queries/contest_queries';
+import { getContestInfo, getContestTeams, getContestUsers } from '@/app/api/queries/contest_queries';
 import Contest from './ClientPage';
 export default async function Page({params:{id}}:{params:{id:string}}) {
-  const contest = await getContest(id);
-  const users = await getContestUsers(id); 
-  const teams = await getContestTeams(id);
+  const contest = await getContestInfo(Number(id));
+  const users = await getContestUsers(Number(id)); 
+  const teams = await getContestTeams(Number(id));
   if (!contest) {
     return <div>Contest not found</div>
   }

@@ -1,3 +1,5 @@
+import { user_type } from "@prisma/client";
+
 export type ratingChangeType = {
   labels : string[];
   datasets : {
@@ -30,7 +32,7 @@ export type userType = {
   vjudgeHandle: string | null;
   cfHandles: string[] | null;
   password: string;
-  userType: string;
+  userType: user_type | null;
 };
 export type AuthContextType = {
   signedIn: boolean;
@@ -69,3 +71,5 @@ export type userTableEntryType = {
   avatar: string;
   contribution: string | number;
 };
+
+

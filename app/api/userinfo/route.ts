@@ -1,5 +1,5 @@
 import { NextResponse, NextRequest } from "next/server";
-import { getUserInfo } from "@/app/api/queries";
+import { getUserInfo } from "@/app/api/queries/user_queries";
 export const dynamic = 'force-dynamic';
 
 export async function GET(request:NextRequest) {

@@ -65,14 +65,14 @@ export async function middleware(request: NextRequest) {
     let url = request.nextUrl.clone()
     url.pathname = '/api/isloggedin';
     console.log(url.toString());
-    const res = await axios.post(url.toString(), null, {
+    const isLoggedInApiRes = await axios.post(url.toString(), null, {
       headers: {
         'Cookie': `token=${token}`
       },
       withCredentials: true
     });
-    console.log(res.data);
-    if(res.data.user.userType != 'admin' && res.data.user.userType != 'mentor') return NextResponse.redirect(new URL('/', request.url));
+    const currentUser = isLoggedInApiRes.data.user;
+    if(!currentUser || (currentUser.userType != 'admin' && currentUser.userType != 'mentor')) return NextResponse.redirect(new URL('/', request.url));
     return NextResponse.next();
   }
   return NextResponse.next();

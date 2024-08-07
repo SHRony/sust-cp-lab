@@ -14,8 +14,8 @@ import { teamType, userType } from "@/app/lib/types";
 import CreateTeams from "./ClientPage";
 import { getContestUsers, getContestTeams } from "@/app/api/queries/contest_queries";
 export default async function Page({params:{id}}:{params:{id:string}}) {
-  const users = await getContestUsers(id);
-  const teams = await getContestTeams(id);
+  const users = await getContestUsers(Number(id));
+  const teams = await getContestTeams(Number(id));
   
 // have to find a better layout for the buttons
 

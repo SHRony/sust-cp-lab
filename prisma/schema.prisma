@@ -1,0 +1,72 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("POSTGRES_URL")
+}
+
+model sust_cp_lab_cf_cache {
+  username String @id @db.VarChar(255)
+  info     Json?  @db.Json
+}
+
+model sust_cp_lab_cf_handles {
+  username String @db.VarChar(255)
+  handle   String @db.VarChar(255)
+
+  @@id([username, handle])
+}
+
+model sust_cp_lab_contestregistrations {
+  contest_id Int
+  user_name  String @db.VarChar(255)
+
+  @@id([contest_id, user_name])
+}
+
+model sust_cp_lab_contests {
+  id          Int     @id @default(autoincrement())
+  name        String  @db.VarChar(255)
+  venue       String  @db.VarChar(35)
+  description String  @db.VarChar(500)
+  type        String  @db.VarChar(35)
+  date        String  @db.VarChar(25)
+  poster      String? @db.VarChar(255)
+  author      String  @default("Rony") @db.VarChar(255)
+}
+
+model sust_cp_lab_student_info {
+  username        String  @id @db.VarChar(255)
+  full_name       String  @db.VarChar(255)
+  registration_no String  @db.VarChar(10)
+  vjudge_handle   String? @db.VarChar(255)
+}
+
+model sust_cp_lab_team_members {
+  team_id   Int
+  user_name String @db.VarChar(255)
+
+  @@unique([team_id, user_name])
+}
+
+model sust_cp_lab_teams {
+  id      Int    @id @default(autoincrement())
+  name    String @db.VarChar(255)
+  contest Int
+}
+
+model sust_cp_lab_users {
+  username  String     @id @db.VarChar(255)
+  email     String     @unique
+  password  String
+  user_type user_type? @default(student)
+}
+
+enum user_type {
+  mentor
+  student
+  admin
+  pending_mentor
+}
