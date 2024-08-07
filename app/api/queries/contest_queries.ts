@@ -1,5 +1,5 @@
 import { userTableEntryType } from "@/app/lib/types";
-import { prisma } from "@/app/api/dbclient";
+import prisma from "@/app/api/dbclient";
 import { isLoggedIn } from "./user_queries";
 
 export const getContests = async () => {
