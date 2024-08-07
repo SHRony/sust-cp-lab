@@ -1,6 +1,6 @@
 // write get api to get the info object from cf_cache table by username
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/app/api/dbclient';
+import prisma from '@/app/api/dbclient';
 export const dynamic = 'force-dynamic';
 
 export async function GET(request:NextRequest) {

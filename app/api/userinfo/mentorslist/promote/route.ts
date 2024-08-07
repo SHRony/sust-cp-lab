@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/app/api/dbclient';
+import prisma from '@/app/api/dbclient';
 import { user_type } from '@prisma/client';
 import { getUserbyName } from '@/app/api/queries/user_queries';
 
-export async function promoteUser(request: NextRequest) {
+export async function POST(request: NextRequest) {
 
   try {
     const username = await fetchUserName(request);
