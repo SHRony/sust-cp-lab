@@ -1,22 +1,37 @@
 import React from "react";
 import Image from "next/image";
 import Card from "../cards/Card";
-type cfUserType = Readonly<{
-  maxRating: number | string;
-  maxRank: string;
-  lastActive: string;
-  registered: string;
-  contribution: number | string;
-  avatar:string;
-  name : string;
-}>;
+import { cfUserType } from "@/app/lib/types";
 
-export default function cfUserInfo({maxRating, maxRank, lastActive, registered, contribution, avatar, name}:cfUserType){
+
+export default function cfUserInfo({CFUser}:{CFUser:cfUserType|null}){
+  if(!CFUser) return <></>;
+  const {maxRating, maxRank, lastActive, registered, contribution, avatar, name} = CFUser
   return (
     <Card style={{backgroundImage : 'url(profile_bg.png)', backgroundSize : '100% 100%'} } className="flex flex-col items-center bg-card w-170 min-h-10 py-8 rounded">
-      <div className="">
-        <Image
-        src={avatar}
+      <ProfileImage avatar={avatar} />
+      <ProfileHeading text={name} />
+      <ProfileInfoRow label="Max Rating" value={maxRating.toString()} />
+      <ProfileInfoRow label="Max Rank" value={maxRank} />
+      <ProfileInfoRow label="Last Active" value={lastActive} />
+      <ProfileInfoRow label="Registered" value={registered} />
+      <ProfileInfoRow label="Contribution" value={contribution.toString()} />
+    </Card>
+  )
+}
+
+const ProfileHeading = ({text}:{text:string}) => {
+  return (
+    <div className="text-3xl font-bold text-text">
+      {text}
+    </div>
+  )
+}
+const ProfileImage = ({avatar}:{avatar:string}) => {
+  return (
+    <div className="">
+      <Image
+      src={avatar}
         width={120}
         height={120}
         style={{height:'120px', width : '120px', borderColor : 'var(--primaryContainer)'}}
@@ -25,54 +40,18 @@ export default function cfUserInfo({maxRating, maxRank, lastActive, registered, 
         objectFit="contain"
         alt="Profile"
       />
+    </div>
+  )
+}
+const ProfileInfoRow = ({label, value}:{label:string, value:string}) => {
+  return (
+    <div className="flex flex-row justify-start w-full p-2 pl-40">
+      <div className="font-bold text-text w-40">
+        {label} :
       </div>
-      <div 
-        className="flex justify-center items-center text-2xl font-bold text-text text-shadow-2xl text-center px-10 mb-5"
-        style={{backgroundColor : 'var(--primaryContainer)', color : 'var(--primary)', borderRadius : '50px'}}
-      >
-        {name}
+      <div className="text-dim">
+        {value}
       </div>
-      <div className="flex flex-row justify-start w-full p-2 pl-40">
-        <div className="font-bold text-text w-40">
-          Max Rating :
-        </div>
-        <div className="text-dim">
-          {maxRating}
-        </div>
-      </div>
-      <div className="flex flex-row justify-start w-full p-2 pl-40">
-        <div className="font-bold text-text w-40">
-          Max Rank :
-        </div>
-        <div className="text-dim">
-          {maxRank}
-        </div>
-      </div>
-      <div className="flex flex-row justify-start w-full p-2 pl-40">
-        <div className="font-bold text-text w-40">
-          Last Active :
-        </div>
-        <div className="text-dim">
-          {lastActive}
-        </div>
-      </div>
-      <div className="flex flex-row justify-start w-full p-2 pl-40">
-        <div className="font-bold text-text w-40">
-          Registered :
-        </div>
-        <div className="text-dim">
-          {registered}
-        </div>
-      </div>
-      <div className="flex flex-row justify-start w-full p-2 pl-40">
-        <div className="font-bold text-text w-40">
-          Contribution :
-        </div>
-        <div className="text-dim">
-          {contribution}
-        </div>
-      </div>
-
-    </Card>
+    </div>
   )
 }

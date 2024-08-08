@@ -10,8 +10,9 @@ import {
   Legend,
 } from 'chart.js';
 import { Line } from 'react-chartjs-2';
-import { ratingChangeType } from '@/app/lib/types';
+import { cfUserType, ratingChangeType } from '@/app/lib/types';
 import Card from '../cards/Card';
+import ChartHeading from '@/app/ui/cfviz/ChartHeading';
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -21,6 +22,18 @@ ChartJS.register(
   Tooltip,
   Legend
 );
+
+export default function RatingLineChart({CFUser} : {CFUser : cfUserType|null}){
+  if(!CFUser) return <></>
+  const lineData = CFUser.ratingChanges;
+  return (
+    <Card className="bg-card w-full flex flex-col justify-center items-center max-h-700 p-8">
+      <ChartHeading text="Rating Curve"></ChartHeading>
+      <Line options={options} data = { lineData } className="w-full" />
+    </Card>
+
+  );
+}
 
 export const options = {
   responsive: true,
@@ -35,24 +48,3 @@ export const options = {
     },
   },
 };
-export default function RatingLineChart({lineData} : {lineData : ratingChangeType}){
-  
-  return (
-    <Card className="bg-card w-full flex flex-col justify-center items-center max-h-700 p-8">
-      <p 
-      className='px-5 m-4 text-lg'
-      style={{backgroundColor : 'var(--primaryContainer)', color : 'var(--primary)', borderRadius : '50px', fontWeight : 'bold'}}
-      >
-        Rating curve</p>
-      <Line options={options}
-        data = {
-          lineData
-        }
-        className="w-full"
-      >
-
-      </Line>
-    </Card>
-
-  );
-}

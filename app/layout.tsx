@@ -5,7 +5,6 @@ import React from "react";
 import NavBar from '@/app/ui/nav/NavBar';
 import AuthProvider from "./lib/AuthProvider";
 import { isLoggedIn } from '@/app/api/queries/user_queries';
-import { userStateType } from "@/app/lib/types";
 
 export const metadata: Metadata = {
   title: "Sust Competitive Programming Lab",
@@ -13,7 +12,6 @@ export const metadata: Metadata = {
 };
 
 export default async function RootLayout({children} : Readonly<{children:React.ReactNode}>){
-  // const user = (await isLoggedIn()) as userStateType | null;
   const user = await isLoggedIn();
   return (
     <html lang="en">
