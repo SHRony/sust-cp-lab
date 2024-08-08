@@ -1,9 +1,7 @@
 'use client'
 import React, { useState, useEffect, useContext } from 'react';
 import { authContext } from "@/app/lib/AuthProvider";
-import { redirect } from 'next/navigation';
 import { cfUserType, userType } from '@/app/lib/types';
-
 import axios from 'axios';
 import UserInfo from '@/app/ui/cfviz/CFUserInfo';
 import CalenderHeatmap from '@/app/ui/cfviz/CalenderHeatmap';
@@ -52,7 +50,6 @@ const Profile = ({userParams, cfUserParams}:{userParams : userType|null, cfUserP
   return (
     <div className="flex flex-col items-center w-full pt-20 gap-20">
       <div className="flex flex-row flex-wrap w-full justify-center items-stretch gap-20">
-        {/* basic userinfo here */}
         {
           user != null ? (
             <UserCard 
@@ -66,58 +63,20 @@ const Profile = ({userParams, cfUserParams}:{userParams : userType|null, cfUserP
               registrationNumber={user.registrationNumber}
               addCFHandle={addCFHandle}
               removeCFHandle={removeCFHandle}
-              userType='student'
-              >
+              userType='student'>
                 
               </UserCard>
           ):(
             <UserCardSkeleton></UserCardSkeleton>
           )
         }
-        {
-          cfUser != null ? (
-            <UserInfo maxRating={cfUser.maxRating} maxRank={cfUser.maxRank} lastActive={cfUser.lastActive} registered={cfUser.registered} contribution={cfUser.contribution} avatar={cfUser.avatar} name={cfUser.name}></UserInfo>
-          ) : (
-            <></>
-          )
-        }
+        <UserInfo CFUser={cfUser}/>
       </div>
-      {
-        cfUser != null ? (
-          <RatingLineChart lineData={cfUser.ratingChanges}></RatingLineChart>
-        ) : (
-          <></>
-        )
-      }
-      {
-        cfUser != null ? (
-          <DifficultyBarChart barData={cfUser.diffData}></DifficultyBarChart>
-        ) : (
-          <></>
-        )
-      }
-      {
-        cfUser != null ? (
-          <CatagoryBarChart barData={cfUser.catData}></CatagoryBarChart>
-        ) : (
-          <></>
-        )
-      }
-  
-      {
-        cfUser != null ? (
-          <ScatterChart user={cfUser}></ScatterChart>
-        ) : (
-          <></>
-        )
-      }
-      {
-        cfUser != null ? (
-          <CalenderHeatmap user={cfUser}></CalenderHeatmap>
-        ) : (
-          <></>
-        )
-      }
+      <RatingLineChart CFUser={cfUser}/>
+      <DifficultyBarChart CFUser={cfUser}/>
+      <CatagoryBarChart CFUser={cfUser}/>
+      <ScatterChart user={cfUser}></ScatterChart>
+      <CalenderHeatmap user={cfUser}></CalenderHeatmap>
     </div>
   );
 }

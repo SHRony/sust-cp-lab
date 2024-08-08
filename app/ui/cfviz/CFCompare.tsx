@@ -125,10 +125,10 @@ export default function CFCompare ({user1Name, user2Name} : {user1Name : string,
       {user1 && user2 && (
         <>
           <div className="flex flex-row flex-wrap w-full justify-center items-stretch gap-20">
-            <UserInfo maxRating = {user1.maxRating} maxRank = {user1.maxRank} lastActive = {user1.lastActive} registered = {user1.registered} contribution = {user1.contribution} avatar = {user1.avatar} name = {user1Name}/>
-            <UserInfo maxRating = {user2.maxRating} maxRank = {user2.maxRank} lastActive = {user2.lastActive} registered = {user2.registered} contribution = {user2.contribution} avatar = {user2.avatar} name = {user2Name} />
+            <UserInfo CFUser={user1}/>
+            <UserInfo CFUser={user2} />
           </div>
-          <RatingLineChart lineData={combineRatingChanges(user1.ratingChanges, user2.ratingChanges)}/>
+          <RatingLineChart CFUser={createDummyUserFromLineData(combineRatingChanges(user1.ratingChanges, user2.ratingChanges))}/>
           <DifficultyCompareChart barData1={user1.diffData} barData2={user2.diffData}></DifficultyCompareChart>
         </>
       )}
@@ -150,3 +150,20 @@ export default function CFCompare ({user1Name, user2Name} : {user1Name : string,
   )
 }
 
+function createDummyUserFromLineData(lineData: ratingChangeType) {
+  let ret: cfUserType = {
+    maxRating: 0,
+    maxRank: "none",
+    lastActive: "never",
+    registered: "never",
+    avatar: "https://userpic.codeforces.org/no-title.jpg",
+    name: "dummy",
+    contribution: 0,
+    acTime: [],
+    calenderSubmissions: [],
+    catData: [],
+    ratingChanges: lineData,
+    diffData: [],
+  };
+  return ret;
+}

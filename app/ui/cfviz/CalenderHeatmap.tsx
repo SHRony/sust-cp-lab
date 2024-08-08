@@ -1,11 +1,10 @@
 import React from "react";
 import { cfUserType } from "@/app/lib/types";
-import Tooltip from '@uiw/react-tooltip';
-import HeatMap from '@uiw/react-heat-map';
 import CalendarHeatmap from 'react-calendar-heatmap';
 import Card from "../cards/Card";
 
-export default function CalenderHeatmap({user}:{user : cfUserType}){
+export default function CalenderHeatmap({user}:{user : cfUserType|null}){
+  if(!user) return <></>
   const value:any = user.calenderSubmissions;
   const startYear = value.reduce((mn:number, x:any)=>{ mn = Math.min(mn, new Date(x.date).getFullYear()); return mn;}, new Date().getFullYear());
   const getTooltipDataAttrs = (value:any) => {

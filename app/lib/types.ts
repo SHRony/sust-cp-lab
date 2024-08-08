@@ -9,8 +9,8 @@ export type ratingChangeType = {
     backgroundColor : string;
   }[]
 };
-export type cfUserType = Readonly<{
-  maxRating: number | string;
+export type cfUserType = {
+  maxRating: number;
   maxRank: string;
   lastActive: string;
   registered: string;
@@ -22,7 +22,7 @@ export type cfUserType = Readonly<{
   diffData : { x: any; y: any; }[];
   catData : { x: any; y: any; }[];
   ratingChanges : ratingChangeType;
-}>;
+};
 export type userType = {
   userName: string;
   fullName: string;
