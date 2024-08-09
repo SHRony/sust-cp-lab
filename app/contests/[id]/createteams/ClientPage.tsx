@@ -23,7 +23,6 @@ export default function CreateTeams({usersParams, teamsParams, id}: {usersParams
   const [user1Name, setUser1Name] = useState('');
   const [user2Name, setUser2Name] = useState('');
   const [creatingTeam, setCreatingTeam] = useState(false);
-  const [hoveredCard, setHoveredCard] = useState<number | null>(null);
   const columns: GridColDef[] = [
     { 
       field: 'avatar', 

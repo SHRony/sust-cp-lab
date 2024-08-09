@@ -23,7 +23,10 @@ export async function POST(request: NextRequest) {
 const tryToCreateContest = async (contest: contestType) => {
   contest.poster = await generatePosterUrl(contest);
   await prisma.sust_cp_lab_contests.create({
-    data: contest
+    data: {
+      ...contest,
+      id: undefined,
+    }
   });
 }
 

@@ -54,7 +54,7 @@ export default function ContestCard({ contest, onClose, onRegister, registered, 
   return (
     <>
       <Card
-        className={`flex relative flex-col items-start md:items-center gap-4 bg-card h-full z-10 rounded-2xl overflow-hidden ${
+        className={`flex relative flex-col items-start md:items-center gap-4 bg-card h-full z-10 rounded-md overflow-hidden ${
           contest.poster ? "row-span-2" : ""
         }`}
       >
@@ -71,9 +71,6 @@ export default function ContestCard({ contest, onClose, onRegister, registered, 
 
         <div className="min-h-4">
           {contest.poster && (
-            // <div className="" style={{ width: "340px", maxHeight: "220px",objectFit: "contain" }}>
-            //   <DirectionAwareHover imageUrl={contest.poster}><></></DirectionAwareHover>
-            // </div>
             <Image
               src={contest.poster}
               alt="Contest logo"
