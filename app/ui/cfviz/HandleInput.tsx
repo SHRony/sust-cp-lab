@@ -5,13 +5,9 @@ import cfLogo from "@/public/cf.svg";
 import TextField from '@mui/material/TextField';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import Box from '@mui/material/Box';
-import SubmitButton from '@/app/ui/buttons/SubmitButton';
 import SearchIcon from '@mui/icons-material/Search';
-import { useRef } from "react";
-import submitIcon from '@/public/plane.png'
-import { Button, IconButton, Snackbar, SnackbarContent } from "@mui/material";
+import { Button, CircularProgress, IconButton, Snackbar, SnackbarContent } from "@mui/material";
 import CloseIcon from '@mui/icons-material/Close';
-import spinnerIcon from '@/public/spinner.gif'
 import { cfUserType } from "@/app/lib/types";
 import Card from "../cards/Card";
 
@@ -22,20 +18,13 @@ export default function HandleInput({changeUser}:Readonly<{changeUser: (newUser:
   function handleChange(e:React.ChangeEvent<HTMLInputElement>){
    setInput (e.target.value);
   };
-  function startSpinner(){
-    setLoading(true);
-  }
-  function stopSpinner(){
-    setLoading(false);
-  }
   const handleClose = (event: React.SyntheticEvent | Event, reason?: string) => {
+    setOpen(false);
     if (reason === 'clickaway') {
       return;
     }
-
-    setOpen(false);
   };
-  const action = (
+  const snackBarAction = (
     <React.Fragment>
       <IconButton
         size="small"
@@ -48,26 +37,16 @@ export default function HandleInput({changeUser}:Readonly<{changeUser: (newUser:
     </React.Fragment>
   );
 
-  
   async function handleSubmit() {
     setLoading(true);
-    await fetch(`/api/external/cfuserinfo?user=${input}`).then(
-      (res) => {
-        if(res.status == 200){
-          res.json().then((val) => {
-            console.log(val);
-            changeUser(val);
-          });
-        }else{
-          setOpen(true);
-        }
-        
-      }
-    ).catch(() => {
-    });
+    try{
+      changeUser(await fetchCFStats(input));
+    }catch(e){
+      console.log(e);
+    }
     setLoading(false);
-    
   }
+
   return (
     <Card style={null} className="
     flex flex-col justify-between items-center bg-card w-170 rounded pb-32">
@@ -88,44 +67,61 @@ export default function HandleInput({changeUser}:Readonly<{changeUser: (newUser:
             />
         </Box>
         <div className="ml-5 flex justify-center items-center translate-y-1">
-          <SubmitButton clickHandler={handleSubmit}>
-            {
-              isLoading ? (
-                <Image
-                  src={spinnerIcon}
-                  width={20}
-                  height={20}
-                  className="mr-2"
-                  alt="Profile" />
-              ):(
-                <Image
-                  src={submitIcon}
-                  width={20}
-                  height={20}
-                  className="mr-2"
-                  alt="Profile" />
-              )
-            }
-            
-            Show stats
-          </SubmitButton>
+          <ShowStatsButton isLoading={isLoading} handleClick={handleSubmit}/>
         </div>
       </div>
       <Snackbar
-      open={open}
-      autoHideDuration={1000}
-      onClose={handleClose}
-      style={{
-        position: 'absolute',
-      }}
-      anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }} 
-    >
-      <SnackbarContent
-        message="Couldn't complete request"
-        action={action}
-        className="bg-red-600 bg-opacity-80"
-      />
-  </Snackbar>
+        open={open}
+        autoHideDuration={1000}
+        onClose={handleClose}
+        style={{
+          position: 'absolute',
+        }}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }} 
+      >
+        <SnackbarContent
+          message="Couldn't complete request"
+          action={snackBarAction}
+          className="bg-red-600 bg-opacity-80"
+        />
+      </Snackbar>
     </Card>
   );
+}
+
+
+function ShowStatsButton({isLoading, handleClick}:{isLoading: boolean, handleClick: () => void}) {
+  if (!isLoading) {
+    return (
+      <Button
+        size="small"
+        aria-label="search"
+        onClick={handleClick}
+        variant="contained"
+        color="primary"
+      >
+        <SearchIcon fontSize="small" />
+        Show stats
+      </Button>
+    )
+  }else{
+    return (
+      <Button
+        size="small"
+        aria-label="search"
+        onClick={handleClick}
+        variant="contained"
+        color="primary"
+        disabled
+      >
+        <CircularProgress size={16} color="inherit" sx={{ mr: 2 }} />
+          Loading...
+      </Button>
+    )
+  }
+}
+
+async function fetchCFStats(inputHandles: string) {
+  const res = await fetch(`/api/external/cfuserinfo?user=${inputHandles}`);
+  return await res.json();
 }
