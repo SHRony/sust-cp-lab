@@ -17,6 +17,7 @@ export default function Register() {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
   function handleUserNameChange(e:React.ChangeEvent<HTMLInputElement>){
     setUserName(e.target.value);
   }
@@ -61,8 +62,8 @@ export default function Register() {
         userType: "student",
       });
       if (res.status == 200) {
-        console.log(res.data);
-        // window.location.href = '/login';
+        setSuccess(true);
+        window.location.href = '/login';
       } else {
         console.log(res.data.error);
         alert('please try again');
@@ -74,7 +75,11 @@ export default function Register() {
 
     setLoading(false);
   }
-
+  if(success) {
+    return <div className="w-full h-full flex justify-center items-center my-10">
+      <div className="h-20 w-20 border-b-2 border-green-500 rounded-full animate-spin"></div>
+    </div>
+  }
   return <div className="w-full h-full flex justify-center items-strech py-10">
       <Card className="flex flex-row items-center items-strech rounded bg-white">
         <div style={{backgroundColor : 'var(--primary)'}} className="w-90 flex flex-col h-full items-center justify-center mr-6">
