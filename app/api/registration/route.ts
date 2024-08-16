@@ -13,8 +13,10 @@ export async function POST(request:NextRequest) {
     if (!user.userName || !user.email || !user.password || (user.userType == 'student' && !user.fullName) || (user.userType == 'student' && !user.registrationNumber) || !user.userType) {
       return NextResponse.json({ error: "Invalid user data" }, { status: 400 });
     }
+    console.log(user);
     if(await getUserbyName(user.userName)) return NextResponse.json({ error: "username already exists" }, { status: 400 });
     if(await getUserbyEmail(user.email)) return NextResponse.json({ error: "email already exists" }, { status: 400 });
+    
     await performRegistration(user);
     return NextResponse.json({ message: "User created successfully" });
   }catch(e){

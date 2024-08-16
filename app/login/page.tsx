@@ -14,6 +14,7 @@ export default function LogIn(){
   const [password, setPassword] = useState('');
   const auth = React.useContext(authContext);
   const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
   function handleUserChange(e:React.ChangeEvent<HTMLInputElement>){
     setUserName(e.target.value);
   }
@@ -38,6 +39,7 @@ export default function LogIn(){
     try {
       if(await auth!.signIn(userName, password)) {
         window.location.href = '/profile';
+        setSuccess(true);
       };
       
     } catch (error) {
@@ -48,7 +50,11 @@ export default function LogIn(){
     
 
   }
-
+  if(success) {
+    return <div className="w-full h-full flex justify-center items-center my-40">
+      <div className="h-20 w-20 border-b-2 border-green-500 rounded-full animate-spin"></div>
+    </div>
+  }
   return <div className="w-full h-full flex justify-center items-strech py-40">
       <Card className="flex flex-row items-center items-strech rounded bg-white">
         <div style={{backgroundColor : 'var(--primary)'}} className="w-90 flex flex-col h-full items-center justify-center mr-6">
