@@ -11,7 +11,6 @@ import Image from "next/image";
 import Link from "next/link";
 import UserCardSkeleton from "../cards/UserCardSkeleton";
 import { contestType } from "@/app/lib/types";
-import ContestList from "../grids/ContestList";
 import ContestCard from "../cards/ContestCard";
 
 export const HeroParallax = ({

@@ -1,3 +1,4 @@
+"use client"
 import React, { useState, useEffect, useContext } from 'react';
 import {contestType} from "@/app/lib/types";
 import ContestCard from '@/app/ui/cards/ContestCard';
