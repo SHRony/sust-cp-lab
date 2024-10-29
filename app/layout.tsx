@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import {inter} from '@/app/ui/fonts';
 import React from "react";
-import NavBar from '@/app/ui/nav/NavBar';
 import AuthProvider from "./lib/AuthProvider";
 import { isLoggedIn } from '@/app/api/queries/user_queries';
+import SideNav from "./ui/nav/side-nav";
+import { headers } from "next/headers";
+import { redirect } from "next/dist/server/api-utils";
+import LayoutWrapper from "./client-wraper";
 
 export const metadata: Metadata = {
   title: "Sust Competitive Programming Lab",
@@ -15,13 +17,12 @@ export default async function RootLayout({children} : Readonly<{children:React.R
   const user = await isLoggedIn();
   return (
     <html lang="en">
-      <body style={{display : "flex"}} className={inter.className + "flex flex-col items-center theme-light"}>
-        <AuthProvider userProps={user}>
-          <NavBar></NavBar>
-          <div className="flex flex-col items-center w-100 mobile:w-106 tablet:w-192 laptop:w-256 desktop:w-360">
+      <body className="inter.className">
+        <div className="flex flex-row items-center theme-light h-screen w-screen p-4 bg-gray-100 gap-4">
+          <LayoutWrapper user={user}>
             {children}
-          </div>
-        </AuthProvider>
+          </LayoutWrapper>
+        </div>
           
       </body>
     </html>

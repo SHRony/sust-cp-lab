@@ -74,10 +74,9 @@ export default function ContestCard({ contest, onClose, onRegister, registered, 
             <Image
               src={contest.poster}
               alt="Contest logo"
-              layout='responsive'
               width={340}
               height={100}
-              style={{ width: "340px", maxHeight: "220px",objectFit: "contain" }}
+              style={{ width: "340px", maxHeight: "220px",objectFit: "cover" }}
             />
             
           )}
