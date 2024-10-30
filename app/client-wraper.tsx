@@ -4,6 +4,7 @@ import { $Enums } from "@prisma/client";
 import { usePathname } from "next/navigation";
 import AuthProvider from "./lib/AuthProvider";
 import SideNav from "./ui/nav/side-nav";
+import { useRouter } from 'next/router';
 
 
 const LayoutWrapper = ({ user, children }: {
@@ -13,11 +14,7 @@ user:{
 } | null,  
 children: React.ReactNode }) => {
     const pathname = usePathname();
-    if(pathname == "/login" || pathname == "/register" || pathname == "/") return <>{children}</>;
-    if(user == null){
-        window.location.href = '/login';
-        return <></>;
-    }
+    if(pathname == "/login" || pathname == "/register" || pathname == "/") return <AuthProvider userProps={user}>{children}</AuthProvider>;
     return (
         <AuthProvider userProps={user}>
           <SideNav/>

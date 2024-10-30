@@ -20,9 +20,16 @@ const isStudentOnly = (request: NextRequest) => {
   let routes = ['/profile'];
   return routes.some((route) => request.nextUrl.pathname==(route));
 }
+const isNotForGuests = (request: NextRequest) => {
+  let routes = ['/login', '/registration', 'registration/mentor', '/'];
+  return !routes.some((route) => request.nextUrl.pathname==(route));
+}
 export async function middleware(request: NextRequest) {
   // const cookies = request.cookies.getAll();
-
+  if(isNotForGuests(request)){
+    const token = request.cookies.get('token')?.value;
+    if(!token) return NextResponse.redirect(new URL('/login', request.url));
+  }
   if(isStudentOnly(request)){
     const token = request.cookies.get('token')?.value;
     if(!token) return NextResponse.redirect(new URL('/login', request.url));
