@@ -25,8 +25,8 @@ const isNotForGuests = (request: NextRequest) => {
   return !routes.some((route) => request.nextUrl.pathname==(route));
 }
 export async function middleware(request: NextRequest) {
-  // const cookies = request.cookies.getAll();
-  if(isNotForGuests(request)){
+  const PUBLIC_FILE = /\.(.*)$/;
+  if(isNotForGuests(request) && !PUBLIC_FILE.test(request.nextUrl.pathname)) {
     const token = request.cookies.get('token')?.value;
     if(!token) return NextResponse.redirect(new URL('/login', request.url));
   }
@@ -41,6 +41,7 @@ export async function middleware(request: NextRequest) {
       },
       withCredentials: true
     });
+
     if(res.data.user.userType != 'student') return NextResponse.redirect(new URL('/', request.url));
     if(request.nextUrl.pathname == '/profile') return NextResponse.redirect(new URL(`/profile/${res.data.user.userName}`, request.url));
     return NextResponse.next();
