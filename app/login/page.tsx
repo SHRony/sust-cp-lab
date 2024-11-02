@@ -28,9 +28,7 @@ export default function LogIn(){
     return true;
   }
   async function handleSubmit(){
-    //CODIUM:add the login logic here. use the spinner like the registration logic and redirect to the profile in successful login
     setLoading(true);
-    // console.log("yo yo");
     const isValid = await validate();
     if(!isValid){
       setLoading(false);
