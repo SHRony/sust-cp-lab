@@ -18,7 +18,7 @@ export default async function RootLayout({children} : Readonly<{children:React.R
   return (
     <html lang="en">
       <body className="inter.className">
-        <div className="flex flex-row items-center theme-light h-screen w-screen p-4 bg-gray-100 gap-4">
+        <div className="flex flex-row items-center theme-light h-screen w-screen bg-gray-100 gap-4">
           <LayoutWrapper user={user}>
             {children}
           </LayoutWrapper>

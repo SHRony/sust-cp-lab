@@ -29,7 +29,7 @@ export default function ContestList({contestsParams, registeredContestsParams, c
         setRegisteredContests([...registeredContests, id]);
   };
   return (
-    <div className="grid w-full gap-10 laptop:gap-2 desktop:gap-8 justify-center tablet:justify-between pt-20 items-stretch" style={{gridTemplateColumns: 'repeat(auto-fill, 21rem)'}}> 
+    <div className="grid w-full gap-10 laptop:gap-2 desktop:gap-8 justify-evenly tablet:justify-evenly items-stretch pt-4" style={{gridTemplateColumns: 'repeat(auto-fill, 21rem)'}}> 
       <AnimatePresence>
         {contests.map((contest) => (
           <motion.div layout key={contest.id} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className={`p-1 relative ${contest.poster ? "row-span-2" : "row-span-1"}`} onMouseEnter={() => {setHoveredContest(contest.id), setShadow(true)}}

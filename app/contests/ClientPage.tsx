@@ -11,7 +11,7 @@ export default function Contests({contestsProps, registeredContestsProps}: {cont
   return (
     <div className="flex flex-col items-left w-full">
       <AccessProvider permittedUsers={['admin', 'mentor']}>
-        <Link href="/contests/create" className="mt-10">
+        <Link href="/contests/create">
         <Button variant="contained" color="primary">
           Create Contest
         </Button>

@@ -54,11 +54,11 @@ export default function ContestCard({ contest, onClose, onRegister, registered, 
   return (
     <>
       <Card
-        className={`flex relative flex-col items-start md:items-center gap-4 bg-card h-full z-10 rounded-md overflow-hidden ${
+        className={`flex relative flex-col items-start md:items-center gap-2 bg-card h-full z-10 rounded-md overflow-hidden ${
           contest.poster ? "row-span-2" : ""
         }`}
       >
-        <div className="bg-card flex absolute right-0 rounded-bl-3xl shadow-2xl border border-gray-300" style={{ backgroundColor: "rgba(255, 255, 255, 0.5)" }}>
+        <div className="bg-card flex absolute right-0 rounded-bl-3xl shadow-2xl border border-gray-300">
           {
             closable && <AccessProvider permittedUsers={['admin', '_'+contest.author]}>
              <IconButton onClick={handleOpen} disabled={removing}>
@@ -81,38 +81,49 @@ export default function ContestCard({ contest, onClose, onRegister, registered, 
             
           )}
         </div>
-        <div className="flex-1 flex flex-col justify-center items-start min-h-48 w-full p-4 overflow-y-scroll gap-3 grow" style={{ scrollbarWidth: "none" }}>
-            <h2 className="text-2xl font-bold text-center w-full">{contest.name}</h2>
-          <div className="flex flex-col justify-center items-start gap-2">
-            <p className="text-lg font-semibold text-dim ">{contest.venue}</p>
-            <p className="text-sm text-dim">{contest.description}</p>
-            <p className="text-sm text-dim">
-              Date: {new Date(contest.date).toLocaleDateString()}
+        <div className="flex-1 flex flex-col justify-center items-start w-full p-2 pb-0 overflow-y-scroll grow" style={{ scrollbarWidth: "none" }}>
+            <h2 className="text-xl font-bold text-gray-500 w-full pb-2">{contest.name}</h2>
+            <p className={`text-sm rounded-full px-2 border ${
+              contest.type.toLowerCase().includes('icpc') ? 'bg-red-100 text-red-400' : 'bg-gray-100 text-gray-600'
+            }`}>
+                {contest.type}
             </p>
-            <p className="text-sm text-dim">
-              Type: {contest.type}
-            </p>
+          <div className="flex flex-col justify-center items-start gap-1">
+            <p className="text-dim ">Venue: {contest.venue}</p>
+            
+            
           </div>
         </div>
           
       </Link>
-          <div className="w-full flex">
+         <div className="flex justify-between w-full">
+         <p className="text-sm text-dim px-2 pb-2">
+              {new Date(contest.date).getTime() > new Date().setHours(0, 0, 0, 0) ? `${Math.ceil((new Date(contest.date).getTime() - new Date().setHours(0, 0, 0, 0)) / (1000 * 60 * 60 * 24))} days left` : `Ended: ${new Date(contest.date).toLocaleDateString()}`}
+          </p>  
+          <div className="grow flex justify-end">
+          {new Date(contest.date).getTime() > new Date().setHours(0, 0, 0, 0) && (
           <AccessProvider permittedUsers={['student']}>
-            {registered ? (
-              <Button disabled
-                variant="outlined"
-                startIcon={<CheckIcon />}
-                color="success"
-              >
-                Registered
-              </Button>
-            ) : (
-              <Button variant="outlined" onClick={handleRegister}>
-                Register
-              </Button>
-            )}
+            <div className="w-full flex justify-end p-1">
+              {registered ? (
+                <Button disabled
+                  variant="outlined"
+                  startIcon={<CheckIcon />}
+                  color="success"
+                  className="min-w-full"
+                >
+                  Registered
+                </Button>
+              ) : (
+                <Button variant="outlined" onClick={handleRegister}>
+                  Register
+                </Button>
+              )}
+            </div>
           </AccessProvider>
-        </div>
+        )}
+          </div>
+         </div>
+        
       </Card>
       <Dialog open={open} onClose={handleClose}>
         <DialogTitle>Close Contest</DialogTitle>
