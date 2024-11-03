@@ -4,10 +4,10 @@ import HandleInput from "@/app/ui/cfviz/HandleInput";
 import CFUserInfo from "@/app/ui/cfviz/CFUserInfo";
 import ScatterChart from "@/app/ui/cfviz/ScatterChart";
 import CalenderHeatmap from "@/app/ui/cfviz/CalenderHeatmap";
-import CatagoryBarChart from "../ui/cfviz/CatagoryBarChart";
-import DifficultyBarChart from "../ui/cfviz/DifficultyBarChart";
-import RatingLineChart from "../ui/cfviz/RatingLineChart";
-import { cfUserType } from "../lib/types";
+import CatagoryBarChart from "../../ui/cfviz/CatagoryBarChart";
+import DifficultyBarChart from "../../ui/cfviz/DifficultyBarChart";
+import RatingLineChart from "../../ui/cfviz/RatingLineChart";
+import { cfUserType } from "../../lib/types";
 
 export default function CFViz(){
   const [user, setUser] = useState<cfUserType | null>(null);

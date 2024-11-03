@@ -22,7 +22,7 @@ const isStudentOnly = (request: NextRequest) => {
 }
 const isNotForGuests = (request: NextRequest) => {
   let routes = ['/dashboard', '/contests', '/cfviz', '/forum', '/users', '/profile', '/settings'];
-  return routes.some((route) => request.nextUrl.pathname==(route));
+  return routes.some((route) => request.nextUrl.pathname.startsWith(route));
 }
 export async function middleware(request: NextRequest) {
   const PUBLIC_FILE = /\.(.*)$/;

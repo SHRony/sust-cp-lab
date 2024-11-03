@@ -19,11 +19,10 @@ export default async function RootLayout({children} : Readonly<{children:React.R
     <html lang="en">
       <body className="inter.className">
         <div className="flex flex-row items-center theme-light h-screen w-screen bg-gray-100 gap-4">
-          <LayoutWrapper user={user}>
+          <AuthProvider userProps={user}>
             {children}
-          </LayoutWrapper>
+          </AuthProvider>
         </div>
-          
       </body>
     </html>
   );

@@ -98,7 +98,7 @@ export default function ContestCard({ contest, onClose, onRegister, registered, 
       </Link>
          <div className="flex justify-between w-full">
          <p className="text-sm text-dim px-2 pb-2">
-              {new Date(contest.date).getTime() > new Date().setHours(0, 0, 0, 0) ? `${Math.ceil((new Date(contest.date).getTime() - new Date().setHours(0, 0, 0, 0)) / (1000 * 60 * 60 * 24))} days left` : `Ended: ${new Date(contest.date).toLocaleDateString()}`}
+              {new Date(contest.date).getTime() > new Date().setHours(0, 0, 0, 0) ? `${Math.ceil((new Date(contest.date).getTime() - new Date().setHours(0, 0, 0, 0)) / (1000 * 60 * 60 * 24))} days left` : `Ended At: ${new Date(contest.date).toLocaleDateString()}`}
           </p>  
           <div className="grow flex justify-end">
           {new Date(contest.date).getTime() > new Date().setHours(0, 0, 0, 0) && (

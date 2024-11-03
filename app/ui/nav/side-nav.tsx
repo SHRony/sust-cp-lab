@@ -94,7 +94,7 @@ const SideNavButton = ({children, url, type, onClick} : Readonly<{children:React
   return (
     <Link href={url} className="w-full">{
       type != 'icon' ? (
-        <div className={`flex flex-row text-gray-600 w-48 h-12 font-bold items-center gap-2 p-4 hover:bg-blue-100 ${url == pathname ? 'border-l-2 border-l-blue-600 text-blue-600' : ''}`}>
+        <div className={`flex flex-row text-gray-600 w-48 h-12 font-bold items-center gap-2 p-4 hover:bg-blue-100 ${pathname.startsWith(url) ? 'border-l-2 border-l-blue-600 text-blue-600' : ''}`}>
           {children}
         </div>
       ) : (
