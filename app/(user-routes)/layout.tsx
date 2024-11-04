@@ -3,7 +3,7 @@ import SideNav from "../ui/nav/side-nav";
 export default async function Layout({children} : Readonly<{children:React.ReactNode}>){
     
     return (
-    <div className="p-4 flex flex-row h-screen w-screen bg-gray-100 gap-4">
+    <div className="sm:p-4 flex flex-row h-screen w-screen bg-gray-100 gap-1 sm:gap-4">
         <SideNav/>
         <div className="flex flex-col grow h-full overflow-y-scroll bg-white rounded-xl [&::-webkit-scrollbar]:w-2
             [&::-webkit-scrollbar-track]:bg-gray-100

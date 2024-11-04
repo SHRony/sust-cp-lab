@@ -76,7 +76,7 @@ export default function ContestCard({ contest, onClose, onRegister, registered, 
               alt="Contest logo"
               width={340}
               height={100}
-              style={{ width: "340px", maxHeight: "220px",objectFit: "cover" }}
+              className=" w-[320px] h-[208px] sm:w-[340px] sm:h-[220px] object-cover"
             />
             
           )}
