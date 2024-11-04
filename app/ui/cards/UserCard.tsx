@@ -140,7 +140,6 @@ export default function UserCard({userName, fullName, registrationNumber, email,
                       >
                         {handle}
                     </a>
-                    {/* if the user is visiting his own profile, then show the close icon to delete the handle */}
                     <AccessProvider permittedUsers={[`_${userName}`]}>
                       <Image className="cursor-pointer ml-2" alt = 'close' height={20} src = {closeIcon} onClick={()=> {deleteCFhandle(handle)}}/>
                     </AccessProvider>

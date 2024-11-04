@@ -9,6 +9,7 @@ export async function addCFHandle(cfHandle : string, userName : string){
 }
 
 export async function removeCFHandle(cfHandle : string, userName : string){
+  console.log(cfHandle, userName);
   await prisma.sust_cp_lab_cf_handles.deleteMany({ where: { handle: cfHandle, username: userName } });
 }
 

@@ -97,9 +97,7 @@ body {
   }
 }
 
-input{
-  padding: 5px !important;
-}
+
 .color-empty{
   fill: transparent !important;
   border: 1px solid var(--shade) !important;

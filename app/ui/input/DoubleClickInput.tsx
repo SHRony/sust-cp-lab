@@ -1,5 +1,6 @@
+"use client"
 import { Tooltip } from '@mui/material';
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 interface DoubleClickInputProps {
   initialValue: string;
@@ -14,7 +15,7 @@ export default function DoubleClickInput({ initialValue, onChange, inputClassNam
   const [isEditing, setIsEditing] = useState(false);
   const [value, setValue] = useState(initialValue);
   const inputRef = useRef<HTMLInputElement>(null);
-
+  const [mounted, setMounted] = useState(false);
   const handleDoubleClick = () => {
     setIsEditing(true);
     setTimeout(() => {
@@ -31,18 +32,20 @@ export default function DoubleClickInput({ initialValue, onChange, inputClassNam
     setValue(value || initialValue);
     onChange(value);
   };
-
+  useEffect(() => {
+    setMounted(true);
+  },[]);
   return (
     <div className="flex flex-row items-center cursor-text" onDoubleClick={handleDoubleClick}>
       <div className={`flex flex-row items-center ${isEditing ? 'hidden' : ''}`}>
-        <Tooltip followCursor arrow title={'double click to edit'}>
-          <p  className={`select-none p-1 ${textClassName}`} style={textStyle}>{value}</p>
-        </Tooltip>
+        {mounted && <Tooltip followCursor arrow title={'double click to edit'}>
+          <span  className={`select-none p-1 ${textClassName}`} style={textStyle}>{value}</span>
+        </Tooltip>}
       </div>
       <input
         ref={inputRef}
         type="text"
-        className={`w-full p-0 border-0 outline-none ${isEditing ? '' : 'hidden'} ${inputClassName}`}
+        className={`p-1 border-0 outline-none ${isEditing ? '' : 'hidden'} ${inputClassName}`}
         onChange={handleChange}
         value={value}
         onBlur={handleBlur}
