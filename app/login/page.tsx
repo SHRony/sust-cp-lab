@@ -55,12 +55,12 @@ export default function LogIn(){
   }
   return <div className="w-full h-full flex justify-center items-strech py-40">
       <Card className="flex flex-row items-center items-strech rounded bg-white">
-        <div style={{backgroundColor : 'var(--primary)'}} className="w-90 flex flex-col h-full items-center justify-center mr-6">
+        <div style={{backgroundColor : 'var(--primary)'}} className="hidden tablet:flex w-90 flex flex-col h-full items-center justify-center mr-6">
           <p className="text-xl text-white">Welcome to </p>
           <p className="text-2xl text-white">SUST CP Lab </p>
           <div style={{backgroundColor : 'var(--primary)', transform : 'translateX(10.5rem) rotate(45deg)'}} className="absolute h-12 w-12 rotate-45"></div>
         </div>
-        <div className="flex flex-col w-96 gap-5 p-5 bg-white">
+        <div className="flex flex-col w-90 tablet:w-96 gap-5 p-5 bg-white">
           <div className="flex flex-col items-center rounded gap-5">
             <div className="flex flex-row text-2xl font-bold items-center">
               <Image 

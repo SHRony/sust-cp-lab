@@ -72,14 +72,14 @@ export default function Register() {
     setLoading(false);
   }
 
-  return <div className="w-full h-full flex justify-center items-strech py-10">
+  return <div className="w-full flex justify-center items-strech py-10">
       <Card className="flex flex-row items-center items-strech rounded bg-white">
-        <div style={{backgroundColor : 'var(--primary)'}} className="w-90 flex flex-col h-full items-center justify-center mr-6">
+        <div style={{backgroundColor : 'var(--primary)'}} className="w-90 hidden tablet:flex flex-col h-full items-center justify-center mr-6">
           <p className="text-xl text-white">Welcome to </p>
           <p className="text-2xl text-white">SUST CP Lab </p>
           <div style={{backgroundColor : 'var(--primary)', transform : 'translateX(10.5rem) rotate(45deg)'}} className="absolute h-12 w-12 rotate-45"></div>
         </div>
-        <div className="flex flex-col w-96 p-5 gap-5 bg-white relative">
+        <div className="flex flex-col w-90 tablet:w-96 p-5 gap-5 bg-white relative">
           <div className="flex flex-row text-2xl font-bold items-center justify-center">
             <Image 
               src={regIcon}
