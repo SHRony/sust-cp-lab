@@ -50,8 +50,8 @@ const Settings = ({ user }: { user: userType }) => {
                     <div className="flex flex-row gap-2"> <span className="p-1 w-32">Full Name:</span> <DoubleClickInput 
                         initialValue={newUser.fullName} 
                         onChange={(value) => setNewUser({ ...newUser, fullName: value })}
-                        inputClassName="bg-blue-100 text-blue-600 w-48 px-2 rounded-full"
-                        textClassName="bg-blue-100 text-blue-600 w-48 px-2 rounded-full"
+                        inputClassName="border bg-blue-100 text-blue-600 w-48 px-2 rounded-full"
+                        textClassName="border bg-blue-100 text-blue-600 w-48 px-2 rounded-full"
                         />
                     </div>
                     <div className="flex flex-row gap-2"> <span className="p-1 w-32">Phone NO:</span> <DoubleClickInput 
@@ -96,7 +96,7 @@ const Tag = ({ tag, removeTag }: { tag: string, removeTag: (tag: string) => Prom
         }
     }
     return (
-        <div className="bg-blue-100 text-blue-600 px-2 rounded-full flex items-center flex-row gap-2">
+        <div className="bg-green-100 text-green-600 px-2 rounded-full flex items-center flex-row gap-2 border">
             {tag}
             <Image className="cursor-pointer" src={loading ? loaderIcon : closeIcon} alt="" width={16} height={16} onClick={handleRemoveTag}/>
         </div>

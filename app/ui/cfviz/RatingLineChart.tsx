@@ -27,7 +27,7 @@ export default function RatingLineChart({CFUser} : {CFUser : cfUserType|null}){
   if(!CFUser) return <></>
   const lineData = CFUser.ratingChanges;
   return (
-    <Card className="bg-card w-full flex flex-col justify-center items-center max-h-700 p-8">
+    <Card className="bg-card w-full flex flex-col justify-center items-center max-h-700 laptop:p-8">
       <ChartHeading text="Rating Curve"></ChartHeading>
       <Line options={options} data = { lineData } className="w-full" />
     </Card>

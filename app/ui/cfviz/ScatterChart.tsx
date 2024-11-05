@@ -10,17 +10,15 @@ ChartJS.register(LineController, LineElement, PointElement, LinearScale, Title);
 export default function ScatterChart({user} : {user : cfUserType|null}) {
   if(!user) return <></>;
   return (
-    <Card style={{
-          minWidth : '600px',
-          width : '100%'
-        }
-      }
-      className="flex flex-col justify-center items-center bg-card p-8 rounded max-h-600">
+    <Card
+      className="flex flex-col bg-card laptop:p-8 rounded w-full overflow-y-scroll" style = {{scrollbarWidth : "none"}}>
+        <div className="w-full min-w-800-px">
         <ChartHeading text="Scatter diagram of solved problems with time"/>
         <Scatter 
         className="w-full" 
         data={generateDataForScatterChart(user)}
         options={options}/>
+        </div>
     </Card>
   )
 }

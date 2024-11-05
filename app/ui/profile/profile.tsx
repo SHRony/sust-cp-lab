@@ -51,7 +51,7 @@ const Profile = ({userParams, cfUserParams}:{userParams : userType|null, cfUserP
     <div className="flex flex-col items-center w-full pt-20 gap-20">
       <div className="flex flex-row flex-wrap w-full justify-center items-stretch gap-20">
         {
-          user != null ? (
+          user != null && (
             <UserCard 
               phone={''} 
               password='' 
@@ -66,8 +66,6 @@ const Profile = ({userParams, cfUserParams}:{userParams : userType|null, cfUserP
               userType='student'>
                 
               </UserCard>
-          ):(
-            <UserCardSkeleton></UserCardSkeleton>
           )
         }
         <UserInfo CFUser={cfUser}/>

@@ -2,15 +2,16 @@ import React from "react";
 import Image from "next/image";
 import Card from "../cards/Card";
 import { cfUserType } from "@/app/lib/types";
-
+import { ProfileInfoRow } from "@/app/ui/cards/UserCard";
 
 export default function cfUserInfo({CFUser}:{CFUser:cfUserType|null}){
   if(!CFUser) return <></>;
   const {maxRating, maxRank, lastActive, registered, contribution, avatar, name} = CFUser
   return (
-    <Card style={{backgroundImage : 'url(profile_bg.png)', backgroundSize : '100% 100%'} } className="flex flex-col items-center bg-card w-170 min-h-10 py-8 rounded">
-      <ProfileImage avatar={avatar} />
+    <Card className="flex flex-col items-start bg-card w-80 tablet:w-120 laptop:w-160 min-h-10 py-8 rounded">
       <ProfileHeading text={name} />
+      <ProfileImage avatar={avatar} />
+      
       <ProfileInfoRow label="Max Rating" value={maxRating.toString()} />
       <ProfileInfoRow label="Max Rank" value={maxRank} />
       <ProfileInfoRow label="Last Active" value={lastActive} />
@@ -22,14 +23,14 @@ export default function cfUserInfo({CFUser}:{CFUser:cfUserType|null}){
 
 const ProfileHeading = ({text}:{text:string}) => {
   return (
-    <div className="text-3xl font-bold text-text">
+    <div className="flex justify-center items-center text-2xl font-bold text-shadow-2xl text-center px-10 mb-5 bg-blue-100 text-blue-600 rounded-r-full">
       {text}
     </div>
   )
 }
 const ProfileImage = ({avatar}:{avatar:string}) => {
   return (
-    <div className="">
+    <div className="w-full flex justify-center">
       <Image
       src={avatar}
         width={120}
@@ -40,18 +41,6 @@ const ProfileImage = ({avatar}:{avatar:string}) => {
         objectFit="contain"
         alt="Profile"
       />
-    </div>
-  )
-}
-const ProfileInfoRow = ({label, value}:{label:string, value:string}) => {
-  return (
-    <div className="flex flex-row justify-start w-full p-2 pl-40">
-      <div className="font-bold text-text w-40">
-        {label} :
-      </div>
-      <div className="text-dim">
-        {value}
-      </div>
     </div>
   )
 }
