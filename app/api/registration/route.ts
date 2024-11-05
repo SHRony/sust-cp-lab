@@ -43,14 +43,18 @@ async function tryToPerformRegistration(user: userType) {
 async function saveUserInfoIntoDatabase(user : userType, prisma : Omit<PrismaClient, ITXClientDenyList>){
   user.password = await hashPassword(user.password);
   console.log(user);
-  await prisma.sust_cp_lab_users.create({
-    data: {
-      username: user.userName,
-      email: user.email,
-      password: user.password,
-      user_type: user.userType
-    }
-  });
+  try{
+    await prisma.sust_cp_lab_users.create({
+      data: {
+        username: user.userName,
+        email: user.email,
+        password: user.password,
+        user_type: user.userType
+      }
+    });
+  }catch(e){
+    console.log(e);
+  }
 }
 async function saveStudentInfoIntoDatabase(user : userType, prisma : Omit<PrismaClient, ITXClientDenyList>){
   await prisma.sust_cp_lab_student_info.create({
