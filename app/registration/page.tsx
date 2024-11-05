@@ -62,6 +62,7 @@ export default function Register() {
         userType: "student",
       });
       if (res.status == 200) {
+        console.log(res.data);
         setSuccess(true);
         window.location.href = '/login';
       } else {
