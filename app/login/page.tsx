@@ -1,6 +1,7 @@
 'use client'
 import React, { useState } from "react";
-import { Button, TextField } from "@mui/material";
+import TextField from "@/app/ui/input/TextField";
+import { Button } from "@mui/material";
 import lockIcon from '@/public/lock.svg'
 import Image from "next/image";
 import Link from "next/link";
@@ -9,27 +10,38 @@ import axios from "axios";
 import { authContext } from "../lib/AuthProvider";
 import Card from "../ui/cards/Card";
 import spinnerIcon from '@/public/spinner.gif'
+import loaderIcon from '@/public/loader.gif'
 export default function LogIn(){
   const [userName, setUserName] = useState('');
   const [password, setPassword] = useState('');
   const auth = React.useContext(authContext);
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [error, setError] = useState('');
+  const [errorSource, setErrorSource] = useState('');
   function handleUserChange(e:React.ChangeEvent<HTMLInputElement>){
+    if(errorSource == 'username') setError(''), setErrorSource('');
     setUserName(e.target.value);
   }
   function handlePasswordChange(e:React.ChangeEvent<HTMLInputElement>){
+    if(errorSource == 'password') setError(''), setErrorSource('');
     setPassword(e.target.value);
   }
-  const validate = async () => {
+  const validate = () => {
     // add the validation logic for the form here
-    if(userName == '' || password == '') return false;
-    if(password.length < 3) return false;
+    if(userName == ''){
+      setError('username required'), setErrorSource('username');
+      return false;
+    }
+    if(password.length < 3){
+      setError('Password must be at least 3 characters'), setErrorSource('password');
+      return false;
+    }
     return true;
   }
   async function handleSubmit(){
     setLoading(true);
-    const isValid = await validate();
+    const isValid = validate();
     if(!isValid){
       setLoading(false);
       return;
@@ -50,17 +62,17 @@ export default function LogIn(){
   }
   if(success) {
     return <div className="w-full h-full flex justify-center items-center my-40">
-      <div className="h-20 w-20 border-b-2 border-green-500 rounded-full animate-spin"></div>
+      <Image src={loaderIcon} alt="loader" />
     </div>
   }
-  return <div className="w-full h-full flex justify-center items-strech py-40">
-      <Card className="flex flex-row items-center items-strech rounded bg-white">
+  return <div className="w-full h-full flex justify-center items-center">
+      <Card className="flex flex-row items-center rounded bg-white h-80">
         <div style={{backgroundColor : 'var(--primary)'}} className="hidden tablet:flex w-90 flex flex-col h-full items-center justify-center mr-6">
           <p className="text-xl text-white">Welcome to </p>
           <p className="text-2xl text-white">SUST CP Lab </p>
-          <div style={{backgroundColor : 'var(--primary)', transform : 'translateX(10.5rem) rotate(45deg)'}} className="absolute h-12 w-12 rotate-45"></div>
+          <div className="absolute h-12 w-12 rotate-45 bg-primary transform translate-x-[10.5rem]" style={{transform: 'translateX(10.5rem) rotate(45deg)'}}></div>
         </div>
-        <div className="flex flex-col w-90 tablet:w-96 gap-5 p-5 bg-white">
+        <div className="flex flex-col w-90 tablet:w-96 gap-5 py-2 px-5 bg-white">
           <div className="flex flex-col items-center rounded gap-5">
             <div className="flex flex-row text-2xl font-bold items-center">
               <Image 
@@ -77,16 +89,16 @@ export default function LogIn(){
             </div>
             <TextField
               label="User name"
-              variant="standard"
               onChange={handleUserChange}
-              className="w-full"
+              value={userName}
+              errorMessage={errorSource == 'username' ? error : undefined}
             />
             <TextField
               label="Password"
-              variant="standard"
               type = "password"
               onChange={handlePasswordChange}
-              className="w-full"
+              value={password}
+              errorMessage={errorSource == 'password' ? error : undefined}
             />
             <SubmitButton clickHandler={handleSubmit}>
               <div className="flex w-full items-center justify-center">{loading ? <Image src={spinnerIcon} height={24} width={24} alt="loading"/> : 'Sign In'}</div>
