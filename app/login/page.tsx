@@ -54,7 +54,21 @@ export default function LogIn(){
       
     } catch (error) {
       console.error("Error registering user:", error);
-      alert('please try again');
+      try{
+        if (axios.isAxiosError(error) && error.response && error.response.data) {
+          const errorData = error.response.data as { error: string };
+          if (errorData.error === "Incorrect password") {
+            setError('Incorrect password');
+            setErrorSource('password');
+          } else if (errorData.error === "User not found") {
+            setError('User not found');
+            setErrorSource('username');
+          }
+        }
+      }
+      catch(e){
+        alert('please try again later');
+      }
     }
     setLoading(false);
     
@@ -66,7 +80,7 @@ export default function LogIn(){
     </div>
   }
   return <div className="w-full h-full flex justify-center items-center">
-      <Card className="flex flex-row items-center rounded bg-white h-80">
+      <Card className="flex flex-row items-center rounded bg-white h-96 rounded-xl">
         <div style={{backgroundColor : 'var(--primary)'}} className="hidden tablet:flex w-90 flex flex-col h-full items-center justify-center mr-6">
           <p className="text-xl text-white">Welcome to </p>
           <p className="text-2xl text-white">SUST CP Lab </p>
@@ -100,8 +114,8 @@ export default function LogIn(){
               value={password}
               errorMessage={errorSource == 'password' ? error : undefined}
             />
-            <SubmitButton clickHandler={handleSubmit}>
-              <div className="flex w-full items-center justify-center">{loading ? <Image src={spinnerIcon} height={24} width={24} alt="loading"/> : 'Sign In'}</div>
+            <SubmitButton clickHandler={handleSubmit} disabled={loading}>
+              <div className="flex w-full items-center justify-center p-1 gap-2">{loading ? <Image src={spinnerIcon} height={24} width={24} alt="loading"/> : <></>}Sign In</div>
             </SubmitButton>
             <p>Dont have an account ? <Link href={'registration'}>Sign UP</Link></p>
           </div>

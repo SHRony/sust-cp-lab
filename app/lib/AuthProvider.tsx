@@ -31,7 +31,7 @@ export default function AuthProvider({ children, userProps }: { children: React.
       // Handle authentication errors
       console.log('could not login');
       setLoading(false);
-      return false;
+      throw error;
     } finally {
       setLoading(false);
     }    
