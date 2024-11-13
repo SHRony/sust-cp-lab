@@ -63,11 +63,13 @@ export default function LogIn(){
           } else if (errorData.error === "User not found") {
             setError('User not found');
             setErrorSource('username');
+          }else{
+            alert('Unknown error, report to admin');
           }
         }
       }
       catch(e){
-        alert('please try again later');
+        alert('Unknown error, report to admin');
       }
     }
     setLoading(false);
@@ -80,8 +82,8 @@ export default function LogIn(){
     </div>
   }
   return <div className="w-full h-full flex justify-center items-center">
-      <Card className="flex flex-row items-center rounded bg-white h-96 rounded-xl">
-        <div style={{backgroundColor : 'var(--primary)'}} className="hidden tablet:flex w-90 flex flex-col h-full items-center justify-center mr-6">
+      <Card className="flex flex-row items-center rounded bg-white h-96 rounded-xl overflow-hidden">
+        <div style={{backgroundColor : 'var(--primary)'}} className="hidden tablet:flex w-90 flex flex-col h-full items-center justify-center mr-6 text-gray-600">
           <p className="text-xl text-white">Welcome to </p>
           <p className="text-2xl text-white">SUST CP Lab </p>
           <div className="absolute h-12 w-12 rotate-45 bg-primary transform translate-x-[10.5rem]" style={{transform: 'translateX(10.5rem) rotate(45deg)'}}></div>
@@ -97,7 +99,7 @@ export default function LogIn(){
               >
 
               </Image>
-              <p className="pl-5">
+              <p className="pl-5 text-gray-800">
               Login
               </p>
             </div>

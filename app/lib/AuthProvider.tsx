@@ -1,11 +1,7 @@
 'use client';
-import React, { createContext, useEffect, useState } from "react";
-import { AuthContextType, userType, userStateType } from "./types";
+import React, { createContext, useState } from "react";
+import { AuthContextType, userStateType } from "./types";
 import axios from "axios";
-// Define the type of your context value
-
-
-// Create the context with the defined type
 export const authContext = createContext<AuthContextType | undefined>(undefined);
 
 export default function AuthProvider({ children, userProps }: { children: React.ReactNode, userProps: userStateType|null }) {

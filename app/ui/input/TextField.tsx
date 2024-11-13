@@ -1,6 +1,4 @@
-import React, { FC, useEffect, useState } from 'react'
-import styled from 'styled-components'
-
+import React, { FC, useState } from 'react'
 export interface TextFieldProps {
   label: string
   errorMessage?: string
@@ -26,7 +24,6 @@ const TextField: FC<TextFieldProps> = ({
         value={value}
         onChange={(e) => {
           onChange(e)
-          console.log(e.target.value);
           if(e.target.value == '') setIsEmpty(true)
           else setIsEmpty(false)
         }}
@@ -53,7 +50,7 @@ const Wrapper = ({children}: {children: React.ReactNode}) => {
 //   transition: all 0.2s ease-out;
 // `
 const Label = ({children, isFocused, isEmpty}: {children: React.ReactNode, isFocused: boolean, isEmpty: boolean}) => {
-  return <label className={`absolute ${(!isEmpty)||isFocused ? 'top-[-12px]' : 'top-[5px]'} left-4 ${(!isEmpty)||isFocused ? 'text-[14px]' : 'text-[16px]'} transition-all ease-out` }>{children}</label>
+  return <label  className={`absolute ${(!isEmpty)||isFocused ? 'top-[-12px]' : 'top-[5px]'} left-4 ${(!isEmpty)||isFocused ? 'text-[14px]' : 'text-[16px]'} transition-all ease-out` }>{children}</label>
 }
 const ErrorMessage = ({children}: {children: React.ReactNode}) => {
   return <p className="text-red-500 text-sm mt-2">{children}</p>
