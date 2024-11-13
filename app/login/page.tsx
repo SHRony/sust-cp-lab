@@ -88,7 +88,7 @@ export default function LogIn(){
           <p className="text-2xl text-white">SUST CP Lab </p>
           <div className="absolute h-12 w-12 rotate-45 bg-primary transform translate-x-[10.5rem]" style={{transform: 'translateX(10.5rem) rotate(45deg)'}}></div>
         </div>
-        <div className="flex flex-col w-90 tablet:w-96 gap-5 py-2 px-5 bg-white">
+        <div className="flex flex-col w-90 tablet:w-96 gap-5 py-2 px-5 bg-white text-gray-600">
           <div className="flex flex-col items-center rounded gap-5">
             <div className="flex flex-row text-2xl font-bold items-center">
               <Image 
@@ -99,7 +99,7 @@ export default function LogIn(){
               >
 
               </Image>
-              <p className="pl-5 text-gray-800">
+              <p className="pl-5 text-gray-700">
               Login
               </p>
             </div>

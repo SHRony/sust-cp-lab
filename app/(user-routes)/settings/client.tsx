@@ -69,7 +69,7 @@ const Settings = ({ user }: { user: userType }) => {
                         />
                     </div>
                     <div className="flex flex-row gap-2"> <span className="p-1 w-32">CF Handles:</span> 
-                        <div className="flex flex-row gap-2">
+                        <div className="flex flex-row gap-2 items-end flex-wrap">
                             {newUser.cfHandles?.map((handle) => {
                                 return <Tag key={handle} tag={handle} removeTag={removeCFHandle}/>;
                             })}

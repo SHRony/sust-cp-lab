@@ -37,7 +37,7 @@ export default function DoubleClickInput({ initialValue, onChange, inputClassNam
   },[]);
   return (
     <div className="flex flex-row items-center cursor-text" onDoubleClick={handleDoubleClick}>
-      <div className={`flex flex-row items-center ${isEditing ? 'hidden' : ''}`}>
+      <div className={`flex-row items-center hidden ${isEditing ? 'laptop:hidden' : 'laptop:flex'}`}>
         {mounted && <Tooltip followCursor arrow title={'double click to edit'}>
           <span  className={`select-none p-1 ${textClassName}`} style={textStyle}>{value}</span>
         </Tooltip>}
@@ -45,7 +45,7 @@ export default function DoubleClickInput({ initialValue, onChange, inputClassNam
       <input
         ref={inputRef}
         type="text"
-        className={`p-1 border-0 outline-none ${isEditing ? '' : 'hidden'} ${inputClassName}`}
+        className={`p-1 border-0 outline-none ${isEditing ? '' : 'laptop:hidden'} ${inputClassName}`}
         onChange={handleChange}
         value={value}
         onBlur={handleBlur}
