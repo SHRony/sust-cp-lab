@@ -28,7 +28,7 @@ export default function CalenderHeatmap({user}:{user : cfUserType|null}){
      <Card className="bg-card w-full mt-10 flex flex-col justify-center items-center">
       {
           Array.from({ length: new Date().getFullYear() - startYear + 1 }, (_, i) => i + startYear).reverse().map(year => (
-            <div style={{maxWidth : "1200px"}} key={year} className="w-full h-60 p-2">
+            <div style={{maxWidth : "1200px"}} key={year} className="w-full p-2">
               <div className="font-bold text-xl px-5" style={{backgroundColor : 'var(--primaryContainer)', color : 'var(--primary)', width : 'fit-content', borderRadius : '40px'}}>{year}</div>
               <CalendarHeatmap
                 key={year} // Important to add a unique key for each heatmap

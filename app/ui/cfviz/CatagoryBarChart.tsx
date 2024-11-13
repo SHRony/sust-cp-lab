@@ -26,7 +26,7 @@ export default function CatagoryBarChart({CFUser}:{CFUser : cfUserType|null}) {
   if(!CFUser) return <></>;
   const barData = CFUser.catData;
   return (
-    <Card className="bg-card w-full flex flex-col justify-center items-center max-h-600 p-8">
+    <Card className="bg-card w-full flex flex-col justify-center items-start max-h-600">
       <ChartHeading text="Catagory wise solve count" />
       <Bar options={options}
         data = {generateDataForCatagoryBarChart(barData)}

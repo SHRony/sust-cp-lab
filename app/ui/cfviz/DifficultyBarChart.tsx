@@ -26,7 +26,7 @@ export default function DifficultyBarChart({CFUser} : {CFUser : cfUserType|null}
   const barData = CFUser.diffData;
   
   return (
-    <Card className="bg-card w-full flex flex-col justify-center items-center max-h-600 p-8">
+    <Card className="bg-card w-full flex flex-col justify-center items-start max-h-600">
       <ChartHeading text="Difficulty wise solve count" />
       <Bar options={options}
         data = {generateDataForDifficultyBarChart(barData)}

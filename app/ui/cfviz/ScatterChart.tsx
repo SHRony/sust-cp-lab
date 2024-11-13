@@ -11,9 +11,10 @@ export default function ScatterChart({user} : {user : cfUserType|null}) {
   if(!user) return <></>;
   return (
     <Card
-      className="flex flex-col bg-card laptop:p-8 rounded w-full overflow-y-scroll" style = {{scrollbarWidth : "none"}}>
-        <div className="w-full min-w-800-px">
+      className="flex flex-col bg-card rounded w-full overflow-y-scroll items-start" style = {{scrollbarWidth : "none"}}>
         <ChartHeading text="Scatter diagram of solved problems with time"/>
+
+        <div className="w-full min-w-800-px">
         <Scatter 
         className="w-full" 
         data={generateDataForScatterChart(user)}

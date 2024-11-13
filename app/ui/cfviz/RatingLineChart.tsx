@@ -26,8 +26,15 @@ ChartJS.register(
 export default function RatingLineChart({CFUser} : {CFUser : cfUserType|null}){
   if(!CFUser) return <></>
   const lineData = CFUser.ratingChanges;
+  lineData.datasets = lineData.datasets.map((data) => {
+    return {
+      ...data,
+      pointRadius : 1,
+      borderWidth : 1
+    }
+  })
   return (
-    <Card className="bg-card w-full flex flex-col justify-center items-center max-h-700 laptop:p-8">
+    <Card className="bg-card w-full flex flex-col justify-center items-start max-h-700">
       <ChartHeading text="Rating Curve"></ChartHeading>
       <Line options={options} data = { lineData } className="w-full" />
     </Card>
