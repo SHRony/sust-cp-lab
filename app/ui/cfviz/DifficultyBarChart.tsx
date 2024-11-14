@@ -12,6 +12,7 @@ import { Bar } from 'react-chartjs-2';
 import Card from "../cards/Card";
 import { cfUserType } from "@/app/lib/types";
 import ChartHeading from "./ChartHeading";
+import { borderColors } from "@/app/lib/colors";
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -48,12 +49,12 @@ function generateDataForDifficultyBarChart(barData : { x: any; y: any; }[]) {
       {
         label : 'x difficulty',
         data : solveCounts,
-        backgroundColor: '#6750A4BB',
+        backgroundColor: borderColors[2],
       },
       {
         label : 'x+ difficulty',
         data : cumulitiveSolveCounts,
-        backgroundColor: 'rgba(53, 162, 235, 0.5)',
+        backgroundColor: borderColors[3],
         hidden : true
       },
     ]

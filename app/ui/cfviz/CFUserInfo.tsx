@@ -23,7 +23,7 @@ export default function cfUserInfo({CFUser}:{CFUser:cfUserType|null}){
 
 const ProfileHeading = ({text}:{text:string}) => {
   return (
-    <div className="flex justify-center items-center text-2xl font-bold text-shadow-2xl text-center px-10 mb-5 bg-blue-100 text-blue-600 rounded-r-full">
+    <div className="flex justify-center items-center text-2xl font-bold text-shadow-2xl text-center px-10 mb-5 bg-blue-100 text-blue-600 rounded-r-full border-l-2 border-blue-600">
       {text}
     </div>
   )

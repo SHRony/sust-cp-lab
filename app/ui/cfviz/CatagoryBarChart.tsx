@@ -12,6 +12,7 @@ import { Bar } from 'react-chartjs-2';
 import Card from "../cards/Card";
 import { cfUserType } from "@/app/lib/types";
 import ChartHeading from "@/app/ui/cfviz/ChartHeading";
+import { borderColors } from "@/app/lib/colors";
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -46,7 +47,7 @@ function generateDataForCatagoryBarChart(barData : {x : string, y : number}[]) {
       {
         label : 'Solved',
         data : solveCounts,
-        backgroundColor: '#6750A4BB',
+        backgroundColor: borderColors[4],
       },
     ]
   }

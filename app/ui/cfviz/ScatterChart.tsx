@@ -5,6 +5,7 @@ import { LinearScale } from "chart.js";
 import { Chart as ChartJS, LineController, LineElement, PointElement, Title } from 'chart.js';
 import Card from "@/app/ui/cards/Card";
 import ChartHeading from "@/app/ui/cfviz/ChartHeading";
+import { borderColors } from "@/app/lib/colors";
 ChartJS.register(LineController, LineElement, PointElement, LinearScale, Title);
 
 export default function ScatterChart({user} : {user : cfUserType|null}) {
@@ -29,7 +30,7 @@ function generateDataForScatterChart(user : cfUserType){
     datasets: [
       {
         data: user.acTime,
-        backgroundColor: '#6750A4',
+        backgroundColor: borderColors[0],
         label : ''
       },
     ],
@@ -45,7 +46,7 @@ const options = {
     },
     title: {
       display: false,
-      text: 'Scatter diagram of solved problems with time',
+      text: 'Scatter diagram of solved problems',
     },
   },
 };

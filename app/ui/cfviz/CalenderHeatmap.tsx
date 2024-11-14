@@ -25,11 +25,11 @@ export default function CalenderHeatmap({user}:{user : cfUserType|null}){
     alert(`${value.count}`);
   };
   return (
-     <Card className="bg-card w-full mt-10 flex flex-col justify-center items-center">
+     <Card className="bg-card w-full mt-10 flex flex-col justify-center items-center gap-8">
       {
           Array.from({ length: new Date().getFullYear() - startYear + 1 }, (_, i) => i + startYear).reverse().map(year => (
-            <div style={{maxWidth : "1200px"}} key={year} className="w-full p-2">
-              <div className="font-bold text-xl px-5" style={{backgroundColor : 'var(--primaryContainer)', color : 'var(--primary)', width : 'fit-content', borderRadius : '40px'}}>{year}</div>
+            <div style={{maxWidth : "1200px"}} key={year} className="flex flex-col items-start w-full p-2 gap-4">
+              <div className="font-bold text-xl px-5 bg-blue-100 text-blue-600 border border-blue-600 rounded-r-full rounded-full" >{year}</div>
               <CalendarHeatmap
                 key={year} // Important to add a unique key for each heatmap
                 startDate={new Date(year + '-01-01')}

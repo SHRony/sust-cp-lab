@@ -139,7 +139,7 @@ body {
 
  .react-calendar-heatmap text {
   font-size: 10px;
-  fill: #aaa;
+  fill: rgb(22, 163, 74);
 }
 
 .react-calendar-heatmap .react-calendar-heatmap-small-text {
@@ -147,7 +147,7 @@ body {
 }
 
 .react-calendar-heatmap rect:hover {
-  stroke: #555;
+  stroke: rgb(22, 163, 74);
   stroke-width: 1px;
 }
 
@@ -189,7 +189,7 @@ body {
 
  .react-calendar-heatmap {
   /* Existing styles... */
-  fill: var(--primary);
+  fill: rgb(22, 163, 74);
   
 }
 

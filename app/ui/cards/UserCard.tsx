@@ -16,7 +16,7 @@ export default function UserCard({userName, fullName, registrationNumber, email,
   return (
     <Card className="flex flex-col items-start bg-card w-80 tablet:w-120 laptop:w-160 min-h-10 py-8 rounded text-gray-600">
       <div 
-        className="flex justify-center items-center text-2xl font-bold text-shadow-2xl text-center px-10 mb-5 bg-blue-100 text-blue-600 rounded-r-full"
+        className="flex justify-center items-center text-2xl font-bold text-shadow-2xl text-center px-10 mb-5 bg-blue-100 text-blue-600 rounded-r-full border-l-2 border-blue-600"
       >
         {userName}
       </div>
