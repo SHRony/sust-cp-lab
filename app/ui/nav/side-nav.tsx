@@ -1,108 +1,178 @@
 'use client';
 import React, { ReactNode, useContext } from "react";
-import logoutIcon from '@/public/logout_white.png'
-import profileIcon from '@/public/profile.svg'
 import Image from "next/image";
 import { authContext } from "@/app/lib/AuthProvider";
-import Brightness4Icon from '@mui/icons-material/Brightness4';
 import { usePathname } from "next/navigation";
-import { Button, IconButton } from "@mui/material";
 import Link from "next/link";
-import homeIcon from '@/public/home.svg';
 import logo from '@/public/logo.png';
-import trophyIcon from '@/public/trophy.svg';
-import statIcon from '@/public/stat.svg';
-import settingsIcon from '@/public/settings.svg';
-import usersIcon from '@/public/users.svg';
-import signOutIcon from '@/public/sign-out.svg';
-import writeIcon from '@/public/write.svg';
+import { motion, AnimatePresence } from "framer-motion";
+import { 
+  Home, 
+  Trophy, 
+  BarChart2, 
+  MessageSquare, 
+  Users, 
+  User, 
+  Settings,
+  LogOut,
+} from "lucide-react";
 
-const nvaLinks = [
+const navLinks = [
   {
     url: "/dashboard",
-    icon: homeIcon,
+    icon: Home,
     text: "Dashboard"
   }, 
   {
     url: "/contests",
-    icon: trophyIcon,
+    icon: Trophy,
     text: "Contests"
   },
   {
     url: "/cfviz",
-    icon: statIcon,
-    text: "Cfviz",
+    icon: BarChart2,
+    text: "CF Viz",
   },
   {
     url: "/forum",
-    icon: writeIcon,
+    icon: MessageSquare,
     text: "Forum",
   },
   {
     url: "/users",
-    icon: usersIcon,
+    icon: Users,
     text: "Users"
   }, 
   {
     url: "/profile",
-    icon: profileIcon,
+    icon: User,
     text: "Profile"
   },
   {
     url: "/settings",
-    icon: settingsIcon,
+    icon: Settings,
     text: "Settings"
   }
-  
-]
-export default function SideNav(){
+];
+
+const SideNavButton = ({
+  children, 
+  url, 
+  isActive,
+  onClick
+}: {
+  children: ReactNode;
+  url: string;
+  isActive: boolean;
+  onClick?: () => void;
+}) => {
+  return (
+    <Link href={url} className="w-full">
+      <motion.div
+        className={`
+          flex items-center gap-3 px-4 py-3 mx-2 rounded-lg
+          ${isActive 
+            ? 'text-blue-600 bg-blue-50' 
+            : 'text-gray-600 hover:bg-gray-50'
+          }
+          transition-colors duration-200
+        `}
+        whileHover={{ x: 4 }}
+        whileTap={{ scale: 0.98 }}
+      >
+        {children}
+      </motion.div>
+    </Link>
+  );
+};
+
+export default function SideNav() {
   const auth = useContext(authContext);
+  const pathname = usePathname();
+  
   const handleLogout = async () => {
     await auth?.signOut();
-  }
-  return <div className='flex flex-col justify-start items-center h-full w-12 laptop:w-48 bg-white shadow rounded-xl'>
-    <div className='flex flex-col justify-start items-center grow text-gray-600 gap-2'>
-      <div className="pb-12">
+  };
+
+  return (
+    <motion.div 
+      initial={{ x: -100, opacity: 0 }}
+      animate={{ x: 0, opacity: 1 }}
+      transition={{ duration: 0.3 }}
+      className="flex flex-col h-full w-16 laptop:w-64 bg-white border-r border-gray-200"
+    >
+      {/* Logo Section */}
+      <div className="flex items-center gap-3 px-4 py-6 border-b border-gray-100">
         <Link href="/">
-          <div className='flex flex-row justify-begin items-center w-12 laptop:w-48 text-2xl font-bold text-gray-900 p-4 gap-4'>
-            <Image src={logo} alt="" width={30} height={30}/>
-            <span className="hidden laptop:block">
-              CP-LAB
+          <motion.div
+            className="flex items-center gap-3"
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+          >
+            <motion.div
+              whileHover={{ rotate: 360 }}
+              transition={{ duration: 0.5 }}
+            >
+              <Image 
+                src={logo} 
+                alt="CP Lab Logo" 
+                width={32} 
+                height={32}
+                className="rounded-lg"
+              />
+            </motion.div>
+            <span className="hidden laptop:block text-lg font-bold bg-gradient-to-r from-blue-600 to-blue-400 bg-clip-text text-transparent">
+              CP LAB
             </span>
-          </div>
+          </motion.div>
         </Link>
       </div>
-      {
-        nvaLinks.map((link) => (
-          <SideNavButton url={link.url} type="text" key={link.text}>
-            <Image src={link.icon} alt="" width={16} height={16}/> <span className="hidden laptop:block">{link.text}</span>
-          </SideNavButton>
-        ))
-      }
-      
-    </div>
-    <div className='flex flex-col justify-start items-center'>
-        <div className="flex flex-row text-gray-600 w-12 laptop:w-48 h-12 font-bold items-center gap-2 p-4 hover:bg-blue-100 cursor-pointer" onClick={handleLogout}>
-          <Image src={signOutIcon} alt="" width={25} height={25}/>
-          <span className="hidden laptop:block">Signout</span>
-        </div>
-      {/* {(!auth || auth.loading) ? <></> : (auth?.signedIn ? logOutButtonSet() : logInButtonSet())} */}
-    </div>
-  </div>
-}
 
-const SideNavButton = ({children, url, type, onClick} : Readonly<{children:ReactNode|string, url : string, type : string, onClick?:() => void | Promise<void> | null}>) =>{
-  const pathname = usePathname();
-  return (
-    <Link href={url} className="w-full">{
-      type != 'icon' ? (
-        <div className={`flex flex-row text-gray-600 w-12 laptop:w-48 h-12 font-bold items-center gap-2 p-4 hover:bg-blue-100 ${pathname.startsWith(url) ? 'border-l-2 border-l-blue-600 text-blue-600' : ''}`}>
-          {children}
-        </div>
-      ) : (
-        <div className='h-full flex flex-row rounded-full'><IconButton style={{padding : '20px'}} onClick={onClick}>{children}</IconButton></div>
-      ) 
-    }
-    </Link>
+      {/* Navigation Links */}
+      <div className="flex-1 py-4 space-y-1 overflow-y-auto">
+        <AnimatePresence>
+          {navLinks.map((link, index) => {
+            const isActive = pathname.startsWith(link.url);
+            const Icon = link.icon;
+            
+            return (
+              <motion.div
+                key={link.url}
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: index * 0.1 }}
+              >
+                <SideNavButton 
+                  url={link.url} 
+                  isActive={isActive}
+                >
+                  <Icon 
+                    className={`w-5 h-5 ${isActive ? 'text-blue-600' : 'text-gray-500'}`}
+                  />
+                  <span className="hidden laptop:block font-medium">
+                    {link.text}
+                  </span>
+                </SideNavButton>
+              </motion.div>
+            );
+          })}
+        </AnimatePresence>
+      </div>
+
+      {/* Logout Section */}
+      <div className="border-t border-gray-100 p-2">
+        <motion.button
+          className="flex items-center gap-3 w-full px-4 py-3 mx-2 rounded-lg text-gray-600 hover:bg-red-50 hover:text-red-600 transition-colors duration-200"
+          onClick={handleLogout}
+          whileHover={{ x: 4 }}
+          whileTap={{ scale: 0.98 }}
+        >
+          <LogOut className="w-5 h-5" />
+          <span className="hidden laptop:block font-medium">
+            Sign Out
+          </span>
+        </motion.button>
+      </div>
+    </motion.div>
   );
 }

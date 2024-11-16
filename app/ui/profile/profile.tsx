@@ -11,18 +11,53 @@ import RatingLineChart from '@/app/ui/cfviz/RatingLineChart';
 import ScatterChart from '@/app/ui/cfviz/ScatterChart';
 import UserCard from '@/app/ui/cards/UserCard';
 import UserCardSkeleton from '@/app/ui/cards/UserCardSkeleton';
+import { motion } from 'framer-motion';
+import { 
+  BarChart2, 
+  LineChart, 
+  CalendarDays, 
+  ScatterChart as ScatterIcon,
+  PieChart,
+  Activity
+} from 'lucide-react';
+
+interface ChartSectionProps {
+  title: string;
+  icon: React.ElementType;
+  children: React.ReactNode;
+}
+
+const ChartSection = ({ title, icon: Icon, children }: ChartSectionProps) => (
+  <motion.div
+    initial={{ opacity: 0, y: 20 }}
+    animate={{ opacity: 1, y: 0 }}
+    className="w-full"
+  >
+    <div className="flex items-center gap-3 mb-4 px-4 sm:px-0">
+      <div className="p-2 bg-blue-50 rounded-lg">
+        <Icon className="w-5 h-5 text-blue-500" />
+      </div>
+      <h2 className="text-xl font-semibold text-gray-800">{title}</h2>
+    </div>
+    <div className="bg-white rounded-xl border border-gray-200 p-2 sm:p-6">
+      {children}
+    </div>
+  </motion.div>
+);
 
 const Profile = ({userParams, cfUserParams}:{userParams : userType|null, cfUserParams : cfUserType|null}) => {
   const auth = useContext(authContext);
   const [user, setUser] = useState<userType|null>(userParams);
   const [cfUser, setCfUser] = useState<cfUserType|null>(cfUserParams);
   const [trigger, setTrigger] = useState(false);
+
   const addCFHandle = async (handle : string) => {
     if(user && user.cfHandles && !user.cfHandles.includes(handle)){
       setUser({...user, cfHandles: [...user.cfHandles, handle]});
       setTrigger(!trigger);
     }
   }
+
   const removeCFHandle = async (handle : string) => {
     if(user && user.cfHandles && user.cfHandles.includes(handle)){
       setUser({...user, cfHandles: user.cfHandles.filter((cfHandle) => cfHandle != handle)});
@@ -31,27 +66,36 @@ const Profile = ({userParams, cfUserParams}:{userParams : userType|null, cfUserP
   }
 
   useEffect(() => {
-    const yo = async() => {
-    
-      let handles = user?.cfHandles?.join(',') ?? '';
-      axios.get(`/api/external/cfuserinfo?user=${handles}`).then((res) => {
+    const fetchCFInfo = async () => {
+      try {
+        let handles = user?.cfHandles?.join(',') ?? '';
+        const res = await axios.get(`/api/external/cfuserinfo?user=${handles}`);
         if(res.data){
           setCfUser(res.data);
-          axios.post('/api/userinfo/addcache', {username : user?.userName, info : res.data});
+          await axios.post('/api/userinfo/addcache', {username : user?.userName, info : res.data});
         }
-      }).catch((res)=>{
+      } catch (error) {
         setCfUser(null);
-      });
-    }
-    yo();
-
+        console.error('Error fetching CF info:', error);
+      }
+    };
+    fetchCFInfo();
   }, [user?.cfHandles, user?.userName]);
   
   return (
-    <div className="flex flex-col items-center w-full pt-20 gap-20">
+    <motion.div 
+      className="flex flex-col items-center w-full pt-20 space-y-4 sm:space-y-8"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.3 }}
+    >
+      {/* User Info Section */}
       <div className="flex flex-row flex-wrap w-full justify-center items-stretch gap-20">
-        {
-          user != null && (
+        {user && (
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+          >
             <UserCard 
               phone={''} 
               password='' 
@@ -63,19 +107,41 @@ const Profile = ({userParams, cfUserParams}:{userParams : userType|null, cfUserP
               registrationNumber={user.registrationNumber}
               addCFHandle={addCFHandle}
               removeCFHandle={removeCFHandle}
-              userType='student'>
-                
-              </UserCard>
-          )
-        }
-        <UserInfo CFUser={cfUser}/>
+              userType='student'
+            />
+          </motion.div>
+        )}
+        <motion.div
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+        >
+          <UserInfo CFUser={cfUser}/>
+        </motion.div>
       </div>
-      <RatingLineChart CFUser={cfUser}/>
-      <DifficultyBarChart CFUser={cfUser}/>
-      <CatagoryBarChart CFUser={cfUser}/>
-      <ScatterChart user={cfUser}></ScatterChart>
-      <CalenderHeatmap user={cfUser}></CalenderHeatmap>
-    </div>
+
+      {/* Charts Section */}
+      <div className="w-full px-2 sm:px-4 space-y-4 sm:space-y-8">
+        <ChartSection title="Rating Progress" icon={LineChart}>
+          <RatingLineChart CFUser={cfUser}/>
+        </ChartSection>
+
+        <ChartSection title="Problem Difficulty Distribution" icon={BarChart2}>
+          <DifficultyBarChart CFUser={cfUser}/>
+        </ChartSection>
+
+        <ChartSection title="Problem Categories" icon={PieChart}>
+          <CatagoryBarChart CFUser={cfUser}/>
+        </ChartSection>
+
+        <ChartSection title="Problem vs Rating" icon={Activity}>
+          <ScatterChart user={cfUser} />
+        </ChartSection>
+
+        <ChartSection title="Submission Activity" icon={CalendarDays}>
+          <CalenderHeatmap user={cfUser} />
+        </ChartSection>
+      </div>
+    </motion.div>
   );
 }
 
