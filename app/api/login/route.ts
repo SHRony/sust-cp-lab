@@ -5,8 +5,7 @@ import { getUserbyName, getCFHandles } from "@/app/api/queries/user_queries";
 import jwt from 'jsonwebtoken';
 import { sust_cp_lab_users } from '@prisma/client';
 import prisma from '@/app/api/dbclient';
-import { getCFInfo } from "../queries/cf_queries";
-import { addCFCache } from '../profile/[username]/cf/route';
+import { getCFInfo, addCFCache } from "../queries/cf_queries";
 
 const JWT_KEY:string = process.env.JWT_KEY!;
 

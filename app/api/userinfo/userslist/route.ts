@@ -2,6 +2,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 export const dynamic = 'force-dynamic';
 import { getUsersListWithBsicCFInfo } from '@/app/api/queries/user_queries';
+
 export async function GET(request:NextRequest) {
   try{
     return NextResponse.json({users: getUsersListWithBsicCFInfo()});
@@ -9,5 +10,3 @@ export async function GET(request:NextRequest) {
     return NextResponse.json({ error: 'An error occurred' }, { status: 500 });
   }
 }
-
-export { dynamic };

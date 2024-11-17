@@ -24,7 +24,7 @@ export default async function Page() {
 
   return (
     <Suspense fallback={<div>Loading...</div>}>
-      <ClientPage user={user} cfInfo={cfInfo} contests={recentContests} />
+      {user && <ClientPage user={user} cfInfo={cfInfo} contests={recentContests} />}
     </Suspense>
   );
 }

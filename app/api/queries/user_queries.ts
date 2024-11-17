@@ -1,5 +1,6 @@
 import prisma from "@/app/api/dbclient";
 import { userTableEntryType, userType } from "@/app/lib/types";
+import { user_type } from "@prisma/client";
 import Jwt from 'jsonwebtoken';
 import { cookies } from "next/headers";
 
@@ -41,7 +42,7 @@ export const getUserInfo = async (username: string) => {
     }
     return user;
 }
-async function getCFHandles(username: string) {
+export const getCFHandles = async (username: string)=>{
   const cfResult = await prisma.sust_cp_lab_cf_handles.findMany({
     where: {
       username: username
@@ -75,16 +76,16 @@ export const getUsersListWithBsicCFInfo = async () => {
     }
   }
   
-  export const isLoggedIn = async () => {
+  export const isLoggedIn = async (): Promise<{userName: string; userType: user_type} | null> => {
     try{
       const token = await cookies().get('token')?.value;
       if(token == undefined) return null;
-      const user = await Jwt.verify(token!, process.env.JWT_KEY!) as {username: string; userType: string};
+      const user = await Jwt.verify(token!, process.env.JWT_KEY!) as {username: string; user_type: user_type};
       if(!user) return null;
       const response = await getUserbyName(user.username);
       let ret = {
         userName: user.username,
-        userType: user.userType || response?.user_type || null
+        userType: user.user_type,
       }
       return ret;
     }catch{
