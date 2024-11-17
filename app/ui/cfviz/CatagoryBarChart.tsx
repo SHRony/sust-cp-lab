@@ -24,8 +24,6 @@ ChartJS.register(
 
 
 export default function CatagoryBarChart({CFUser}:{CFUser : cfUserType|null}) {
-  if(!CFUser) return <></>;
-  const barData = CFUser.catData;
   const [windowWidth, setWindowWidth] = useState(typeof window !== 'undefined' ? window.innerWidth : 1024);
 
   useEffect(() => {
@@ -35,6 +33,9 @@ export default function CatagoryBarChart({CFUser}:{CFUser : cfUserType|null}) {
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
+
+  if(!CFUser) return <></>;
+  const barData = CFUser.catData;
 
   return (
     <Card className="bg-card w-full flex flex-col justify-center items-start">
@@ -47,7 +48,6 @@ export default function CatagoryBarChart({CFUser}:{CFUser : cfUserType|null}) {
     </Card>
   );
 }
-
 
 
 function generateDataForCatagoryBarChart(barData : {x : string, y : number}[]) {
@@ -83,7 +83,7 @@ const options = (windowWidth: number) => ({
       position: 'top' as const,
     },
     title: {
-      display: false,
+      display: true,
       text: 'Category Distribution',
     },
   },

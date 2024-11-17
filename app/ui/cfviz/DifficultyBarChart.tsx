@@ -23,8 +23,6 @@ ChartJS.register(
 );
 
 export default function DifficultyBarChart({CFUser}:{CFUser:cfUserType|null}) {
-  if(!CFUser) return <></>;
-  const barData = CFUser.diffData;
   const [windowWidth, setWindowWidth] = useState(typeof window !== 'undefined' ? window.innerWidth : 1024);
 
   useEffect(() => {
@@ -34,6 +32,9 @@ export default function DifficultyBarChart({CFUser}:{CFUser:cfUserType|null}) {
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
+
+  if(!CFUser) return <></>;
+  const barData = CFUser.diffData;
 
   return (
     <Card className="bg-card w-full flex flex-col justify-center items-start">
@@ -46,7 +47,6 @@ export default function DifficultyBarChart({CFUser}:{CFUser:cfUserType|null}) {
     </Card>
   );
 }
-
 
 
 function generateDataForDifficultyBarChart(barData : { x: any; y: any; }[]) {
@@ -102,7 +102,7 @@ const options = (windowWidth: number) => ({
       position: 'top' as const,
     },
     title: {
-      display: false,
+      display: true,
       text: 'Difficulty Distribution',
     },
   },

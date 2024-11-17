@@ -24,15 +24,6 @@ ChartJS.register(
 );
 
 export default function RatingLineChart({CFUser} : {CFUser : cfUserType|null}){
-  if(!CFUser) return <></>
-  const lineData = CFUser.ratingChanges;
-  lineData.datasets = lineData.datasets.map((data) => {
-    return {
-      ...data,
-      pointRadius : 1,
-      borderWidth : 1
-    }
-  })
   const [windowWidth, setWindowWidth] = useState(typeof window !== 'undefined' ? window.innerWidth : 1024);
 
   useEffect(() => {
@@ -43,6 +34,16 @@ export default function RatingLineChart({CFUser} : {CFUser : cfUserType|null}){
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
+  if(!CFUser) return <></>;
+  const lineData = CFUser.ratingChanges;
+  lineData.datasets = lineData.datasets.map((data) => {
+    return {
+      ...data,
+      pointRadius : 1,
+      borderWidth : 1
+    }
+  })
+
   return (
     <Card className="bg-card w-full flex flex-col justify-center items-start">
       <ChartHeading text="Rating Curve"></ChartHeading>
@@ -50,7 +51,6 @@ export default function RatingLineChart({CFUser} : {CFUser : cfUserType|null}){
         <Line options={options(windowWidth)} data={lineData} />
       </div>
     </Card>
-
   );
 }
 
@@ -64,7 +64,7 @@ export const options = (windowWidth: number) => ({
       position: 'top' as const,
     },
     title: {
-      display: false,
+      display: true,
       text: 'Ratingwise solve count',
     },
   },

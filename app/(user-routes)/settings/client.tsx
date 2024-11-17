@@ -11,7 +11,8 @@ import closeIcon from '@/public/close.svg';
 import loaderIcon from '@/public/loader.gif';
 import { Input } from "@mui/material";
 import { motion, AnimatePresence } from "framer-motion";
-import { Settings as SettingsIcon, User, Mail, Phone, Hash, Code, Award, X, Plus } from "lucide-react";
+import { Settings as SettingsIcon, User, Mail, Phone, Hash, Code, Award, X, Plus, Save } from "lucide-react";
+import { toast } from "react-hot-toast";
 
 const SettingField = ({ label, children }: { label: React.ReactNode; children: React.ReactNode }) => (
   <motion.div 
@@ -57,6 +58,18 @@ const Settings = ({ user }: { user: userType }) => {
     const [newUser, setNewUser] = useState(user);
     const [newCFHandle, setNewCFHandle] = useState('');
     const [isLoading, setIsLoading] = useState(false);
+    const [isSaving, setIsSaving] = useState(false);
+    const [hasChanges, setHasChanges] = useState(false);
+
+    // Track changes
+    useEffect(() => {
+      const hasUserChanges = 
+        newUser.fullName !== user.fullName ||
+        newUser.phone !== user.phone ||
+        newUser.vjudgeHandle !== user.vjudgeHandle;
+      
+      setHasChanges(hasUserChanges);
+    }, [newUser, user]);
 
     const removeCFHandle = async (handle: string) => {
         try {
@@ -71,6 +84,7 @@ const Settings = ({ user }: { user: userType }) => {
             }
         } catch (error) {
             console.error('Error removing CF handle:', error);
+            toast.error('Failed to remove CF handle');
         } finally {
             setIsLoading(false);
         }
@@ -91,8 +105,31 @@ const Settings = ({ user }: { user: userType }) => {
             }
         } catch (error) {
             console.error('Error adding CF handle:', error);
+            toast.error('Failed to add CF handle');
         } finally {
             setIsLoading(false);
+        }
+    };
+
+    const handleSave = async () => {
+        try {
+            setIsSaving(true);
+            const res = await axios.post('/api/profile/updateSettings', {
+                userName: user.userName,
+                fullName: newUser.fullName,
+                phone: newUser.phone,
+                vjudgeHandle: newUser.vjudgeHandle
+            });
+
+            if (res.status === 200) {
+                toast.success('Settings saved successfully');
+                setHasChanges(false);
+            }
+        } catch (error) {
+            console.error('Error saving settings:', error);
+            toast.error('Failed to save settings');
+        } finally {
+            setIsSaving(false);
         }
     };
 
@@ -104,11 +141,36 @@ const Settings = ({ user }: { user: userType }) => {
         >
             <Card className="bg-white shadow-sm border border-gray-200 rounded-xl overflow-hidden">
                 <div className="border-b border-gray-200 bg-gray-50 p-6">
-                    <div className="flex items-center gap-3">
-                        <div className="p-2 bg-blue-100 rounded-lg">
-                            <SettingsIcon className="w-6 h-6 text-blue-600" />
+                    <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                            <div className="p-2 bg-blue-100 rounded-lg">
+                                <SettingsIcon className="w-6 h-6 text-blue-600" />
+                            </div>
+                            <h1 className="text-2xl font-semibold text-gray-800">Settings</h1>
                         </div>
-                        <h1 className="text-2xl font-semibold text-gray-800">Settings</h1>
+                        <motion.button
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                            className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-colors ${
+                                hasChanges
+                                    ? 'bg-blue-600 text-white hover:bg-blue-700'
+                                    : 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                            }`}
+                            onClick={handleSave}
+                            disabled={!hasChanges || isSaving}
+                        >
+                            {isSaving ? (
+                                <motion.div
+                                    animate={{ rotate: 360 }}
+                                    transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                                >
+                                    <Save className="w-4 h-4" />
+                                </motion.div>
+                            ) : (
+                                <Save className="w-4 h-4" />
+                            )}
+                            Save Changes
+                        </motion.button>
                     </div>
                 </div>
 
