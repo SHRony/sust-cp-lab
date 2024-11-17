@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/app/api/dbclient';
 import { cookies } from 'next/headers';
-import { isLoggedIn } from '@/app/api/queries/user_queries';
+import { isLoggedIn, getUserInfo } from '@/app/api/queries/user_queries';
 
 export async function POST(request: NextRequest) {
   try {
@@ -23,6 +23,15 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Get full user info including registration number
+    const userInfo = await getUserInfo(userName);
+    if (!userInfo) {
+      return NextResponse.json(
+        { error: 'User info not found' },
+        { status: 404 }
+      );
+    }
+
     // Update user info in student_info table
     const updatedStudentInfo = await prisma.sust_cp_lab_student_info.upsert({
       where: {
@@ -31,7 +40,7 @@ export async function POST(request: NextRequest) {
       create: {
         username: userName,
         full_name: fullName,
-        registration_no: user.registrationNumber || '',
+        registration_no: userInfo.registrationNumber || '',
         vjudge_handle: vjudgeHandle
       },
       update: {

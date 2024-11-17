@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import TeamCard from "@/app/ui/cards/TeamCard";
 import axios from "axios";
@@ -13,17 +12,21 @@ import CFCompare from "@/app/ui/cfviz/CFCompare";
 import { teamType, userType } from "@/app/lib/types";
 import CreateTeams from "./ClientPage";
 import { getContestUsers, getContestTeams } from "@/app/api/queries/contest_queries";
+import { isLoggedIn } from "@/app/api/queries/user_queries";
+import { redirect } from "next/navigation";
+
 export default async function Page({params:{id}}:{params:{id:string}}) {
+  const user = await isLoggedIn();
+  
+  // Redirect if not admin or mentor
+  if (!user || (user.userType !== 'admin' && user.userType !== 'mentor')) {
+    redirect('/contests/' + id);
+  }
+
   const users = await getContestUsers(Number(id));
   const teams = await getContestTeams(Number(id));
-  
-// have to find a better layout for the buttons
-
-
 
   return (
-    <CreateTeams teamsParams={teams} usersParams={users} id={id} ></CreateTeams>
+    <CreateTeams teamsParams={teams} usersParams={users} id={id} />
   );
 };
-
-    

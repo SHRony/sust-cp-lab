@@ -25,7 +25,7 @@ export default function ScatterChart({user}:{user:cfUserType|null}) {
   return (
     <Card className="bg-card w-full flex flex-col justify-center items-start">
       <ChartHeading text="Scatter diagram of solved problems with time"/>
-      <div className={`w-full ${windowWidth <= 768 ? 'h-[500px]' : 'h-[400px]'}`}>
+      <div className="w-full h-[400px]">
         <Scatter 
           data={generateDataForScatterChart(scatterData)}
           options={options(windowWidth)}

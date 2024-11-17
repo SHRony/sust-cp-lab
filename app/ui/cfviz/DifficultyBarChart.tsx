@@ -39,7 +39,7 @@ export default function DifficultyBarChart({CFUser}:{CFUser:cfUserType|null}) {
   return (
     <Card className="bg-card w-full flex flex-col justify-center items-start">
       <ChartHeading text="Difficulty wise solve count" />
-      <div className={`w-full ${windowWidth <= 768 ? 'h-[500px]' : 'h-[400px]'}`}>
+      <div className="w-full h-[400px]">
         <Bar options={options(windowWidth)}
           data={generateDataForDifficultyBarChart(barData)}
         />
