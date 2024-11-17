@@ -48,7 +48,7 @@ export default function LogIn(){
     }
     try {
       if(await auth!.signIn(userName, password)) {
-        window.location.href = '/profile';
+        window.location.href = '/dashboard';
         setSuccess(true);
       };
       

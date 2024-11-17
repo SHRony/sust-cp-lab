@@ -42,13 +42,13 @@ export async function middleware(request: NextRequest) {
       withCredentials: true
     });
 
-    if(res.data.user.userType != 'student') return NextResponse.redirect(new URL('/', request.url));
+    if(res.data.user.userType != 'student') return NextResponse.redirect(new URL('/dashboard', request.url));
     if(request.nextUrl.pathname == '/profile') return NextResponse.redirect(new URL(`/profile/${res.data.user.userName}`, request.url));
     return NextResponse.next();
   }
   if(isGuestOnly(request)){
     const token = request.cookies.get('token')?.value;
-    if(token) return NextResponse.redirect(new URL('/', request.url));
+    if(token) return NextResponse.redirect(new URL('/dashboard', request.url));
     return NextResponse.next();
   }
   if(isAdminOnly(request)) {
