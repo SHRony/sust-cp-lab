@@ -112,16 +112,27 @@ export default function CreateTeams({usersParams, teamsParams, id}: {usersParams
       console.log(error);
     })
   }
-  const handleRename = (members: string[], newTeamName:string) => {
-    const newTeams = teams.map(t => {
-      if (t.members === members) {
-        return {name: newTeamName, members: t.members};
-      } else {
-        return t;
+
+  const handleRename = async (members: string[], newTeamName:string) => {
+    const team = teams.find(t => t.members === members);
+    if (!team) return;
+
+    try {
+      const res = await axios.post(`/api/contests/${id}/teams/${team.id}/rename`, { name: newTeamName });
+      if (res.status === 200) {
+        const newTeams = teams.map(t => {
+          if (t.members === members) {
+            return { ...t, name: newTeamName };
+          }
+          return t;
+        });
+        setTeams(newTeams);
       }
-    })
-    setTeams(newTeams);
+    } catch (error) {
+      console.error('Error renaming team:', error);
+    }
   }
+
   const body = (
     <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: '100%' }}>
       

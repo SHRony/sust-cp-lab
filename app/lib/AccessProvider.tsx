@@ -1,7 +1,11 @@
 import { useContext, useEffect, useState } from "react";
 import { authContext } from "./AuthProvider";
 
-export default function AccessProvider({ permittedUsers, children }: { permittedUsers: string[], children: React.ReactNode }) {
+export default function AccessProvider({ permittedUsers, children, fallback }: { 
+  permittedUsers: string[], 
+  children: React.ReactNode,
+  fallback?: React.ReactNode 
+}) {
   const auth = useContext(authContext);
   const [permition, setPermision] = useState(false);
   useEffect(() => {
@@ -12,7 +16,6 @@ export default function AccessProvider({ permittedUsers, children }: { permitted
     if(auth && (auth.signedIn == false) && auth.loading == false && permittedUsers.length == 0) setPermision(true);
   },[auth, permittedUsers])
   if (!auth) return <></>;
-  if (!permition) return <></>;
-  
+  if (!permition) return fallback ? <>{fallback}</> : <></>;
   return <>{children}</>;
 }

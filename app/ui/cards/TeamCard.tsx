@@ -98,18 +98,17 @@ const TeamCard = ({ team, onClose, onRename, onDelete, closable, contestAuthor}:
         {/* Team Name */}
         <div className="flex items-center gap-3 mb-4">
           <Users className="w-5 h-5 text-blue-500" />
-          <AccessProvider permittedUsers={['admin', 'mentor']}>
+          <AccessProvider 
+            permittedUsers={['admin', 'mentor', ...team.members.map((member) => '_' + member)]} 
+            fallback={<div className="text-lg font-semibold text-gray-800 hover:text-blue-600 transition-colors">{team.name}</div>}
+          >
             <DoubleClickInput
               initialValue={team.name}
-              onChange={(value) => onRename(team.members, value)}
+              onChange={() => {}}  
+              onKeyEnter={(value) => onRename(team.members, value)}  
               inputClassName="px-2 py-1 w-full border border-gray-300 rounded focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none"
               textClassName="text-lg font-semibold text-gray-800 hover:text-blue-600 transition-colors"
             />
-          </AccessProvider>
-          <AccessProvider permittedUsers={[]}>
-            <div className="text-lg font-semibold text-gray-800">
-              {team.name}
-            </div>
           </AccessProvider>
         </div>
 
