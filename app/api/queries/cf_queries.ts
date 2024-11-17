@@ -85,9 +85,23 @@ function getTime(s : number){
         return mx
       }, 0));
     const maxRank = getRank(maxRating);
-    const avatar = userResult[0].avatar;
+
+    // Prioritize avatar selection
+    let avatar = "https://userpic.codeforces.org/no-title.jpg";
+    // First try to find a user with a custom avatar
+    const userWithAvatar = userResult.find((user: any) => 
+      user.titlePhoto && 
+      !user.titlePhoto.includes('no-title.jpg') && 
+      !user.titlePhoto.includes('no-avatar.jpg')
+    );
+    if (userWithAvatar) {
+      avatar = userWithAvatar.titlePhoto;
+    } else {
+      // If no custom avatar found, use the first available avatar
+      avatar = userResult[0]?.titlePhoto || avatar;
+    }
     
-    // New name handling logic
+    // Name handling logic
     let name = "undefined";
     
     // First priority: Find a user with both first and last name
