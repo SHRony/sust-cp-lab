@@ -68,27 +68,48 @@ function getTime(s : number){
   
   
   async function fetchUserInfo(users:string[]){
-      const userResponse = await fetch('https://codeforces.com/api/user.info?handles='+users?.join(";"));
-      const userData = await userResponse.json();
-      const userResult = userData.result;
-      const contribution = userResult.reduce((mx:number, x:any)=>{ mx = Math.max(mx, x.contribution); return mx;}, 0);
-      const lastActive = getTime(
-        userResult.reduce((mn:any, x:any) => {
-          mn = Math.min(mn, Math.floor(Date.now()/ 1000) - x.lastOnlineTimeSeconds);
-          return mn
-        }, 1000000000)
-      );  
-      const maxRating = userResult.reduce((mx:number, x:any)=>{ mx = Math.max(mx, x.maxRating); return mx;}, 0);
-      const registered = getTime(
-        userResult.reduce((mx:number, x:any)=>{
-          mx = Math.max(mx, Math.floor(Date.now()/1000) - x.registrationTimeSeconds);
-          return mx
-        }, 0));
-      const maxRank = getRank(maxRating);
-      const avatar = userResult[0].avatar;
-      const name = userResult[0].firstName + " " + userResult[0].lastName;
-      return [maxRating, maxRank, registered, lastActive, avatar, name, contribution]
-  }
+    const userResponse = await fetch('https://codeforces.com/api/user.info?handles='+users?.join(";"));
+    const userData = await userResponse.json();
+    const userResult = userData.result;
+    const contribution = userResult.reduce((mx:number, x:any)=>{ mx = Math.max(mx, x.contribution); return mx;}, 0);
+    const lastActive = getTime(
+      userResult.reduce((mn:any, x:any) => {
+        mn = Math.min(mn, Math.floor(Date.now()/ 1000) - x.lastOnlineTimeSeconds);
+        return mn
+      }, 1000000000)
+    );  
+    const maxRating = userResult.reduce((mx:number, x:any)=>{ mx = Math.max(mx, x.maxRating); return mx;}, 0);
+    const registered = getTime(
+      userResult.reduce((mx:number, x:any)=>{
+        mx = Math.max(mx, Math.floor(Date.now()/1000) - x.registrationTimeSeconds);
+        return mx
+      }, 0));
+    const maxRank = getRank(maxRating);
+    const avatar = userResult[0].avatar;
+    
+    // New name handling logic
+    let name = "undefined";
+    
+    // First priority: Find a user with both first and last name
+    const userWithBothNames = userResult.find((user: any) => 
+      user.firstName && user.lastName
+    );
+    
+    if (userWithBothNames) {
+      name = `${userWithBothNames.firstName} ${userWithBothNames.lastName}`;
+    } else {
+      // Second priority: Find a user with either first or last name
+      const userWithSomeName = userResult.find((user: any) => 
+        user.firstName || user.lastName
+      );
+      
+      if (userWithSomeName) {
+        name = userWithSomeName.firstName || userWithSomeName.lastName;
+      }
+    }
+    
+    return [maxRating, maxRank, registered, lastActive, avatar, name, contribution];
+}
   
   
   async function fetchSubmissionsInfo(users:string[]) {

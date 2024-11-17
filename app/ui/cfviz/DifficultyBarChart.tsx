@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -22,19 +22,28 @@ ChartJS.register(
   Legend
 );
 
-export default function DifficultyBarChart({CFUser} : {CFUser : cfUserType|null}) {
+export default function DifficultyBarChart({CFUser}:{CFUser:cfUserType|null}) {
   if(!CFUser) return <></>;
   const barData = CFUser.diffData;
-  
-  return (
-    <Card className="bg-card w-full flex flex-col justify-center items-start max-h-600">
-      <ChartHeading text="Difficulty wise solve count" />
-      <Bar options={options}
-        data = {generateDataForDifficultyBarChart(barData)}
-        className="w-full"
-      />
-    </Card>
+  const [windowWidth, setWindowWidth] = useState(typeof window !== 'undefined' ? window.innerWidth : 1024);
 
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    const handleResize = () => setWindowWidth(window.innerWidth);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  return (
+    <Card className="bg-card w-full flex flex-col justify-center items-start">
+      <ChartHeading text="Difficulty wise solve count" />
+      <div className={`w-full ${windowWidth <= 768 ? 'h-[500px]' : 'h-[400px]'}`}>
+        <Bar options={options(windowWidth)}
+          data={generateDataForDifficultyBarChart(barData)}
+        />
+      </div>
+    </Card>
   );
 }
 
@@ -84,15 +93,30 @@ function cumulativeSumArray(arr: number[]) {
   return cumSum;
 }
 
-const options = {
+const options = (windowWidth: number) => ({
   responsive: true,
+  maintainAspectRatio: false,
+  aspectRatio: windowWidth <= 768 ? 0.75 : 2,
   plugins: {
     legend: {
       position: 'top' as const,
     },
     title: {
       display: false,
-      text: 'Difficulty wise problem count',
+      text: 'Difficulty Distribution',
     },
   },
-};
+  scales: {
+    y: {
+      ticks: {
+        display: windowWidth > 768,
+      }
+    },
+    x: {
+      ticks: {
+        maxRotation: windowWidth <= 768 ? 90 : 0,
+        minRotation: windowWidth <= 768 ? 90 : 0
+      }
+    }
+  }
+});

@@ -3,22 +3,24 @@ import dbTables from '@/app/lib/dbTables';
 import client from '@/app/api/dbclient';
 import { removeCFHandle } from '../../queries/cf_queries';
 
-//post function for removing codeforces handle
-export async function POST(request:NextRequest) {
-  // write code to remove user and codeforces handles from database table dbTables.cf_handles
-  const req = await request.json();
-  try{
-    tryToRemoveCFHandle(request);
-    return NextResponse.json({ message: "Codeforces handle removed successfully" });  
-  }catch{
-    console.error("Error removing codeforces handle");
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+export async function POST(request: NextRequest) {
+  try {
+    const { cfHandle, userName } = await request.json();
+    
+    if (!cfHandle || !userName) {
+      return NextResponse.json(
+        { error: "CF handle and username are required" },
+        { status: 400 }
+      );
+    }
+
+    await removeCFHandle(cfHandle, userName);
+    return NextResponse.json({ message: "Codeforces handle removed successfully" });
+  } catch (error) {
+    console.error("Error removing codeforces handle:", error);
+    return NextResponse.json(
+      { error: "Failed to remove CF handle" },
+      { status: 500 }
+    );
   }
 }
-
-async function tryToRemoveCFHandle(request:NextRequest) {
-  const {cfHandle, userName} = await request.json();
-  await removeCFHandle(cfHandle, userName);
-  
-}
-

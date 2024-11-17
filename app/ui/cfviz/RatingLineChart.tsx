@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -33,18 +33,32 @@ export default function RatingLineChart({CFUser} : {CFUser : cfUserType|null}){
       borderWidth : 1
     }
   })
+  const [windowWidth, setWindowWidth] = useState(typeof window !== 'undefined' ? window.innerWidth : 1024);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    const handleResize = () => setWindowWidth(window.innerWidth);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   return (
-    <Card className="bg-card w-full flex flex-col justify-center items-start max-h-700">
+    <Card className="bg-card w-full flex flex-col justify-center items-start">
       <ChartHeading text="Rating Curve"></ChartHeading>
-      <Line options={options} data = { lineData } className="w-full" />
+      <div className={`w-full ${windowWidth <= 768 ? 'h-[500px]' : 'h-[400px]'}`}>
+        <Line options={options(windowWidth)} data={lineData} />
+      </div>
     </Card>
 
   );
 }
 
-export const options = {
+export const options = (windowWidth: number) => ({
   responsive: true,
   spanGaps : true,
+  maintainAspectRatio: false,
+  aspectRatio: windowWidth <= 768 ? 0.75 : 2,
   plugins: {
     legend: {
       position: 'top' as const,
@@ -54,4 +68,17 @@ export const options = {
       text: 'Ratingwise solve count',
     },
   },
-};
+  scales: {
+    y: {
+      ticks: {
+        display: windowWidth > 768,
+      }
+    },
+    x: {
+      ticks: {
+        maxRotation: windowWidth <= 768 ? 90 : 0,
+        minRotation: windowWidth <= 768 ? 90 : 0
+      }
+    }
+  }
+});

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -26,13 +26,24 @@ ChartJS.register(
 export default function CatagoryBarChart({CFUser}:{CFUser : cfUserType|null}) {
   if(!CFUser) return <></>;
   const barData = CFUser.catData;
+  const [windowWidth, setWindowWidth] = useState(typeof window !== 'undefined' ? window.innerWidth : 1024);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    const handleResize = () => setWindowWidth(window.innerWidth);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   return (
-    <Card className="bg-card w-full flex flex-col justify-center items-start max-h-600">
+    <Card className="bg-card w-full flex flex-col justify-center items-start">
       <ChartHeading text="Catagory wise solve count" />
-      <Bar options={options}
-        data = {generateDataForCatagoryBarChart(barData)}
-        className="w-full"
-      />
+      <div className={`w-full ${windowWidth <= 768 ? 'h-[500px]' : 'h-[400px]'}`}>
+        <Bar options={options(windowWidth)}
+          data={generateDataForCatagoryBarChart(barData)}
+        />
+      </div>
     </Card>
   );
 }
@@ -63,15 +74,30 @@ function parseCatagoryAndSolveCounts(barData : {x : string, y : number}[]) {
   return {catagories, solveCounts};
 }
 
-const options = {
+const options = (windowWidth: number) => ({
   responsive: true,
+  maintainAspectRatio: false,
+  aspectRatio: windowWidth <= 768 ? 0.75 : 2,
   plugins: {
     legend: {
       position: 'top' as const,
     },
     title: {
       display: false,
-      text: 'Catagory wise problem count',
+      text: 'Category Distribution',
     },
   },
-};
+  scales: {
+    y: {
+      ticks: {
+        display: windowWidth > 768,
+      }
+    },
+    x: {
+      ticks: {
+        maxRotation: windowWidth <= 768 ? 90 : 0,
+        minRotation: windowWidth <= 768 ? 90 : 0
+      }
+    }
+  }
+});
