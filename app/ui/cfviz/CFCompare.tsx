@@ -7,9 +7,9 @@ import Card from '@/app/ui/cards/Card';
 import RatingLineChart from '@/app/ui/cfviz/RatingLineChart';
 import { borderColors, backgroundColors } from "@/app/lib/colors";
 import DifficultyCompareChart from './DifficultyCompareChart';
-export default function CFCompare ({user1Name, user2Name} : {user1Name : string, user2Name : string}) {
-  const [user1, setUser1] = useState<cfUserType|null>(null);
-  const [user2, setUser2] = useState<cfUserType|null>(null);
+
+export default function CFCompare ({users} : {users : string[]}) {
+  const [cfUsers, setCFUsers] = useState<cfUserType[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -28,79 +28,60 @@ export default function CFCompare ({user1Name, user2Name} : {user1Name : string,
     return null;
   }
 
-  const combineRatingChanges = (x: ratingChangeType, y: ratingChangeType) => {
-    const st = new Set([...x.labels, ...y.labels]);
-    const labels = Array.from(st);
-    labels.sort();
-    let cnt = 0;
-    // make labels unique
-    labels.filter((value, index, self) => self.indexOf(value) === index);
-    let ret : ratingChangeType = {
-      labels : labels,
-      datasets : [],
-    };
-    for(const data of x.datasets){
-      
-      let newData:{
-        label : string;
-        data : (number|null)[];
-        borderColor : string;
-        backgroundColor : string;
-    
-      } = {
-        label : data.label,
-        data : [],
-        borderColor : borderColors[cnt],
-        backgroundColor : backgroundColors[cnt],
-      };
-      cnt = (cnt + 1) % 6;
-    
-    let mp = new Map();
-    for(let i = 0; i < x.labels.length; i++){
-      mp.set(x.labels[i], data.data[i]);
-    }
-    for (const label of labels){
-      newData.data.push(mp.has(label) ? mp.get(label) : null);
-    }
-    ret.datasets.push(newData);
-  }
-  for (const data of y.datasets){
-    
-    let newData:{
-      label : string;
-      data : (number|null)[];
-      borderColor : string;
-      backgroundColor : string;
-  
-    } = {
-      label : data.label,
-      data : [],
-      borderColor : borderColors[cnt],
-      backgroundColor : backgroundColors[cnt],
-    };
-    cnt = (cnt + 1) % 6;
-    let mp = new Map();
-    for(let i = 0; i < y.labels.length; i++){
-      mp.set(y.labels[i], data.data[i]);
-    }
-    for (const label of labels){
-      newData.data.push(mp.has(label) ? mp.get(label) : null);
-    }
-    ret.datasets.push(newData);
+  const combineRatingChanges = (users: cfUserType[]) => {
+    // Get all unique labels from all users
+    const labelSet = new Set<string>();
+    users.forEach(user => {
+      user.ratingChanges.labels.forEach(label => labelSet.add(label));
+    });
+    const labels = Array.from(labelSet).sort();
 
+    let ret: ratingChangeType = {
+      labels: labels,
+      datasets: [],
+    };
+
+    let cnt = 0;
+    // For each user, add their datasets
+    users.forEach(user => {
+      for (const data of user.ratingChanges.datasets) {
+        let newData : { label : string; data : (number|null)[]; borderColor : string; backgroundColor : string } = {
+          label: `${user.name} - ${data.label}`,
+          data: [],
+          borderColor: borderColors[cnt],
+          backgroundColor: backgroundColors[cnt],
+        };
+        cnt = (cnt + 1) % borderColors.length;
+
+        // Create a map of label to data for quick lookup
+        let mp: Map<string, number | null> = new Map();
+        for (let i = 0; i < user.ratingChanges.labels.length; i++) {
+          mp.set(user.ratingChanges.labels[i], data.data[i]);
+        }
+
+        // Fill in data for all labels
+        for (const label of labels) {
+          newData.data.push(mp.has(label) ? mp.get(label)??null : null);
+        }
+        ret.datasets.push(newData);
+      }
+    });
+
+    return ret;
   }
-  return ret;
-}
+
   useEffect(() => {
     const fetchUserInfo = async () => {
-    const res1 = await getUserInfo(user1Name);
-    const res2 = await getUserInfo(user2Name);
-    setUser1(res1);
-    setUser2(res2);
-    setLoading(false);
-  }
+      if(users){
+        const promises = users.map(user => getUserInfo(user));
+      Promise.all(promises).then(res => {
+        setCFUsers(res.filter(user => user !== null));
+        setLoading(false);
+      });
+      }
+    }
     fetchUserInfo();
-  }, [user1Name, user2Name]);
+  }, [users]);
 
   if(loading){
     return <div className="flex flex-col items-center justify-center h-full">
@@ -114,7 +95,7 @@ export default function CFCompare ({user1Name, user2Name} : {user1Name : string,
     </div>
   }
 
-  if(!user1 || !user2){
+  if(cfUsers.length === 0){
     return <div className="flex flex-col items-center justify-center h-full">
       <p className="text-center text-2xl">Loading...</p>
     </div>
@@ -122,30 +103,17 @@ export default function CFCompare ({user1Name, user2Name} : {user1Name : string,
 
   return (
     <div className="flex flex-col gap-20 bg-card">
-      {user1 && user2 && (
+      {cfUsers.length > 0 && (
         <>
           <div className="flex flex-row flex-wrap w-full justify-center items-stretch gap-20">
-            <UserInfo CFUser={user1}/>
-            <UserInfo CFUser={user2} />
+            {cfUsers.map(user => (
+              <UserInfo key={user.name} CFUser={user} />
+            ))}
           </div>
-          <RatingLineChart CFUser={createDummyUserFromLineData(combineRatingChanges(user1.ratingChanges, user2.ratingChanges))}/>
-          <DifficultyCompareChart barData1={user1.diffData} barData2={user2.diffData}></DifficultyCompareChart>
+          <RatingLineChart CFUser={createDummyUserFromLineData(combineRatingChanges(cfUsers))}/>
+          <DifficultyCompareChart users={cfUsers}></DifficultyCompareChart>
         </>
       )}
-      {/* <div className="flex flex-col gap-5">
-        <div className="flex items-center">
-          <div className="h-8 w-8 bg-gray-400 rounded-full mr-2"></div>
-          <p className="text-lg font-semibold">{user1Name}</p>
-        </div>
-        <ScatterChart user1={user1} user2={user2} />
-      </div>
-      <div className="flex flex-col gap-5">
-        <div className="flex items-center">
-          <div className="h-8 w-8 bg-gray-400 rounded-full mr-2"></div>
-          <p className="text-lg font-semibold">{user2Name}</p>
-        </div>
-        <ScatterChart user1={user2} user2={user1} />
-      </div> */}
     </div>
   )
 }

@@ -79,7 +79,7 @@ const TeamCard = ({ team, onClose, onRename, onDelete, closable, contestAuthor}:
         </AccessProvider>
 
         {/* Close Button */}
-        {closable && (
+        {/* {closable && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: isHovered ? 1 : 0 }}
@@ -93,7 +93,7 @@ const TeamCard = ({ team, onClose, onRename, onDelete, closable, contestAuthor}:
               <CloseIcon className="text-gray-500" fontSize="small" />
             </IconButton>
           </motion.div>
-        )}
+        )} */}
 
         {/* Team Name */}
         <div className="flex items-center gap-3 mb-4">

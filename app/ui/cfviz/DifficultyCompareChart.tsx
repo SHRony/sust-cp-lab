@@ -9,6 +9,9 @@ import {
   Tooltip,
   Legend,
 } from 'chart.js';
+import { cfUserType } from "@/app/lib/types";
+import { borderColors, backgroundColors } from "@/app/lib/colors";
+
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -18,44 +21,74 @@ ChartJS.register(
   Legend
 );
 
-const DifficultyCompareChart = ({ barData1, barData2 }: { barData1: { x: string; y: number; }[]; barData2: { x: string; y: number; }[] }) => {
+const DifficultyCompareChart = ({ users }: { users: cfUserType[] }) => {
   const data = {
-    labels: barData1.map((_, i) => `${barData1[i].x}`),
-    datasets: [
-      {
-        label: "User 1",
-        data: barData1.map((_, i) => barData1[i].y),
-        backgroundColor: "rgba(153, 102, 255, 0.8)",
-        borderWidth: 1,
-        borderColor: "rgba(153, 102, 255, 1)",
-        hoverBackgroundColor: "rgba(153, 102, 255, 0.6)",
-      },
-      {
-        label: "User 2",
-        data: barData2.map((_, i) => barData2[i].y),
-        backgroundColor: "rgba(255, 159, 64, 0.8)",
-        borderWidth: 1,
-        borderColor: "rgba(255, 159, 64, 1)",
-        hoverBackgroundColor: "rgba(255, 159, 64, 0.6)",
-      },
-    ],
+    labels: users[0].diffData.map(d => d.x),
+    datasets: users.map((user, index) => ({
+      label: user.name,
+      data: user.diffData.map(d => d.y),
+      backgroundColor: `${backgroundColors[index]}`,
+      borderColor: user.diffData.map(d => d.y === 0 ? 'transparent' : borderColors[index]),
+      borderWidth: 2,
+      hoverBackgroundColor: `${backgroundColors[index]}CC`, // CC for 80% opacity
+      barThickness: 15, // Set a fixed width for the bars
+      minBarLength: 5, // Minimum height for bars with very small values
+    })),
   };
 
   const options = {
-  responsive: true,
-  plugins: {
-    legend: {
-      position: 'top' as const,
+    responsive: true,
+    plugins: {
+      legend: {
+        position: 'top' as const,
+      },
+      title: {
+        display: false,
+        text: 'Difficulty wise problem count',
+      },
+      tooltip: {
+        padding: 10,
+        titleFont: { size: 14 },
+        bodyFont: { size: 14 },
+        callbacks: {
+          label: function(context: any) {
+            if (context.raw === 0) return `${context.dataset.label}: No problems solved`;
+            return `${context.dataset.label}: ${context.raw} problems`;
+          }
+        }
+      },
     },
-    title: {
-      display: false,
-      text: 'Difficulty wise problem count',
+    scales: {
+      x: {
+        title: {
+          display: true,
+          text: 'Problem Difficulty',
+        },
+        grid: {
+          display: false,
+        },
+      },
+      y: {
+        title: {
+          display: true,
+          text: 'Number of Problems Solved',
+        },
+        beginAtZero: true,
+        grid: {
+          color: '#f0f0f0',
+        },
+      },
     },
-  },
-};
+    elements: {
+      bar: {
+        borderWidth: 2,
+      }
+    },
+    barPercentage: 0.8, // Controls the relative width of the bars
+    categoryPercentage: 0.9, // Controls the relative width of the bar category
+  };
 
   return <Bar data={data} options={options} />;
 };
 
 export default DifficultyCompareChart;
-

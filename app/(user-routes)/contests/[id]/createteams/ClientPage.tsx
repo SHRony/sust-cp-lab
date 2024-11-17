@@ -13,6 +13,7 @@ import Link from "next/link";
 import CFCompare from "@/app/ui/cfviz/CFCompare";
 import { teamType, userTableEntryType, userType } from "@/app/lib/types";
 import { AnimatePresence, motion } from "framer-motion";
+
 export default function CreateTeams({usersParams, teamsParams, id}: {usersParams: userTableEntryType[], teamsParams: teamType[], id: string}) {
   const [users, setUsers] = useState<userTableEntryType[]>(usersParams.filter((user:userTableEntryType) => !(teamsParams.some((team:teamType) => team.members.includes(user.userName)))));
   const [removedUsers, setRemovedUsers] = useState<userTableEntryType[]>(usersParams.filter((user:userTableEntryType) => teamsParams.some((team:teamType) => team.members.includes(user.userName))));
@@ -20,9 +21,9 @@ export default function CreateTeams({usersParams, teamsParams, id}: {usersParams
   const [rowSelectionModel, setRowSelectionModel] = useState<GridRowSelectionModel>([]);
   const [teams, setTeams] = useState<teamType[]>(teamsParams);
   const [open, setOpen] = useState(false);
-  const [user1Name, setUser1Name] = useState('');
-  const [user2Name, setUser2Name] = useState('');
+  const [selectedForComparison, setSelectedForComparison] = useState<string[]>([]);
   const [creatingTeam, setCreatingTeam] = useState(false);
+
   const columns: GridColDef[] = [
     { 
       field: 'avatar', 
@@ -89,10 +90,9 @@ export default function CreateTeams({usersParams, teamsParams, id}: {usersParams
   };
 
   const handleCompare = () => {
-    if (selectedUsers.length === 2) {
+    if (selectedUsers.length >= 2) {
       setOpen(true);
-      setUser1Name(selectedUsers[0].userName);
-      setUser2Name(selectedUsers[1].userName);
+      setSelectedForComparison(selectedUsers.map(user => user.userName));
     }
   };
 
@@ -135,76 +135,79 @@ export default function CreateTeams({usersParams, teamsParams, id}: {usersParams
 
   const body = (
     <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: '100%' }}>
-      
       <div style={{ scrollbarWidth: 'none', height: 'calc(100vh - 60px)', overflowY: 'scroll' }}>
-        <div className = "w-100 mobile:w-106 tablet:w-192 laptop:w-256 desktop:w-360 bg-white">
-          <IconButton onClick={handleClose}>
-            <CloseIcon />
-          </IconButton>
-          <CFCompare user1Name={user1Name} user2Name={user2Name}/>
+        <div className="w-100 mobile:w-106 tablet:w-192 laptop:w-256 desktop:w-360 bg-white">
+          <div className="flex justify-between items-center p-4">
+            <IconButton onClick={handleClose}>
+              <CloseIcon />
+            </IconButton>
+            <h2 className="text-xl font-semibold">Comparing {selectedForComparison.length} Users</h2>
+          </div>
+          <CFCompare users={selectedForComparison}/>
         </div>
       </div>
     </div>
   );
-  
-// have to find a better layout for the buttons
-
-
 
   return (
-    <div className="flex flex-row justify-between w-full" >
-      <div className="p-4 laptop:flex-grow" style={{ minWidth: '0', maxWidth: '100%', margin: '0 auto' }} >
-        
-        <div className="flex flex-row gap-10 items-center justify-between mb-4 w-full">
-          <h2 className="text-2xl font-bold">Users</h2>
-          <Button variant="contained" disabled={creatingTeam} onClick={handleCreateTeam}
-            startIcon={creatingTeam ? <CircularProgress size={20} /> : null}>
-            {creatingTeam ? 'Creating Team...' : 'Create Team'}
+    <div className="flex flex-col gap-5 p-5">
+      <div className="flex flex-col gap-5">
+        <div className="flex flex-row gap-5 items-center">
+          <h1 className="text-2xl font-bold">Create Teams</h1>
+          <div className="flex-grow"></div>
+          <Button 
+            variant="contained" 
+            color="primary"
+            onClick={handleCreateTeam}
+            disabled={selectedUsers.length === 0 || creatingTeam}
+            className="bg-blue-500"
+          >
+            {creatingTeam ? <CircularProgress size={24} /> : 'Create Team'}
           </Button>
-          <Button variant="contained" onClick={handleCompare}>Compare</Button>
+          <Button
+            variant="contained"
+            color="secondary"
+            onClick={handleCompare}
+            disabled={selectedUsers.length < 2}
+            className="bg-purple-500"
+          >
+            Compare Selected ({selectedUsers.length})
+          </Button>
         </div>
-        <div style={{ overflowX: 'scroll', scrollbarWidth: 'none', width: '100%' }}>
+        <div style={{ height: 400 }}>
           <DataGrid
             rows={users}
             columns={columns}
-            checkboxSelection 
-            onRowSelectionModelChange = {handleSelectionChange} 
-            rowSelectionModel = {rowSelectionModel}
+            getRowId={(row) => row.userName}
+            checkboxSelection
+            onRowSelectionModelChange={handleSelectionChange}
+            rowSelectionModel={rowSelectionModel}
             initialState={{
               pagination: { paginationModel: { pageSize: 10 } },
             }}
             pageSizeOptions={[10, 20, 50]}
-            className="text-text"
+            className="bg-white"
           />
         </div>
-        <Modal
-          open={open}
-          onClose={handleClose}
-          aria-labelledby="modal-modal-title"
-          aria-describedby="modal-modal-description"
-        >
-          {body}
-        </Modal>
       </div>
-      <div className="flex flex-col p-4 w-64 flex-grow max-w-64">
-        <div className="flex flex-row gap-10 items-center justify-between mb-4 w-full">
-          <h2 className="text-2xl font-bold">Teams</h2>
-          {/* <Button variant="contained">Publish</Button> */}
-      
-        </div>
-        
-        <div className="gap-4 flex flex-col" style={{ overflowY: 'scroll', scrollbarWidth: 'none', height: 'calc(100vh - 60px)' }}>
-          <AnimatePresence>
-          {teams.map((team, index) => (
-              <motion.div layout = 'position' key={team.id} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.5 }}>
-                <TeamCard team = {team} key={team.id} onClose={handleDeleteTeam} onRename={handleRename} closable />
-              </motion.div>
-          ))}
-          </AnimatePresence>
-        </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {teams.map((team, index) => (
+          <TeamCard
+            key={index}
+            team={team}
+            onDelete={() => handleDeleteTeam(team)}
+            onRename={handleRename}
+          />
+        ))}
       </div>
+      <Modal
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="comparison-modal"
+        aria-describedby="user-comparison-view"
+      >
+        {body}
+      </Modal>
     </div>
   );
 };
-
-    

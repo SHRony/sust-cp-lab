@@ -79,12 +79,12 @@ export const getUsersListWithBsicCFInfo = async () => {
     try{
       const token = await cookies().get('token')?.value;
       if(token == undefined) return null;
-      const user = await Jwt.verify(token!, process.env.JWT_KEY!) as {username: string};;
+      const user = await Jwt.verify(token!, process.env.JWT_KEY!) as {username: string; userType: string};
       if(!user) return null;
       const response = await getUserbyName(user.username);
       let ret = {
-        userName:user.username,
-        userType: response?.user_type||null
+        userName: user.username,
+        userType: user.userType || response?.user_type || null
       }
       return ret;
     }catch{

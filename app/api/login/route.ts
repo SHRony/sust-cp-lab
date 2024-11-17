@@ -25,7 +25,10 @@ async function validateCredentialsAndLogin(userName: string, password: string) {
     const passwordDidMatch:boolean = await bcrypt.compare(password, user.password);
     if(!passwordDidMatch) return NextResponse.json({ error: "Incorrect password" }, { status: 401 });
     generateLoginTokenAndSetCookie(user);
-    return NextResponse.json({ message: "Login successful" });
+    return NextResponse.json({ 
+      message: "Login successful",
+      userType: user.user_type 
+    });
 }
 
 async function generateLoginTokenAndSetCookie(user: sust_cp_lab_users) {
@@ -35,6 +38,9 @@ async function generateLoginTokenAndSetCookie(user: sust_cp_lab_users) {
   cookies().set('token', token, { expires });
 }
 
-async function generateAuthToken(user: any) {
-  return jwt.sign({ username: user.username}, JWT_KEY, { expiresIn: '720h' });
+async function generateAuthToken(user: sust_cp_lab_users) {
+  return jwt.sign({ 
+    username: user.username,
+    userType: user.user_type
+  }, JWT_KEY, { expiresIn: '720h' });
 }
