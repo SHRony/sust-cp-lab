@@ -1,5 +1,6 @@
 import { getContestTeams } from "@/app/api/queries/contest_queries";
 import { NextRequest, NextResponse } from "next/server";
+
 export const dynamic = 'force-dynamic';
 
 export async function GET(request:NextRequest) {
@@ -10,6 +11,7 @@ export async function GET(request:NextRequest) {
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
+
 const getContestId = (request:NextRequest) => {
   let tmp = request.nextUrl.pathname.split('/');
   tmp.pop();
@@ -21,6 +23,7 @@ const getContestId = (request:NextRequest) => {
   }
   return id;
 }
+
 const tryToGetContestTeams = async (contestId:number) => {
   if(!contestId || contestId == -1) return NextResponse.json({ error: 'Missing parameters' }, { status: 500 });
   const teams = await getContestTeams(contestId);

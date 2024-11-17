@@ -31,7 +31,7 @@ const DifficultyCompareChart = ({ users }: { users: cfUserType[] }) => {
       borderColor: user.diffData.map(d => d.y === 0 ? 'transparent' : borderColors[index]),
       borderWidth: 2,
       hoverBackgroundColor: `${backgroundColors[index]}CC`, // CC for 80% opacity
-      barThickness: 15, // Set a fixed width for the bars
+      barThickness: 12, // Reduced width for better gaps
       minBarLength: 5, // Minimum height for bars with very small values
     })),
   };
@@ -84,8 +84,8 @@ const DifficultyCompareChart = ({ users }: { users: cfUserType[] }) => {
         borderWidth: 2,
       }
     },
-    barPercentage: 0.8, // Controls the relative width of the bars
-    categoryPercentage: 0.9, // Controls the relative width of the bar category
+    barPercentage: 0.7, // Reduced from 0.8 to create more space between groups
+    categoryPercentage: 0.8, // Reduced from 0.9 to create more space between bars in a group
   };
 
   return <Bar data={data} options={options} />;

@@ -19,7 +19,7 @@ import { Users } from "lucide-react";
 
 interface TeamCardProps {
   team: teamType;
-  onClose: (team: teamType) => void;
+  onClose?: (team: teamType) => void;
   onRename: (team: string[], newTeamName: string) => void;
   onDelete?: (team: teamType) => void;
   closable?: boolean;
@@ -33,6 +33,7 @@ const TeamCard = ({ team, onClose, onRename, onDelete, closable, contestAuthor}:
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
   const handleClose = () => {
+    if (!onClose) return;
     setClosing(true);
     setOpen(false);
     onClose(team);

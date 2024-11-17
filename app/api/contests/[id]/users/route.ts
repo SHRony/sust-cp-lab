@@ -1,5 +1,6 @@
 import { getContestUsers } from "@/app/api/queries/contest_queries";
 import { NextRequest, NextResponse } from "next/server";
+
 export const dynamic = 'force-dynamic';
 
 export async function GET(request:NextRequest) {

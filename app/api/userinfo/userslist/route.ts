@@ -9,3 +9,5 @@ export async function GET(request:NextRequest) {
     return NextResponse.json({ error: 'An error occurred' }, { status: 500 });
   }
 }
+
+export { dynamic };

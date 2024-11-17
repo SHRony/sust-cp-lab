@@ -2,7 +2,7 @@ import prisma from "@/app/api/dbclient";
 import { NextRequest, NextResponse } from "next/server";
 import { getCFInfo } from "@/app/api/queries/cf_queries";
 export const dynamic = 'force-dynamic';
-async function addCFCache(username:string, cfUser:any) {
+export async function addCFCache(username:string, cfUser:any) {
   console.log(username);
   cfUser.calenderSubmissions = [], cfUser.diffData = [], cfUser.catData = [], cfUser.ratingChanges = {labels: [], datasets: []}, cfUser.acTime = [];
     if(!username || !cfUser) return NextResponse.json({ error: "Invalid user data" }, { status: 400 });
