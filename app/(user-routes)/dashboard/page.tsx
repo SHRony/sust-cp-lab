@@ -1,4 +1,4 @@
-import { isLoggedIn } from "@/app/api/queries/user_queries";
+import { getUserInfo, isLoggedIn } from "@/app/api/queries/user_queries";
 import { getCFInfo } from "@/app/api/queries/cf_queries";
 import { getContests } from "@/app/api/queries/contest_queries";
 import { Suspense } from "react";
@@ -13,8 +13,9 @@ export default async function Page() {
 
   // Get user's CF info if they have CF handles
   let cfInfo = null;
-  if (user.cfHandles && user.cfHandles.length > 0) {
-    cfInfo = await getCFInfo(user.cfHandles);
+  const userInfo = await getUserInfo(user.userName);
+  if (userInfo && userInfo.cfHandles && userInfo.cfHandles.length > 0) {
+    cfInfo = await getCFInfo(userInfo.cfHandles);
   }
 
   // Get recent contests
