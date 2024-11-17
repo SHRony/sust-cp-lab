@@ -1,13 +1,32 @@
 'use client';
-import React, { createContext, useState } from "react";
+import React, { createContext, useState, useEffect } from "react";
 import { AuthContextType, userStateType } from "./types";
 import axios from "axios";
 export const authContext = createContext<AuthContextType | undefined>(undefined);
 
 export default function AuthProvider({ children, userProps }: { children: React.ReactNode, userProps: userStateType|null }) {
-  const [signedIn, setSignedIn] = useState(userProps != null);
-  const [loading, setLoading] = useState(false);
-  const [user, setUser] = useState<null | userStateType>(userProps);
+  const [signedIn, setSignedIn] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState<null | userStateType>(null);
+
+  // Initialize auth state from session storage or props
+  useEffect(() => {
+    const storedUser = sessionStorage.getItem('user');
+    const storedSignedIn = sessionStorage.getItem('signedIn');
+
+    if (storedUser && storedSignedIn) {
+      setUser(JSON.parse(storedUser));
+      setSignedIn(JSON.parse(storedSignedIn));
+    } else if (userProps) {
+      setUser(userProps);
+      setSignedIn(true);
+      // Store in session
+      sessionStorage.setItem('user', JSON.stringify(userProps));
+      sessionStorage.setItem('signedIn', JSON.stringify(true));
+    }
+    setLoading(false);
+  }, [userProps]);
+
   const signIn = async (userName: string, password: string) => {
     setLoading(true);
     try {
@@ -19,14 +38,15 @@ export default function AuthProvider({ children, userProps }: { children: React.
         console.log(res.data.error);
         return false;
       }
-      await setUser({ userName: userName, userType: res.data.userType});
+      const userData = { userName: userName, userType: res.data.userType };
+      setUser(userData);
       setSignedIn(true);
-      setLoading(false);
+      // Store in session
+      sessionStorage.setItem('user', JSON.stringify(userData));
+      sessionStorage.setItem('signedIn', 'true');
       return true;
     } catch (error) {
-      // Handle authentication errors
       console.log('could not login');
-      setLoading(false);
       throw error;
     } finally {
       setLoading(false);
@@ -34,22 +54,25 @@ export default function AuthProvider({ children, userProps }: { children: React.
   };
   
   const signOut = async () => {
-    // Clear authentication-related data
-    setUser(null);
-    setSignedIn(false);
-    await axios.post('/api/logout');
-    //refresh the page
-    console.log('logging out');
-    window.location.reload();
-
+    try {
+      await axios.post('/api/logout');
+      // Clear both state and session storage
+      setUser(null);
+      setSignedIn(false);
+      sessionStorage.removeItem('user');
+      sessionStorage.removeItem('signedIn');
+      window.location.reload();
+    } catch (error) {
+      console.error('Error during logout:', error);
+    }
   };
 
   const authValue: AuthContextType = {
-    signedIn: signedIn,
-    loading: loading,
-    user: user,
-    signIn: signIn,
-    signOut: signOut,
+    signedIn,
+    loading,
+    user,
+    signIn,
+    signOut,
   };
 
   return (
