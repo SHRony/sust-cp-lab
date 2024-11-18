@@ -31,7 +31,8 @@ export default function UserTable({users}: UserTableProps) {
     return 'text-green-500';
   };
 
-  const getRankColor = (rank: string) => {
+  const getRankColor = (rank: string | null | undefined) => {
+    if (!rank) return 'text-gray-500';
     const rankLower = rank.toLowerCase();
     if (rankLower.includes('grandmaster')) return 'text-red-500';
     if (rankLower.includes('master') && !rankLower.includes('candidate')) return 'text-orange-500';
