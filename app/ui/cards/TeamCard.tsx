@@ -63,7 +63,7 @@ const TeamCard = ({ team, onClose, onRename, onDelete, closable, contestAuthor}:
         className="relative overflow-hidden rounded-xl bg-white p-6 border border-gray-200 hover:border-blue-200 transition-all duration-300 shadow-sm hover:shadow-md w-[300px]"
       >
         {/* Delete Button */}
-        <AccessProvider permittedUsers={['admin', '_' + contestAuthor]}>
+        <AccessProvider permittedUsers={['admin', 'mentor']}>
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: isHovered ? 1 : 0 }}
