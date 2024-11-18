@@ -1,6 +1,6 @@
 import prisma from "@/app/api/dbclient";
-import { userTableEntryType, userType } from "@/app/lib/types";
-import { user_type } from "@prisma/client";
+import { userTableEntryType, userType, userStateType } from "@/app/lib/types";
+import { user_type, sust_cp_lab_users } from "@prisma/client";
 import Jwt from 'jsonwebtoken';
 import { cookies } from "next/headers";
 
@@ -76,26 +76,27 @@ export const getUsersListWithBsicCFInfo = async () => {
     }
   }
   
-  export const isLoggedIn = async (): Promise<{userName: string; userType: user_type} | null> => {
+  export const isLoggedIn = async (): Promise<userStateType | null> => {
     try{
       const token = await cookies().get('token')?.value;
       if(token == undefined) return null;
-      const user = await Jwt.verify(token!, process.env.JWT_KEY!) as {username: string; user_type: user_type};
+      const user = await Jwt.verify(token!, process.env.JWT_KEY!) as {username: string; user_type: user_type | null};
       if(!user) return null;
       const response = await getUserbyName(user.username);
       if (!response) return null;
-      let ret = {
+      
+      const userState: userStateType = {
         userName: user.username,
-        userType: response.user_type,
-      }
-      return ret;
+        userType: response.user_type
+      };
+      return userState;
     }catch{
       return null;
     }
   }
   
   
-  export async function getUserbyName(userName: string) {
+  export async function getUserbyName(userName: string): Promise<sust_cp_lab_users | null> {
     const result = await prisma.sust_cp_lab_users.findUnique({
       where: {
         username: userName,
