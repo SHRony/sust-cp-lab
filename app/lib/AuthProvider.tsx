@@ -2,6 +2,7 @@
 import React, { createContext, useState, useEffect } from "react";
 import { AuthContextType, userStateType } from "./types";
 import axios from "axios";
+
 export const authContext = createContext<AuthContextType | undefined>(undefined);
 
 export default function AuthProvider({ children, userProps }: { children: React.ReactNode, userProps: userStateType|null }) {
@@ -9,20 +10,11 @@ export default function AuthProvider({ children, userProps }: { children: React.
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState<null | userStateType>(null);
 
-  // Initialize auth state from session storage or props
+  // Initialize auth state from props
   useEffect(() => {
-    const storedUser = sessionStorage.getItem('user');
-    const storedSignedIn = sessionStorage.getItem('signedIn');
-
-    if (storedUser && storedSignedIn) {
-      setUser(JSON.parse(storedUser));
-      setSignedIn(JSON.parse(storedSignedIn));
-    } else if (userProps) {
+    if (userProps) {
       setUser(userProps);
       setSignedIn(true);
-      // Store in session
-      sessionStorage.setItem('user', JSON.stringify(userProps));
-      sessionStorage.setItem('signedIn', JSON.stringify(true));
     }
     setLoading(false);
   }, [userProps]);
@@ -41,9 +33,6 @@ export default function AuthProvider({ children, userProps }: { children: React.
       const userData = { userName: userName, userType: res.data.userType };
       setUser(userData);
       setSignedIn(true);
-      // Store in session
-      sessionStorage.setItem('user', JSON.stringify(userData));
-      sessionStorage.setItem('signedIn', 'true');
       return true;
     } catch (error) {
       console.log('could not login');
@@ -56,11 +45,8 @@ export default function AuthProvider({ children, userProps }: { children: React.
   const signOut = async () => {
     try {
       await axios.post('/api/logout');
-      // Clear both state and session storage
       setUser(null);
       setSignedIn(false);
-      sessionStorage.removeItem('user');
-      sessionStorage.removeItem('signedIn');
       window.location.reload();
     } catch (error) {
       console.error('Error during logout:', error);

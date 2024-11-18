@@ -83,9 +83,10 @@ export const getUsersListWithBsicCFInfo = async () => {
       const user = await Jwt.verify(token!, process.env.JWT_KEY!) as {username: string; user_type: user_type};
       if(!user) return null;
       const response = await getUserbyName(user.username);
+      if (!response) return null;
       let ret = {
         userName: user.username,
-        userType: user.user_type,
+        userType: response.user_type,
       }
       return ret;
     }catch{

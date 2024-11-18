@@ -41,7 +41,7 @@ export async function middleware(request: NextRequest) {
       },
       withCredentials: true
     });
-
+    console.log(res.data);
     if(res.data.user.userType != 'student') return NextResponse.redirect(new URL('/dashboard', request.url));
     if(request.nextUrl.pathname == '/profile') return NextResponse.redirect(new URL(`/profile/${res.data.user.userName}`, request.url));
     return NextResponse.next();

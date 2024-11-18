@@ -43,7 +43,7 @@ export type AuthContextType = {
 }
 export type userStateType = {
   userName: string;
-  userType: user_type|null;
+  userType: user_type;
 };
 //contestType. Contest has properties like name, venue, description, date, type, poster image.
 export type contestType = {
@@ -71,5 +71,3 @@ export type userTableEntryType = {
   avatar: string;
   contribution: string | number;
 };
-
-

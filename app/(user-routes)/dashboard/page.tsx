@@ -10,7 +10,7 @@ export default async function Page() {
   if (!user) {
     redirect('/login');
   }
-
+  console.log(user);
   // Get user's CF info if they have CF handles
   let cfInfo = null;
   const userInfo = await getUserInfo(user.userName);
