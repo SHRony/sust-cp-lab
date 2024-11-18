@@ -17,6 +17,29 @@ import { Button, CircularProgress } from "@mui/material";
 import { motion, AnimatePresence } from "framer-motion";
 import { Users } from "lucide-react";
 
+const generateColor = (name: string) => {
+  let hash = 0;
+  for (let i = 0; i < name.length; i++) {
+    hash = name.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  const hue = Math.abs(hash % 360);
+  return `hsl(${hue}, 70%, 80%)`; // Using HSL for pastel colors
+};
+
+const UserInitialsIcon = ({ name }: { name: string }) => {
+  const initial = name.charAt(0).toUpperCase();
+  const backgroundColor = generateColor(name);
+  
+  return (
+    <div 
+      className="w-8 h-8 rounded-full flex items-center justify-center text-gray-700 font-medium text-sm"
+      style={{ backgroundColor }}
+    >
+      {initial}
+    </div>
+  );
+};
+
 interface TeamCardProps {
   team: teamType;
   onClose?: (team: teamType) => void;
@@ -67,7 +90,7 @@ const TeamCard = ({ team, onClose, onRename, onDelete, closable, contestAuthor}:
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: isHovered ? 1 : 0 }}
-            className="absolute top-2 right-2 z-10"
+            className={`absolute top-2 right-2 z-10 ${closable ? '' : 'hidden'}`}
           >
             <IconButton
               onClick={() => setDeleteDialogOpen(true)}
@@ -117,7 +140,8 @@ const TeamCard = ({ team, onClose, onRename, onDelete, closable, contestAuthor}:
         <div className="space-y-2">
           {team.members.map((member) => (
             <Link key={member} href={`/profile/${member}`}>
-              <div className="p-2 rounded-lg hover:bg-gray-50 transition-colors">
+              <div className="p-2 rounded-lg hover:bg-gray-50 transition-colors flex items-center gap-3">
+                <UserInitialsIcon name={member} />
                 <span className="text-gray-700 hover:text-blue-600">{member}</span>
               </div>
             </Link>

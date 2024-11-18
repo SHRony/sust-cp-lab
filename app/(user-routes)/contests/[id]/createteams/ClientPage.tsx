@@ -197,6 +197,7 @@ export default function CreateTeams({usersParams, teamsParams, id}: {usersParams
             team={team}
             onDelete={() => handleDeleteTeam(team)}
             onRename={handleRename}
+            closable
           />
         ))}
       </div>
