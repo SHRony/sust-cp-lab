@@ -6,10 +6,13 @@ import Card from '@/app/ui/cards/Card';
 import RatingLineChart from '@/app/ui/cfviz/RatingLineChart';
 import { borderColors, backgroundColors } from "@/app/lib/colors";
 import DifficultyCompareChart from './DifficultyCompareChart';
+import CategoryCompareChart from './CategoryCompareChart';
+import CumulativeDifficultyCompareChart from './CumulativeDifficultyCompareChart';
+import CombinedScatterChart from './CombinedScatterChart';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Tabs, Tab } from '@mui/material';
-import { Trophy, Activity, BarChart2 } from 'lucide-react';
+import { Trophy, Activity, BarChart2, FolderTree, TrendingUp, Clock } from 'lucide-react';
 
 export default function CFCompare ({users} : {users : string[]}) {
   const [cfUsers, setCFUsers] = useState<cfUserType[]>([]);
@@ -213,7 +216,7 @@ export default function CFCompare ({users} : {users : string[]}) {
   });
 
   return (
-    <div className="flex flex-col gap-8 bg-gradient-to-br from-gray-50 to-white p-8 rounded-2xl">
+    <div className="flex flex-col gap-8 bg-gradient-to-br from-gray-50 to-white p-8 rounded-2xl ">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -256,18 +259,33 @@ export default function CFCompare ({users} : {users : string[]}) {
         >
           <Tab 
             icon={<Trophy className="w-5 h-5" />}
-            label="Overview"
-            className="flex gap-2"
+            label={<span className="hidden sm:inline">Overview</span>}
+            className="flex gap-2 min-h-0 py-3"
           />
           <Tab 
             icon={<Activity className="w-5 h-5" />}
-            label="Rating History"
-            className="flex gap-2"
+            label={<span className="hidden sm:inline">Rating History</span>}
+            className="flex gap-2 min-h-0 py-3"
           />
           <Tab 
             icon={<BarChart2 className="w-5 h-5" />}
-            label="Problem Distribution"
-            className="flex gap-2"
+            label={<span className="hidden sm:inline">Problem Distribution</span>}
+            className="flex gap-2 min-h-0 py-3"
+          />
+          <Tab 
+            icon={<TrendingUp className="w-5 h-5" />}
+            label={<span className="hidden sm:inline">Cumulative Distribution</span>}
+            className="flex gap-2 min-h-0 py-3"
+          />
+          <Tab 
+            icon={<FolderTree className="w-5 h-5" />}
+            label={<span className="hidden sm:inline">Category Distribution</span>}
+            className="flex gap-2 min-h-0 py-3"
+          />
+          <Tab 
+            icon={<Clock className="w-5 h-5" />}
+            label={<span className="hidden sm:inline">Submission Timeline</span>}
+            className="flex gap-2 min-h-0 py-3"
           />
         </Tabs>
 
@@ -337,6 +355,38 @@ export default function CFCompare ({users} : {users : string[]}) {
 
           {activeTab === 2 && (
             <motion.div
+              key="cumulative"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.3 }}
+            >
+              <Card className="overflow-hidden border border-gray-200 shadow-lg rounded-xl bg-white">
+                <div className="p-6">
+                  <CumulativeDifficultyCompareChart users={cfUsers}></CumulativeDifficultyCompareChart>
+                </div>
+              </Card>
+            </motion.div>
+          )}
+
+          {activeTab === 3 && (
+            <motion.div
+              key="category"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.3 }}
+            >
+              <Card className="overflow-hidden border border-gray-200 shadow-lg rounded-xl bg-white">
+                <div className="p-6">
+                  <CategoryCompareChart users={cfUsers}></CategoryCompareChart>
+                </div>
+              </Card>
+            </motion.div>
+          )}
+
+          {activeTab === 4 && (
+            <motion.div
               key="distribution"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -346,6 +396,22 @@ export default function CFCompare ({users} : {users : string[]}) {
               <Card className="overflow-hidden border border-gray-200 shadow-lg rounded-xl bg-white">
                 <div className="p-6">
                   <DifficultyCompareChart users={cfUsers}></DifficultyCompareChart>
+                </div>
+              </Card>
+            </motion.div>
+          )}
+
+          {activeTab === 5 && (
+            <motion.div
+              key="scatter"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.3 }}
+            >
+              <Card className="overflow-hidden border border-gray-200 shadow-lg rounded-xl bg-white">
+                <div className="p-6">
+                  <CombinedScatterChart users={cfUsers}></CombinedScatterChart>
                 </div>
               </Card>
             </motion.div>

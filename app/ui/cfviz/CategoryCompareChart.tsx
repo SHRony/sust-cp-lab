@@ -23,7 +23,7 @@ ChartJS.register(
   Legend
 );
 
-const DifficultyCompareChart = ({ users }: { users: cfUserType[] }) => {
+const CategoryCompareChart = ({ users }: { users: cfUserType[] }) => {
   const [windowWidth, setWindowWidth] = useState(typeof window !== 'undefined' ? window.innerWidth : 1024);
 
   useEffect(() => {
@@ -34,15 +34,32 @@ const DifficultyCompareChart = ({ users }: { users: cfUserType[] }) => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
+  // Combine and sort categories by total solves
+  const combinedCategories = new Map<string, number>();
+  users.forEach(user => {
+    user.catData.forEach(cat => {
+      const current = combinedCategories.get(cat.x) || 0;
+      combinedCategories.set(cat.x, current + cat.y);
+    });
+  });
+
+  // Sort categories by total solves
+  const sortedCategories = Array.from(combinedCategories.entries())
+    .sort((a, b) => b[1] - a[1])
+    .map(([category]) => category);
+
   const data = {
-    labels: users[0].diffData.map(d => d.x),
-    datasets: users.map((user, index) => ({
-      label: user.name,
-      data: user.diffData.map(d => d.y),
-      backgroundColor: backgroundColors[index],
-      borderColor: borderColors[index],
-      borderWidth: 1,
-    })),
+    labels: sortedCategories,
+    datasets: users.map((user, index) => {
+      const categoryMap = new Map(user.catData.map(cat => [cat.x, cat.y]));
+      return {
+        label: user.name,
+        data: sortedCategories.map(category => categoryMap.get(category) || 0),
+        backgroundColor: backgroundColors[index],
+        borderColor: borderColors[index],
+        borderWidth: 1,
+      };
+    }),
   };
 
   const options = {
@@ -55,7 +72,7 @@ const DifficultyCompareChart = ({ users }: { users: cfUserType[] }) => {
       },
       title: {
         display: true,
-        text: 'Difficulty Distribution',
+        text: 'Category Distribution',
       },
       tooltip: {
         callbacks: {
@@ -69,25 +86,40 @@ const DifficultyCompareChart = ({ users }: { users: cfUserType[] }) => {
       y: {
         ticks: {
           display: windowWidth > 768,
+        },
+        grid: {
+          color: '#f0f0f0',
         }
       },
       x: {
         ticks: {
-          maxRotation: windowWidth <= 768 ? 90 : 0,
-          minRotation: windowWidth <= 768 ? 90 : 0
+          maxRotation: 90,
+          minRotation: 90,
+          font: {
+            size: 11
+          },
+          padding: 5
+        },
+        grid: {
+          display: false
         }
+      }
+    },
+    layout: {
+      padding: {
+        bottom: 25
       }
     }
   };
 
   return (
     <Card className="bg-card w-full flex flex-col justify-center items-start">
-      <ChartHeading text="Difficulty Distribution Comparison" />
-      <div className="w-full h-[400px]">
+      <ChartHeading text="Category Distribution Comparison" />
+      <div className="w-full h-[600px]">
         <Bar data={data} options={options} />
       </div>
     </Card>
   );
 };
 
-export default DifficultyCompareChart;
+export default CategoryCompareChart;

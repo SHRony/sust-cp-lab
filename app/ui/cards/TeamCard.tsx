@@ -60,7 +60,7 @@ const TeamCard = ({ team, onClose, onRename, onDelete, closable, contestAuthor}:
       onHoverEnd={() => setIsHovered(false)}
     >
       <Card
-        className="relative overflow-hidden rounded-xl bg-white p-6 border border-gray-200 hover:border-blue-200 transition-all duration-300 shadow-sm hover:shadow-md"
+        className="relative overflow-hidden rounded-xl bg-white p-6 border border-gray-200 hover:border-blue-200 transition-all duration-300 shadow-sm hover:shadow-md w-[300px]"
       >
         {/* Delete Button */}
         <AccessProvider permittedUsers={['admin', '_' + contestAuthor]}>

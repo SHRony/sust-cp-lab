@@ -136,7 +136,7 @@ export default function CreateTeams({usersParams, teamsParams, id}: {usersParams
   const body = (
     <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: '100%' }}>
       <div style={{ scrollbarWidth: 'none', height: 'calc(100vh - 60px)', overflowY: 'scroll' }}>
-        <div className="w-100 mobile:w-106 tablet:w-192 laptop:w-256 desktop:w-360 bg-white">
+        <div className="w-screen h-screen bg-white">
           <div className="flex justify-between items-center p-4">
             <IconButton onClick={handleClose}>
               <CloseIcon />
@@ -190,7 +190,7 @@ export default function CreateTeams({usersParams, teamsParams, id}: {usersParams
           />
         </div>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="flex flex-row flex-wrap gap-4 justify-start">
         {teams.map((team, index) => (
           <TeamCard
             key={index}
