@@ -35,6 +35,7 @@ model sust_cp_lab_contests {
   date        String  @db.VarChar(25)
   poster      String? @db.VarChar(255)
   author      String  @default("Rony") @db.VarChar(255)
+  sust_cp_lab_team_forming_contests sust_cp_lab_team_forming_contests[]
 }
 
 model sust_cp_lab_student_info {
@@ -62,6 +63,36 @@ model sust_cp_lab_users {
   email     String     @unique
   password  String
   user_type user_type? @default(student)
+}
+
+model sust_cp_lab_team_forming_contests {
+  id                          Int                         @id @default(autoincrement())
+  contest_id                  Int
+  vjudge_contest_id           Int
+  name                        String                      @db.VarChar(255)
+  sust_cp_lab_contests        sust_cp_lab_contests        @relation(fields: [contest_id], references: [id])
+  sust_cp_lab_vjudge_contests sust_cp_lab_vjudge_contests @relation(fields: [vjudge_contest_id], references: [id])
+
+  @@unique([contest_id, vjudge_contest_id])
+}
+
+model sust_cp_lab_vjudge_contests {
+  id                                Int                                 @id @default(autoincrement())
+  vjudge_id                         String                              @unique @db.VarChar(100)
+  is_result_available               Boolean                             @default(false)
+  sust_cp_lab_team_forming_contests sust_cp_lab_team_forming_contests[]
+  sust_cp_lab_vjudge_submissions    sust_cp_lab_vjudge_submissions[]
+}
+
+model sust_cp_lab_vjudge_submissions {
+  id                          Int                         @id @default(autoincrement())
+  vjudge_contest_id           Int
+  vjudge_handle               String                      @db.VarChar(255)
+  problem_no                  String                      @db.VarChar(10)
+  is_accepted                 Boolean                     @default(false)
+  sust_cp_lab_vjudge_contests sust_cp_lab_vjudge_contests @relation(fields: [vjudge_contest_id], references: [id])
+
+  @@index([vjudge_contest_id, vjudge_handle])
 }
 
 enum user_type {

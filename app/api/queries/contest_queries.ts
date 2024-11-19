@@ -87,24 +87,44 @@ export const getContests = async () => {
   
   export const getContestTeams = async (contestId: number) => {
     // console.log(typeof contestId);
-      const registeredTeamIds = await prisma.sust_cp_lab_teams.findMany({
-        where: {
-          contest: contestId
-        }
-      })
-      let teams:any = [];
-      for(const row of registeredTeamIds){
-        const teamMembers = await prisma.sust_cp_lab_team_members.findMany({
-          where: {
-            team_id: row.id
-          }
-        });
-        
-        teams.push({
-          id: row.id,
-          name: row.name,
-          members: teamMembers.map((member) => member.user_name),
-        });
+    const registeredTeamIds = await prisma.sust_cp_lab_teams.findMany({
+      where: {
+        contest: contestId
       }
-      return teams;
+    })
+    let teams:any = [];
+    for(const row of registeredTeamIds){
+      const teamMembers = await prisma.sust_cp_lab_team_members.findMany({
+        where: {
+          team_id: row.id
+        }
+      });
+      
+      teams.push({
+        id: row.id,
+        name: row.name,
+        members: teamMembers.map((member) => member.user_name),
+      });
+    }
+    return teams;
+  }
+
+  export const getContestTfcs = async (contestId: number) => {
+    const tfcs = await prisma.sust_cp_lab_team_forming_contests.findMany({
+      where: {
+        contest_id: contestId
+      },
+      include: {
+        sust_cp_lab_vjudge_contests: true
+      }
+    });
+
+    // Map the data to match the expected interface
+    return tfcs.map(tfc => ({
+      ...tfc,
+      vjudge_contest: {
+        vjudge_id: tfc.sust_cp_lab_vjudge_contests.vjudge_id,
+        is_result_available: tfc.sust_cp_lab_vjudge_contests.is_result_available
+      }
+    }));
   }
