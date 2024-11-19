@@ -90,8 +90,11 @@ export default function SideNav() {
   const auth = useContext(authContext);
   const pathname = usePathname();
   
+  // Return early if auth context is not ready
+  if (!auth) return null;
+  
   const handleLogout = async () => {
-    await auth?.signOut();
+    await auth.signOut();
   };
 
   return (
