@@ -18,7 +18,7 @@ export default async function RootLayout({children} : Readonly<{children:React.R
   const user = await isLoggedIn();
   return (
     <html lang="en">
-      <body className="inter.className flex items-stretch theme-light h-screen w-screen bg-gray-100 p-0 m-0">
+      <body className="inter.className flex items-stretch theme-light h-screen w-screen bg-gray-100 p-0 m-0 overflow-x-hidden">
           <AuthProvider userProps={user}>
               {children}
           </AuthProvider>

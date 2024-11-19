@@ -15,7 +15,7 @@ export default async function Home() {
 
 const LandingPage = () => {
   return (
-    <div className="bg-slate-950 h-full w-full overflow-y-scroll">
+    <div className="bg-slate-950 h-full w-full overflow-y-scroll overflow-x-hidden">
       <LandingLamp/>
       <FeatureSections/>
     </div>
