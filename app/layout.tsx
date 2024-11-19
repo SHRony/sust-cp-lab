@@ -3,11 +3,7 @@ import "./globals.css";
 import React from "react";
 import AuthProvider from "./lib/AuthProvider";
 import { isLoggedIn } from '@/app/api/queries/user_queries';
-import SideNav from "./ui/nav/side-nav";
-import { headers } from "next/headers";
-import { redirect } from "next/dist/server/api-utils";
-import LayoutWrapper from "./client-wraper";
-import { Toaster } from "react-hot-toast";
+
 
 export const metadata: Metadata = {
   title: "Sust Competitive Programming Lab",
