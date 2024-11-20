@@ -176,6 +176,9 @@ export async function getTfcRanks(contestId: number) {
     const submissions = vjudgeContest.sust_cp_lab_vjudge_submissions;
     const contestEndTime = new Date(vjudgeContest.start_time.getTime() + vjudgeContest.duration_seconds * 1000);
     
+    // Get unique problems
+    const problems = Array.from(new Set(submissions.map(sub => sub.problem_no))).sort();
+    
     // Group submissions by vjudge handle and problem
     const userProblemSubmissions = new Map<string, Map<string, {
       solved: boolean,
@@ -217,14 +220,22 @@ export async function getTfcRanks(contestId: number) {
 
     // Calculate rankings
     const rankings = Array.from(userProblemSubmissions.entries())
-      .map(([vjudge_handle, problems]) => {
+      .map(([vjudge_handle, problemStats]) => {
         const student = studentInfo.find(s => s.vjudge_handle === vjudge_handle);
         if (!student) return null;
 
         let solved = 0;
         let penalty = 0;
 
-        problems.forEach(stats => {
+        // Convert problem stats to the required format
+        const problems: { [key: string]: { solved: boolean; attempts: number; penalty: number; } } = {};
+        problemStats.forEach((stats, problemNo) => {
+          problems[problemNo] = {
+            solved: stats.solved,
+            attempts: stats.wrongSubmissions + (stats.solved ? 1 : 0),
+            penalty: stats.solved ? stats.firstAcceptedTime! + (stats.wrongSubmissions * 20) : 0
+          };
+          
           if (stats.solved) {
             solved++;
             penalty += stats.firstAcceptedTime! + (stats.wrongSubmissions * 20);
@@ -239,6 +250,7 @@ export async function getTfcRanks(contestId: number) {
           rank: 0,
           solved,
           penalty,
+          problems
         };
       })
       .filter((r): r is NonNullable<typeof r> => r !== null)
@@ -264,6 +276,7 @@ export async function getTfcRanks(contestId: number) {
       tfc_id: tfc.id,
       tfc_name: tfc.name,
       rankings,
+      problems
     };
   });
 
@@ -279,7 +292,6 @@ export async function getTfcs(contestId: number) {
       sust_cp_lab_vjudge_contests: true
     }
   });
-
   return tfcs.map(tfc => ({
     id: tfc.id,
     contest_id: tfc.contest_id,

@@ -13,6 +13,8 @@ import Link from "next/link";
 import CFCompare from "@/app/ui/cfviz/CFCompare";
 import { teamType, userTableEntryType, userType } from "@/app/lib/types";
 import { AnimatePresence, motion } from "framer-motion";
+import TFCRanks from "@/app/ui/tfc/TFCRanks";
+import { ChartBarIcon } from "@heroicons/react/24/outline";
 
 export default function CreateTeams({usersParams, teamsParams, id}: {usersParams: userTableEntryType[], teamsParams: teamType[], id: string}) {
   const [users, setUsers] = useState<userTableEntryType[]>(usersParams.filter((user:userTableEntryType) => !(teamsParams.some((team:teamType) => team.members.includes(user.userName)))));
@@ -23,6 +25,8 @@ export default function CreateTeams({usersParams, teamsParams, id}: {usersParams
   const [open, setOpen] = useState(false);
   const [selectedForComparison, setSelectedForComparison] = useState<string[]>([]);
   const [creatingTeam, setCreatingTeam] = useState(false);
+  const [tfcRanks, setTfcRanks] = useState<any[]>([]);
+  const [loadingRanks, setLoadingRanks] = useState(false);
 
   const columns: GridColDef[] = [
     { 
@@ -133,6 +137,21 @@ export default function CreateTeams({usersParams, teamsParams, id}: {usersParams
     }
   }
 
+  useEffect(() => {
+    const fetchTfcRanks = async () => {
+      setLoadingRanks(true);
+      try {
+        const response = await axios.get(`/api/contests/${id}/tfc/ranks`);
+        setTfcRanks(response.data);
+      } catch (error) {
+        console.error('Error fetching TFC ranks:', error);
+      }
+      setLoadingRanks(false);
+    };
+
+    fetchTfcRanks();
+  }, [id]);
+
   const body = (
     <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: '100%' }}>
       <div style={{ scrollbarWidth: 'none', height: 'calc(100vh - 60px)', overflowY: 'scroll' }}>
@@ -201,6 +220,37 @@ export default function CreateTeams({usersParams, teamsParams, id}: {usersParams
           />
         ))}
       </div>
+
+      {/* TFC Ranks Section */}
+      {tfcRanks && tfcRanks.length > 0 && (
+        <motion.section 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.7 }}
+          className="bg-gradient-to-br from-white via-white to-purple-50 rounded-xl shadow-lg p-8 backdrop-blur-xl border border-purple-100"
+        >
+          <div className="w-full">
+            <div className="flex items-center gap-3 mb-8">
+              <ChartBarIcon className="h-8 w-8 text-purple-500" />
+              <div>
+                <h2 className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-purple-400 bg-clip-text text-transparent">
+                  Team Forming Contest Rankings
+                </h2>
+              </div>
+            </div>
+            <div className="bg-white rounded-lg shadow-inner p-4">
+              {loadingRanks ? (
+                <div className="flex justify-center items-center p-8">
+                  <CircularProgress />
+                </div>
+              ) : (
+                <TFCRanks tfcRanks={tfcRanks} />
+              )}
+            </div>
+          </div>
+        </motion.section>
+      )}
+
       <Modal
         open={open}
         onClose={handleClose}

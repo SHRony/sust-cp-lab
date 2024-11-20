@@ -11,6 +11,7 @@ import DoubleClickInput from "@/app/ui/input/DoubleClickInput";
 import axios from "axios";
 import { authContext } from "@/app/lib/AuthProvider";
 import DoubleClickTextArea from "@/app/ui/input/DoubleClickTextArea";
+import TFCRanks from "@/app/ui/tfc/TFCRanks";
 export default function CreateContestPage() {
   const [name, setName] = useState("Random Inter University Programming Contest");
   const [venue, setVenue] = useState("Random University");
@@ -20,6 +21,24 @@ export default function CreateContestPage() {
   const [poster, setPoster] = useState("");
   const auth = useContext(authContext);
   const [creating, setCreating] = useState(false);
+  const [tfcRanks, setTfcRanks] = useState([]);
+
+  useEffect(() => {
+    // Fetch TFC ranks when component mounts
+    const fetchTfcRanks = async () => {
+      try {
+        const response = await fetch('/api/contests/tfc/ranks');
+        if (response.ok) {
+          const data = await response.json();
+          setTfcRanks(data);
+        }
+      } catch (error) {
+        console.error('Error fetching TFC ranks:', error);
+      }
+    };
+
+    fetchTfcRanks();
+  }, []);
 
   const handleCreateContest = async () => {
     const newContest: contestType = {
@@ -55,10 +74,6 @@ export default function CreateContestPage() {
       setCreating(false);
     }
   };
-  useEffect(() => {
-    console.log(creating);
-  });
-
 
   return (
     <Card
@@ -117,7 +132,13 @@ export default function CreateContestPage() {
           }
         </Button>
       </div>
+
+      {tfcRanks && tfcRanks.length > 0 && (
+        <div className="mt-8 w-full max-w-6xl">
+          <h2 className="text-2xl font-bold mb-4">Team Forming Contest Rankings</h2>
+          <TFCRanks tfcRanks={tfcRanks} />
+        </div>
+      )}
     </Card>
   );
 }
-

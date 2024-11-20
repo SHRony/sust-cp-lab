@@ -1,7 +1,7 @@
 'use client'
 import axios from 'axios';
 import { useState, useEffect } from 'react';
-import {Button, CircularProgress, Select, MenuItem, FormControl, InputLabel, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@mui/material';
+import {Button, CircularProgress, Select, MenuItem, FormControl, InputLabel, TableContainer, Paper } from '@mui/material';
 import { ChartBarIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
 import { contestType, teamType, userTableEntryType } from '@/app/lib/types';
@@ -11,11 +11,12 @@ import AccessProvider from '@/app/lib/AccessProvider';
 import UserTable from '@/app/ui/tables/UserTable';
 import Image from 'next/image';
 import Card from '@/app/ui/cards/Card';
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { CalendarIcon, MapPinIcon, TagIcon, TrophyIcon, UserGroupIcon, ClockIcon, CheckCircleIcon, UsersIcon, LinkIcon } from '@heroicons/react/24/outline';
 import TextField from '@/app/ui/input/TextField';
 import PlusIcon from '@heroicons/react/24/outline/PlusIcon';
 import { ArrowPathIcon } from '@heroicons/react/24/outline';
+import TFCRanks from '@/app/ui/tfc/TFCRanks';
 
 interface TeamFormingContest {
   id: number;
@@ -44,7 +45,15 @@ interface Props {
       rank: number;
       solved: number;
       penalty: number;
+      problems: {
+        [key: string]: {
+          solved: boolean;
+          attempts: number;
+          penalty: number;
+        };
+      };
     }>;
+    problems: string[];
   }[];
 }
 
@@ -58,9 +67,14 @@ export default function Contest({contest, users, teams, teamFormingContests, tfc
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [crawlingStates, setCrawlingStates] = useState<{[key: string]: boolean}>({});
-  const [selectedTfcId, setSelectedTfcId] = useState<number | ''>('');
+  const [expandedTfcs, setExpandedTfcs] = useState<{[key: number]: boolean}>({});
 
-  const selectedTfcRankings = tfcRanks.find(tfc => tfc.tfc_id === selectedTfcId)?.rankings || [];
+  const toggleTfc = (tfcId: number) => {
+    setExpandedTfcs(prev => ({
+      ...prev,
+      [tfcId]: !prev[tfcId]
+    }));
+  };
 
   const handleAddTfc = async (e: React.FormEvent) => {
     if(!contest) return;
@@ -134,6 +148,21 @@ export default function Contest({contest, users, teams, teamFormingContests, tfc
   if (!contest) {
     return <div>Contest not found</div>
   }
+
+  // Transform tfcRanks to match TFCRanksType
+  const transformedTfcRanks = tfcRanks.map(tfc => ({
+    id: tfc.tfc_id.toString(), // Convert number to string
+    name: tfc.tfc_name, // Add the missing name property
+    ranks: tfc.rankings.map(ranking => ({
+      rank: ranking.rank,
+      username: ranking.username,
+      solved: ranking.solved,
+      penalty: ranking.penalty,
+      problems: ranking.problems
+    })),
+    problems: tfc.problems
+  }));
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-purple-50">
       {/* Hero Section */}
@@ -235,7 +264,7 @@ export default function Contest({contest, users, teams, teamFormingContests, tfc
                     <Button
                       variant="contained"
                       startIcon={<AddIcon />}
-                      className="bg-gradient-to-r from-purple-600 to-blue-500 hover:from-purple-700 hover:to-blue-600 text-white px-8 py-3 rounded-xl shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
+                      className="bg-gradient-to-r from-purple-600 to-blue-500 hover:from-purple-700 hover:to-blue-600 text-white px-8 py-3 rounded-xl shadow-md hover:shadow-xl transition-all duration-300"
                     >
                       Create Teams
                     </Button>
@@ -378,83 +407,22 @@ export default function Contest({contest, users, teams, teamFormingContests, tfc
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.7 }}
-          className="bg-white rounded-xl shadow-sm p-8 mb-8 backdrop-blur-xl bg-white/80"
+          className="bg-gradient-to-br from-white via-white to-purple-50 rounded-xl shadow-lg p-8 mb-8 backdrop-blur-xl border border-purple-100"
         >
-          <div className="flex items-center justify-between mb-8">
-            <div className="flex items-center gap-3">
-              <ChartBarIcon className="h-8 w-8 text-indigo-500" />
-              <h2 className="text-3xl font-bold bg-gradient-to-r from-indigo-600 to-indigo-400 bg-clip-text text-transparent">
-                TFC Rankings
-              </h2>
+          {tfcRanks && tfcRanks.length > 0 && (
+            <div className="w-full">
+              <div className="flex items-center gap-3 mb-8">
+                <ChartBarIcon className="h-8 w-8 text-purple-500" />
+                <div>
+                  <h2 className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-purple-400 bg-clip-text text-transparent">
+                    Team Forming Contest Rankings
+                  </h2>
+                </div>
+              </div>
+              <div className="bg-white rounded-lg shadow-inner p-4">
+                <TFCRanks tfcRanks={transformedTfcRanks} />
+              </div>
             </div>
-            <FormControl className="min-w-[200px]">
-              <InputLabel>Select TFC</InputLabel>
-              <Select
-                value={selectedTfcId}
-                onChange={(e) => setSelectedTfcId(e.target.value as number)}
-                label="Select TFC"
-              >
-                <MenuItem value="">
-                  <em>None</em>
-                </MenuItem>
-                {tfcRanks.map((tfc) => (
-                  <MenuItem key={tfc.tfc_id} value={tfc.tfc_id}>
-                    {tfc.tfc_name}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          </div>
-
-          {selectedTfcId && (
-            <TableContainer component={Paper} className="shadow-lg">
-              <Table>
-                <TableHead className="bg-gradient-to-r from-indigo-100 to-purple-100">
-                  <TableRow>
-                    <TableCell className="font-semibold">Rank</TableCell>
-                    <TableCell className="font-semibold">Name</TableCell>
-                    <TableCell className="font-semibold">Username</TableCell>
-                    <TableCell className="font-semibold" align="right">Problems Solved</TableCell>
-                    <TableCell className="font-semibold" align="right">Penalty</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {selectedTfcRankings.map((ranking, index) => (
-                    <TableRow 
-                      key={ranking.user_id}
-                      className={`
-                        ${index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}
-                        hover:bg-indigo-50 transition-colors duration-150
-                      `}
-                    >
-                      <TableCell className="font-medium">
-                        <span className={`
-                          inline-flex items-center justify-center w-8 h-8 rounded-full
-                          ${ranking.rank === 1 ? 'bg-yellow-100 text-yellow-800' : 
-                            ranking.rank === 2 ? 'bg-gray-100 text-gray-800' :
-                            ranking.rank === 3 ? 'bg-orange-100 text-orange-800' :
-                            'bg-indigo-50 text-indigo-800'}
-                        `}>
-                          {ranking.rank}
-                        </span>
-                      </TableCell>
-                      <TableCell>{ranking.name}</TableCell>
-                      <TableCell>{ranking.username}</TableCell>
-                      <TableCell align="right">
-                        <span className="inline-flex items-center px-3 py-1 rounded-full bg-green-100 text-green-800">
-                          {ranking.solved}
-                        </span>
-                      </TableCell>
-                      <TableCell align="right">
-                        <span className="text-gray-600">
-                          {ranking.penalty}
-                        </span>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
           )}
         </motion.section>
 
