@@ -27,14 +27,14 @@ model sust_cp_lab_contestregistrations {
 }
 
 model sust_cp_lab_contests {
-  id          Int     @id @default(autoincrement())
-  name        String  @db.VarChar(255)
-  venue       String  @db.VarChar(35)
-  description String  @db.VarChar(500)
-  type        String  @db.VarChar(35)
-  date        String  @db.VarChar(25)
-  poster      String? @db.VarChar(255)
-  author      String  @default("Rony") @db.VarChar(255)
+  id                                Int                                 @id @default(autoincrement())
+  name                              String                              @db.VarChar(255)
+  venue                             String                              @db.VarChar(35)
+  description                       String                              @db.VarChar(500)
+  type                              String                              @db.VarChar(35)
+  date                              String                              @db.VarChar(25)
+  poster                            String?                             @db.VarChar(255)
+  author                            String                              @default("Rony") @db.VarChar(255)
   sust_cp_lab_team_forming_contests sust_cp_lab_team_forming_contests[]
 }
 
@@ -82,6 +82,9 @@ model sust_cp_lab_vjudge_contests {
   is_result_available               Boolean                             @default(false)
   sust_cp_lab_team_forming_contests sust_cp_lab_team_forming_contests[]
   sust_cp_lab_vjudge_submissions    sust_cp_lab_vjudge_submissions[]
+  start_time                        DateTime                           @default(now()) @db.Timestamp(6)
+  duration_seconds                  Int                                @default(0)
+
 }
 
 model sust_cp_lab_vjudge_submissions {
@@ -90,8 +93,10 @@ model sust_cp_lab_vjudge_submissions {
   vjudge_handle               String                      @db.VarChar(255)
   problem_no                  String                      @db.VarChar(10)
   is_accepted                 Boolean                     @default(false)
+  submission_time             DateTime                    @default(now()) @db.Timestamp(6)
   sust_cp_lab_vjudge_contests sust_cp_lab_vjudge_contests @relation(fields: [vjudge_contest_id], references: [id])
-
+  
+  @@unique([vjudge_contest_id, vjudge_handle, problem_no, submission_time])
   @@index([vjudge_contest_id, vjudge_handle])
 }
 
