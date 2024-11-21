@@ -185,7 +185,37 @@ export default function CreateTeams({usersParams, teamsParams, id}: {usersParams
           </div>
         </div>
       </div>
-
+              {/* TFC Ranks Section */}
+              <motion.section 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.7 }}
+          className="bg-gradient-to-br from-white via-white to-purple-50 rounded-xl shadow-lg p-8 mb-8 backdrop-blur-xl border border-purple-100"
+        >
+          {tfcRanks && tfcRanks.length > 0 && (
+            <div className="w-full max-w-full">
+              <div className="flex items-center gap-3 mb-8 max-w-full">
+                <ChartBarIcon className="h-8 w-8 text-purple-500 flex-shrink-0" />
+                <div className="overflow-hidden">
+                  <h2 className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-purple-400 bg-clip-text text-transparent truncate">
+                    Team Forming Contest Rankings
+                  </h2>
+                </div>
+              </div>
+              <div className="bg-white rounded-lg shadow-inner p-4 overflow-x-auto w-full">
+                {loadingRanks ? (
+                  <div className="flex justify-center items-center h-40">
+                    <CircularProgress />
+                  </div>
+                ) : (
+                  <div className="min-w-full">
+                    <TFCRanks tfcRanks={tfcRanks} />
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+        </motion.section>
       <Modal
         open={open}
         onClose={handleClose}

@@ -315,7 +315,14 @@ export default function Contest({contest, users, teams, teamFormingContests, tfc
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: index * 0.1 }}
               >
-                <TeamCard team={team} onClose={() => {}} onRename={() => {}} />
+                <TeamCard team={team} onClose={() => {}} onRename={(members, newName) => {
+                  console.log(newName);
+                  axios.post(`/api/contests/${contest.id}/teams/${team.id}/rename`, {
+                    name: newName
+                  }).then(res => {
+                    console.log(res);
+                  })
+                }} />
               </motion.div>
             ))}
           </div>
@@ -493,141 +500,6 @@ export default function Contest({contest, users, teams, teamFormingContests, tfc
           </div>
           <UserTable users={users} />
         </motion.section>
-
-        {/* Tabs */}
-        <div className="flex flex-col gap-8">
-          <div className="flex flex-wrap gap-4 items-center justify-between">
-            <div className="flex gap-4">
-              <motion.button
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                className={`px-6 py-2 rounded-lg font-medium transition-all duration-200 ${
-                  activeTab === 'overview' 
-                    ? 'bg-purple-600 text-white shadow-lg' 
-                    : 'bg-white/80 text-gray-700 hover:bg-white'
-                }`}
-                onClick={() => setActiveTab('overview')}
-              >
-                Overview
-              </motion.button>
-              <motion.button
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                className={`px-6 py-2 rounded-lg font-medium transition-all duration-200 ${
-                  activeTab === 'teams' 
-                    ? 'bg-purple-600 text-white shadow-lg' 
-                    : 'bg-white/80 text-gray-700 hover:bg-white'
-                }`}
-                onClick={() => setActiveTab('teams')}
-              >
-                Teams
-              </motion.button>
-              <motion.button
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                className={`px-6 py-2 rounded-lg font-medium transition-all duration-200 ${
-                  activeTab === 'rankings' 
-                    ? 'bg-purple-600 text-white shadow-lg' 
-                    : 'bg-white/80 text-gray-700 hover:bg-white'
-                }`}
-                onClick={() => setActiveTab('rankings')}
-              >
-                Rankings
-              </motion.button>
-            </div>
-            <Link href={`/contests/${contest.id}/createteams`}>
-              <motion.button
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                className="flex items-center gap-2 px-6 py-2 bg-purple-600 text-white rounded-lg font-medium hover:bg-purple-700 transition-colors duration-200"
-              >
-                <PlusIcon className="w-5 h-5" />
-                Create Teams
-              </motion.button>
-            </Link>
-          </div>
-
-          {/* Tab Content */}
-          <div className="bg-white/80 backdrop-blur-lg rounded-xl p-6 shadow-lg">
-            {activeTab === 'overview' && (
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                className="space-y-6"
-              >
-                {/* Contest Details */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  <Card>
-                    <div className="flex items-center gap-4">
-                      <CalendarIcon className="w-8 h-8 text-purple-600" />
-                      <div>
-                        <h3 className="text-sm font-medium text-gray-500">Date</h3>
-                        <p className="text-lg font-semibold text-gray-900">{new Date(contest.date).toLocaleDateString()}</p>
-                      </div>
-                    </div>
-                  </Card>
-                  <Card>
-                    <div className="flex items-center gap-4">
-                      <MapPinIcon className="w-8 h-8 text-purple-600" />
-                      <div>
-                        <h3 className="text-sm font-medium text-gray-500">Venue</h3>
-                        <p className="text-lg font-semibold text-gray-900">{contest.venue}</p>
-                      </div>
-                    </div>
-                  </Card>
-                  <Card>
-                    <div className="flex items-center gap-4">
-                      <UsersIcon className="w-8 h-8 text-purple-600" />
-                      <div>
-                        <h3 className="text-sm font-medium text-gray-500">Participants</h3>
-                        <p className="text-lg font-semibold text-gray-900">{users.length}</p>
-                      </div>
-                    </div>
-                  </Card>
-                </div>
-                {/* Description */}
-                <Card>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-4">Description</h3>
-                  <p className="text-gray-700">{contest.description || 'No description available.'}</p>
-                </Card>
-              </motion.div>
-            )}
-
-            {activeTab === 'teams' && (
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                className="space-y-6"
-              >
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {teams.map((team) => (
-                    <TeamCard 
-                      key={team.id} 
-                      team={team}
-                      onRename={(newName) => {
-                        // Handle team rename
-                       axios.post(`/api/contests/${contest.id}/teams/${team.id}/rename`, { name: newName });
-                      }}
-                    />
-                  ))}
-                </div>
-              </motion.div>
-            )}
-
-            {activeTab === 'rankings' && (
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                className="space-y-6"
-              >
-                <TFCRanks tfcRanks={transformedTfcRanks} />
-              </motion.div>
-            )}
-          </div>
-        </div>
       </div>
     </div>
   );
