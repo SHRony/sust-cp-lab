@@ -68,6 +68,7 @@ export default function Contest({contest, users, teams, teamFormingContests, tfc
   const [loading, setLoading] = useState(false);
   const [crawlingStates, setCrawlingStates] = useState<{[key: string]: boolean}>({});
   const [expandedTfcs, setExpandedTfcs] = useState<{[key: number]: boolean}>({});
+  const [activeTab, setActiveTab] = useState('overview');
 
   const toggleTfc = (tfcId: number) => {
     setExpandedTfcs(prev => ({
@@ -384,12 +385,10 @@ export default function Contest({contest, users, teams, teamFormingContests, tfc
                           {crawlingStates[tfc.vjudge_contest.vjudge_id] ? (
                             <>
                               <CircularProgress size={16} className="text-purple-600" />
-                              {/* <span>Crawling...</span> */}
                             </>
                           ) : (
                             <>
                               <ArrowPathIcon className="h-4 w-4" />
-                              {/* <span>Crawl Results</span> */}
                             </>
                           )}
                         </button>
@@ -400,6 +399,59 @@ export default function Contest({contest, users, teams, teamFormingContests, tfc
               </motion.div>
             ))}
           </div>
+
+          {/* Add TFC Modal */}
+          {showAddTfc && (
+            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+              <motion.div 
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="bg-white p-8 rounded-xl w-[32rem] relative shadow-2xl"
+              >
+                <h3 className="text-2xl font-bold mb-6 bg-gradient-to-r from-purple-600 to-purple-400 bg-clip-text text-transparent">
+                  Add Team Forming Contest
+                </h3>
+                {error && (
+                  <div className="mb-6 p-4 bg-red-50 border border-red-200 text-red-700 rounded-lg">
+                    {error}
+                  </div>
+                )}
+                <form onSubmit={handleAddTfc} className="space-y-6">
+                  <div>
+                    <TextField
+                      label="Contest Name"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                    />
+                  </div>
+                  <div>
+                    <TextField
+                      label="VJudge Contest ID"
+                      value={vjudgeId}
+                      onChange={(e) => setVjudgeId(e.target.value)}
+                      type="text"
+                    />
+                  </div>
+                  <div className="flex justify-end gap-3 pt-4">
+                    <button
+                      type="button"
+                      onClick={() => setShowAddTfc(false)}
+                      className="px-6 py-2 text-gray-600 hover:text-gray-800 transition-colors"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="submit"
+                      disabled={loading}
+                      className="bg-gradient-to-r from-purple-600 to-purple-400 text-white px-6 py-2 rounded-lg hover:from-purple-700 hover:to-purple-500 transition-all duration-200 disabled:from-purple-300 disabled:to-purple-200 shadow-md hover:shadow-lg disabled:shadow-none"
+                    >
+                      {loading ? "Adding..." : "Add Contest"}
+                    </button>
+                  </div>
+                </form>
+              </motion.div>
+            </div>
+          )}
         </motion.section>
 
         {/* TFC Ranks Section */}
@@ -442,58 +494,140 @@ export default function Contest({contest, users, teams, teamFormingContests, tfc
           <UserTable users={users} />
         </motion.section>
 
-        {/* Add TFC Modal */}
-        {showAddTfc && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <motion.div 
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              className="bg-white p-8 rounded-xl w-[32rem] relative shadow-2xl"
-            >
-              <h3 className="text-2xl font-bold mb-6 bg-gradient-to-r from-purple-600 to-purple-400 bg-clip-text text-transparent">
-                Add Team Forming Contest
-              </h3>
-              {error && (
-                <div className="mb-6 p-4 bg-red-50 border border-red-200 text-red-700 rounded-lg">
-                  {error}
-                </div>
-              )}
-              <form onSubmit={handleAddTfc} className="space-y-6">
-                <div>
-                  <TextField
-                    label="Contest Name"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                  />
-                </div>
-                <div>
-                  <TextField
-                    label="VJudge Contest ID"
-                    value={vjudgeId}
-                    onChange={(e) => setVjudgeId(e.target.value)}
-                    type="text"
-                  />
-                </div>
-                <div className="flex justify-end gap-3 pt-4">
-                  <button
-                    type="button"
-                    onClick={() => setShowAddTfc(false)}
-                    className="px-6 py-2 text-gray-600 hover:text-gray-800 transition-colors"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    type="submit"
-                    disabled={loading}
-                    className="bg-gradient-to-r from-purple-600 to-purple-400 text-white px-6 py-2 rounded-lg hover:from-purple-700 hover:to-purple-500 transition-all duration-200 disabled:from-purple-300 disabled:to-purple-200 shadow-md hover:shadow-lg disabled:shadow-none"
-                  >
-                    {loading ? "Adding..." : "Add Contest"}
-                  </button>
-                </div>
-              </form>
-            </motion.div>
+        {/* Tabs */}
+        <div className="flex flex-col gap-8">
+          <div className="flex flex-wrap gap-4 items-center justify-between">
+            <div className="flex gap-4">
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                className={`px-6 py-2 rounded-lg font-medium transition-all duration-200 ${
+                  activeTab === 'overview' 
+                    ? 'bg-purple-600 text-white shadow-lg' 
+                    : 'bg-white/80 text-gray-700 hover:bg-white'
+                }`}
+                onClick={() => setActiveTab('overview')}
+              >
+                Overview
+              </motion.button>
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                className={`px-6 py-2 rounded-lg font-medium transition-all duration-200 ${
+                  activeTab === 'teams' 
+                    ? 'bg-purple-600 text-white shadow-lg' 
+                    : 'bg-white/80 text-gray-700 hover:bg-white'
+                }`}
+                onClick={() => setActiveTab('teams')}
+              >
+                Teams
+              </motion.button>
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                className={`px-6 py-2 rounded-lg font-medium transition-all duration-200 ${
+                  activeTab === 'rankings' 
+                    ? 'bg-purple-600 text-white shadow-lg' 
+                    : 'bg-white/80 text-gray-700 hover:bg-white'
+                }`}
+                onClick={() => setActiveTab('rankings')}
+              >
+                Rankings
+              </motion.button>
+            </div>
+            <Link href={`/contests/${contest.id}/createteams`}>
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                className="flex items-center gap-2 px-6 py-2 bg-purple-600 text-white rounded-lg font-medium hover:bg-purple-700 transition-colors duration-200"
+              >
+                <PlusIcon className="w-5 h-5" />
+                Create Teams
+              </motion.button>
+            </Link>
           </div>
-        )}
+
+          {/* Tab Content */}
+          <div className="bg-white/80 backdrop-blur-lg rounded-xl p-6 shadow-lg">
+            {activeTab === 'overview' && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                className="space-y-6"
+              >
+                {/* Contest Details */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  <Card>
+                    <div className="flex items-center gap-4">
+                      <CalendarIcon className="w-8 h-8 text-purple-600" />
+                      <div>
+                        <h3 className="text-sm font-medium text-gray-500">Date</h3>
+                        <p className="text-lg font-semibold text-gray-900">{new Date(contest.date).toLocaleDateString()}</p>
+                      </div>
+                    </div>
+                  </Card>
+                  <Card>
+                    <div className="flex items-center gap-4">
+                      <MapPinIcon className="w-8 h-8 text-purple-600" />
+                      <div>
+                        <h3 className="text-sm font-medium text-gray-500">Venue</h3>
+                        <p className="text-lg font-semibold text-gray-900">{contest.venue}</p>
+                      </div>
+                    </div>
+                  </Card>
+                  <Card>
+                    <div className="flex items-center gap-4">
+                      <UsersIcon className="w-8 h-8 text-purple-600" />
+                      <div>
+                        <h3 className="text-sm font-medium text-gray-500">Participants</h3>
+                        <p className="text-lg font-semibold text-gray-900">{users.length}</p>
+                      </div>
+                    </div>
+                  </Card>
+                </div>
+                {/* Description */}
+                <Card>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-4">Description</h3>
+                  <p className="text-gray-700">{contest.description || 'No description available.'}</p>
+                </Card>
+              </motion.div>
+            )}
+
+            {activeTab === 'teams' && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                className="space-y-6"
+              >
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {teams.map((team) => (
+                    <TeamCard 
+                      key={team.id} 
+                      team={team}
+                      onRename={(newName) => {
+                        // Handle team rename
+                       axios.post(`/api/contests/${contest.id}/teams/${team.id}/rename`, { name: newName });
+                      }}
+                    />
+                  ))}
+                </div>
+              </motion.div>
+            )}
+
+            {activeTab === 'rankings' && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                className="space-y-6"
+              >
+                <TFCRanks tfcRanks={transformedTfcRanks} />
+              </motion.div>
+            )}
+          </div>
+        </div>
       </div>
     </div>
   );

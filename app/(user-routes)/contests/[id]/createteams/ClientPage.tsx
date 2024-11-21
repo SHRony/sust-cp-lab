@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import TeamCard from "@/app/ui/cards/TeamCard";
 import axios from "axios";
-import { DataGrid, GridCellParams, GridColDef, GridPaginationModel, GridRowId, GridRowSelectionModel } from '@mui/x-data-grid';
+import UserTable from "@/app/ui/tables/UserTable";
 import Image from 'next/image'
 import Modal from '@mui/material/Modal';
 import { Button, CircularProgress, IconButton } from '@mui/material';
@@ -20,7 +20,6 @@ export default function CreateTeams({usersParams, teamsParams, id}: {usersParams
   const [users, setUsers] = useState<userTableEntryType[]>(usersParams.filter((user:userTableEntryType) => !(teamsParams.some((team:teamType) => team.members.includes(user.userName)))));
   const [removedUsers, setRemovedUsers] = useState<userTableEntryType[]>(usersParams.filter((user:userTableEntryType) => teamsParams.some((team:teamType) => team.members.includes(user.userName))));
   const [selectedUsers, setSelectedUsers] = useState<userTableEntryType[]>([]);
-  const [rowSelectionModel, setRowSelectionModel] = useState<GridRowSelectionModel>([]);
   const [teams, setTeams] = useState<teamType[]>(teamsParams);
   const [open, setOpen] = useState(false);
   const [selectedForComparison, setSelectedForComparison] = useState<string[]>([]);
@@ -28,41 +27,8 @@ export default function CreateTeams({usersParams, teamsParams, id}: {usersParams
   const [tfcRanks, setTfcRanks] = useState<any[]>([]);
   const [loadingRanks, setLoadingRanks] = useState(false);
 
-  const columns: GridColDef[] = [
-    { 
-      field: 'avatar', 
-      headerName: '', 
-      flex: 1, 
-      minWidth: 50,
-      maxWidth: 50,
-      renderCell: (params: GridCellParams) => (
-        
-        <AnimatePresence>
-          <motion.div key={params.row.userName} className='h-full flex justify-center items-center w-8'>
-            <Image style={{borderRadius: '50%', height: '30px', width: '30px', objectFit: 'cover'}} src={params.row.avatar} alt={''} width={30} height={30}/>
-          </motion.div>
-        </AnimatePresence>
-      ),
-    },
-    { 
-      field: 'username', 
-      headerName: 'Username', 
-      flex: 1, 
-      minWidth: 150,
-      renderCell: (params: GridCellParams) => (
-        <Link href={`/profile/${params.row.userName}`}>
-          {params.row.userName}
-        </Link>
-      ),
-    },
-    { field: 'maxRating', headerName: 'Max Rating', flex: 1, minWidth: 150 },
-    { field: 'maxRank', headerName: 'Max Rank', flex: 1, minWidth: 150 },
-    { field: 'contribution', headerName: 'Contribution', flex: 1, minWidth: 150 },
-  ];
-
-  const handleSelectionChange = (newSelection: GridRowSelectionModel) => {
-    setRowSelectionModel(newSelection);
-    setSelectedUsers(newSelection.map((id) => users.find((user) => user.userName === id) as userTableEntryType));
+  const handleSelectionChange = (newSelectedUsers: userTableEntryType[]) => {
+    setSelectedUsers(newSelectedUsers);
   };
 
   const handleCreateTeam = () => {
@@ -86,7 +52,6 @@ export default function CreateTeams({usersParams, teamsParams, id}: {usersParams
       console.log(error);
       setCreatingTeam(false);
     })
-    
   };
 
   const handleClose = () => {
@@ -137,6 +102,27 @@ export default function CreateTeams({usersParams, teamsParams, id}: {usersParams
     }
   }
 
+  const calculateTFCData = () => {
+    if (!tfcRanks || tfcRanks.length === 0) return [];
+
+    return selectedUsers.map(user => {
+      const userTfcs = tfcRanks.map(tfc => {
+        const userRank = tfc.ranks.find((r: any) => r.username === user.userName);
+        return {
+          id: tfc.id,
+          name: tfc.name,
+          solveCount: userRank ? userRank.solved : 0
+        };
+      });
+
+      return {
+        username: user.userName,
+        tfcs: userTfcs,
+        totalSolves: userTfcs.reduce((sum, tfc) => sum + tfc.solveCount, 0)
+      };
+    });
+  };
+
   useEffect(() => {
     const fetchTfcRanks = async () => {
       setLoadingRanks(true);
@@ -152,113 +138,69 @@ export default function CreateTeams({usersParams, teamsParams, id}: {usersParams
     fetchTfcRanks();
   }, [id]);
 
-  const body = (
-    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: '100%' }}>
-      <div style={{ scrollbarWidth: 'none', height: 'calc(100vh - 60px)', overflowY: 'scroll' }}>
-        <div className="w-screen h-screen bg-white">
-          <div className="flex justify-between items-center p-4">
-            <IconButton onClick={handleClose}>
-              <CloseIcon />
-            </IconButton>
-            <h2 className="text-xl font-semibold">Comparing {selectedForComparison.length} Users</h2>
-          </div>
-          <CFCompare users={selectedForComparison}/>
-        </div>
-      </div>
-    </div>
-  );
-
   return (
-    <div className="flex flex-col gap-5 p-5">
-      <div className="flex flex-col gap-5">
-        <div className="flex flex-row gap-5 items-center">
-          <h1 className="text-2xl font-bold">Create Teams</h1>
-          <div className="flex-grow"></div>
-          <Button 
-            variant="contained" 
+    <div className="flex flex-col gap-8">
+      <div className="flex justify-between items-center">
+        <div className="flex gap-4">
+          <Button
+            variant="contained"
             color="primary"
             onClick={handleCreateTeam}
             disabled={selectedUsers.length === 0 || creatingTeam}
-            className="bg-blue-500"
+            startIcon={creatingTeam ? <CircularProgress size={20} /> : null}
           >
-            {creatingTeam ? <CircularProgress size={24} /> : 'Create Team'}
+            Create Team
           </Button>
           <Button
-            variant="contained"
-            color="secondary"
+            variant="outlined"
+            color="primary"
             onClick={handleCompare}
             disabled={selectedUsers.length < 2}
-            className="bg-purple-500"
+            startIcon={<ChartBarIcon className="h-5 w-5" />}
           >
-            Compare Selected ({selectedUsers.length})
+            Compare
           </Button>
         </div>
-        <div style={{ height: 400 }}>
-          <DataGrid
-            rows={users}
-            columns={columns}
-            getRowId={(row) => row.userName}
-            checkboxSelection
-            onRowSelectionModelChange={handleSelectionChange}
-            rowSelectionModel={rowSelectionModel}
-            initialState={{
-              pagination: { paginationModel: { pageSize: 10 } },
-            }}
-            pageSizeOptions={[10, 20, 50]}
-            className="bg-white"
-          />
-        </div>
-      </div>
-      <div className="flex flex-row flex-wrap gap-4 justify-start">
-        {teams.map((team, index) => (
-          <TeamCard
-            key={index}
-            team={team}
-            onDelete={() => handleDeleteTeam(team)}
-            onRename={handleRename}
-            closable
-          />
-        ))}
       </div>
 
-      {/* TFC Ranks Section */}
-      {tfcRanks && tfcRanks.length > 0 && (
-        <motion.section 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.7 }}
-          className="bg-gradient-to-br from-white via-white to-purple-50 rounded-xl shadow-lg p-8 backdrop-blur-xl border border-purple-100"
-        >
-          <div className="w-full">
-            <div className="flex items-center gap-3 mb-8">
-              <ChartBarIcon className="h-8 w-8 text-purple-500" />
-              <div>
-                <h2 className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-purple-400 bg-clip-text text-transparent">
-                  Team Forming Contest Rankings
-                </h2>
-              </div>
-            </div>
-            <div className="bg-white rounded-lg shadow-inner p-4">
-              {loadingRanks ? (
-                <div className="flex justify-center items-center p-8">
-                  <CircularProgress />
-                </div>
-              ) : (
-                <TFCRanks tfcRanks={tfcRanks} />
-              )}
-            </div>
+      <div className="grid grid-cols-1 gap-8">
+        <div>
+          <h2 className="text-xl font-semibold mb-4">Available Users</h2>
+          <UserTable 
+            users={users}
+            onSelectionChange={handleSelectionChange}
+            checkboxSelection={true}
+            selectedUsers={selectedUsers}
+          />
+        </div>
+
+        <div>
+          <h2 className="text-xl font-semibold mb-4">Teams</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <AnimatePresence>
+              {teams.map((team) => (
+                <TeamCard key={team.id} team={team} onDelete={() => handleDeleteTeam(team)} onRename={handleRename} closable />
+              ))}
+            </AnimatePresence>
           </div>
-        </motion.section>
-      )}
+        </div>
+      </div>
 
       <Modal
         open={open}
         onClose={handleClose}
-        aria-labelledby="comparison-modal"
-        aria-describedby="user-comparison-view"
+        className="flex items-center justify-center"
       >
-        {body}
+        <div className="bg-white rounded-xl w-[90vw] h-[90vh] relative overflow-y-auto">
+          <IconButton
+            onClick={handleClose}
+            className="absolute right-0"
+          >
+            <CloseIcon />
+          </IconButton>
+          <CFCompare users={selectedForComparison} tfcData={calculateTFCData()} />
+        </div>
       </Modal>
     </div>
   );
-};
+}

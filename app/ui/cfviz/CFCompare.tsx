@@ -9,12 +9,25 @@ import DifficultyCompareChart from './DifficultyCompareChart';
 import CategoryCompareChart from './CategoryCompareChart';
 import CumulativeDifficultyCompareChart from './CumulativeDifficultyCompareChart';
 import CombinedScatterChart from './CombinedScatterChart';
-import { DataGrid, GridColDef } from '@mui/x-data-grid';
+import { DataGrid, GridColDef, GridCellParams } from '@mui/x-data-grid';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Tabs, Tab } from '@mui/material';
-import { Trophy, Activity, BarChart2, FolderTree, TrendingUp, Clock } from 'lucide-react';
+import { Trophy, Activity, BarChart2, FolderTree, TrendingUp, Clock, Target } from 'lucide-react';
+import Link from 'next/link';
 
-export default function CFCompare ({users} : {users : string[]}) {
+interface TFCData {
+  id: string;
+  name: string;
+  solveCount: number;
+}
+
+interface UserTFCData {
+  username: string;
+  tfcs: TFCData[];
+  totalSolves: number;
+}
+
+export default function CFCompare ({users, tfcData} : {users : string[], tfcData?: UserTFCData[]}) {
   const [cfUsers, setCFUsers] = useState<cfUserType[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -215,8 +228,120 @@ export default function CFCompare ({users} : {users : string[]}) {
     };
   });
 
+  const renderTFCTable = () => {
+    if (!tfcData || tfcData.length === 0) return null;
+
+    // Get all unique TFC IDs
+    const tfcIds = Array.from(new Set(tfcData.flatMap(user => user.tfcs.map(tfc => tfc.id))));
+    const tfcNames = Array.from(new Set(tfcData.flatMap(user => user.tfcs.map(tfc => tfc.name))));
+
+    const columns: GridColDef[] = [
+      { 
+        field: 'username', 
+        headerName: 'Username', 
+        flex: 1, 
+        minWidth: 150, 
+        sortable: true,
+        renderCell: (params: GridCellParams<UserTFCData>) => (
+          <Link 
+            href={`/profile/${params.row.username}`}
+            className="hover:text-blue-500 transition-colors font-medium"
+          >
+            {params.row.username}
+          </Link>
+        ),
+      },
+      ...tfcNames.map((name, index) => ({
+        field: tfcIds[index],
+        headerName: name,
+        flex: 1,
+        minWidth: 100,
+        sortable: true,
+        renderCell: (params: GridCellParams<UserTFCData>) => {
+          const tfc = params.row.tfcs.find((t: TFCData) => t.id === tfcIds[index]);
+          return (
+            <div className="flex items-center gap-2 font-medium">
+              <span className={`${tfc?.solveCount ? 'text-green-500' : 'text-gray-400'}`}>
+                {tfc ? tfc.solveCount : 0}
+              </span>
+            </div>
+          );
+        }
+      })),
+      { 
+        field: 'totalSolves', 
+        headerName: 'Total Solves', 
+        flex: 1, 
+        minWidth: 120,
+        sortable: true,
+        renderCell: (params: GridCellParams<UserTFCData>) => (
+          <div className="flex items-center gap-2">
+            <span className="font-semibold text-purple-600">
+              {params.row.totalSolves}
+            </span>
+          </div>
+        )
+      }
+    ];
+
+    return (
+      <motion.div 
+        className="p-6"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3 }}
+      >
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+          <DataGrid
+            rows={tfcData}
+            columns={columns}
+            getRowId={(row) => row.username}
+            disableRowSelectionOnClick
+            pageSizeOptions={[5, 10, 25]}
+            initialState={{
+              pagination: { 
+                paginationModel: { pageSize: 10 } 
+              },
+              sorting: {
+                sortModel: [{ field: 'totalSolves', sort: 'desc' }],
+              },
+            }}
+            className="text-gray-700"
+            autoHeight
+            sx={{
+              border: 'none',
+              '& .MuiDataGrid-cell': {
+                borderColor: '#f3f4f6',
+              },
+              '& .MuiDataGrid-columnHeaders': {
+                backgroundColor: '#f9fafb',
+                borderBottom: '2px solid #e5e7eb',
+              },
+              '& .MuiDataGrid-row': {
+                '&:hover': {
+                  backgroundColor: '#f9fafb',
+                  transform: 'scale(1.002)',
+                  transition: 'all 0.2s ease',
+                },
+              },
+              '& .MuiDataGrid-footerContainer': {
+                borderTop: '2px solid #e5e7eb',
+              },
+              '& .MuiTablePagination-root': {
+                color: '#374151',
+              },
+              '& .MuiDataGrid-virtualScroller': {
+                backgroundColor: '#ffffff',
+              },
+            }}
+          />
+        </div>
+      </motion.div>
+    );
+  };
+
   return (
-    <div className="flex flex-col gap-8 bg-gradient-to-br from-gray-50 to-white p-8 rounded-2xl ">
+    <div className="flex flex-col gap-8 bg-gradient-to-br from-gray-50 to-white rounded-2xl p-8">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -249,7 +374,7 @@ export default function CFCompare ({users} : {users : string[]}) {
         <Tabs
           value={activeTab}
           onChange={handleTabChange}
-          className="border-b border-gray-200"
+          className="border-b border-gray-200 overflow-y-scroll [scrollbar-width:none]"
           TabIndicatorProps={{
             style: {
               backgroundColor: '#3B82F6',
@@ -269,7 +394,7 @@ export default function CFCompare ({users} : {users : string[]}) {
           />
           <Tab 
             icon={<BarChart2 className="w-5 h-5" />}
-            label={<span className="hidden sm:inline">Problem Distribution</span>}
+            label={<span className="hidden sm:inline">Difficulty Distribution</span>}
             className="flex gap-2 min-h-0 py-3"
           />
           <Tab 
@@ -285,6 +410,11 @@ export default function CFCompare ({users} : {users : string[]}) {
           <Tab 
             icon={<Clock className="w-5 h-5" />}
             label={<span className="hidden sm:inline">Submission Timeline</span>}
+            className="flex gap-2 min-h-0 py-3"
+          />
+          <Tab 
+            icon={<Target className="w-5 h-5" />}
+            label={<span className="hidden sm:inline">TFC</span>}
             className="flex gap-2 min-h-0 py-3"
           />
         </Tabs>
@@ -352,8 +482,22 @@ export default function CFCompare ({users} : {users : string[]}) {
               </Card>
             </motion.div>
           )}
-
           {activeTab === 2 && (
+            <motion.div
+              key="distribution"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.3 }}
+            >
+              <Card className="overflow-hidden border border-gray-200 shadow-lg rounded-xl bg-white">
+                <div className="p-6">
+                  <DifficultyCompareChart users={cfUsers}></DifficultyCompareChart>
+                </div>
+              </Card>
+            </motion.div>
+          )}
+          {activeTab === 3 && (
             <motion.div
               key="cumulative"
               initial={{ opacity: 0, y: 20 }}
@@ -369,7 +513,7 @@ export default function CFCompare ({users} : {users : string[]}) {
             </motion.div>
           )}
 
-          {activeTab === 3 && (
+          {activeTab === 4 && (
             <motion.div
               key="category"
               initial={{ opacity: 0, y: 20 }}
@@ -385,21 +529,7 @@ export default function CFCompare ({users} : {users : string[]}) {
             </motion.div>
           )}
 
-          {activeTab === 4 && (
-            <motion.div
-              key="distribution"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.3 }}
-            >
-              <Card className="overflow-hidden border border-gray-200 shadow-lg rounded-xl bg-white">
-                <div className="p-6">
-                  <DifficultyCompareChart users={cfUsers}></DifficultyCompareChart>
-                </div>
-              </Card>
-            </motion.div>
-          )}
+          
 
           {activeTab === 5 && (
             <motion.div
@@ -412,6 +542,23 @@ export default function CFCompare ({users} : {users : string[]}) {
               <Card className="overflow-hidden border border-gray-200 shadow-lg rounded-xl bg-white">
                 <div className="p-6">
                   <CombinedScatterChart users={cfUsers}></CombinedScatterChart>
+                </div>
+              </Card>
+            </motion.div>
+          )}
+
+          {activeTab === 6 && (
+            <motion.div
+              key="tfc"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.3 }}
+            >
+              <Card className="overflow-hidden border border-gray-200 shadow-lg rounded-xl bg-white">
+                <div className="p-6">
+                  <h2 className="text-xl font-semibold mb-4">TFC Comparison</h2>
+                  {renderTFCTable()}
                 </div>
               </Card>
             </motion.div>

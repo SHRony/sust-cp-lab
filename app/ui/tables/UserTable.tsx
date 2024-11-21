@@ -1,6 +1,6 @@
 'use client'
 import { cfUserType, userTableEntryType } from "@/app/lib/types";
-import { DataGrid, GridCellParams, GridColDef, GridPaginationModel } from "@mui/x-data-grid";
+import { DataGrid, GridCellParams, GridColDef, GridPaginationModel, GridRowSelectionModel } from "@mui/x-data-grid";
 import Link from "next/link";
 import React, { useState } from "react";
 import Image from "next/image";
@@ -9,18 +9,22 @@ import { TrendingUp, TrendingDown, Medal, Star } from "lucide-react";
 
 type UserTableProps = {
   users: userTableEntryType[];
+  onSelectionChange?: (selectedUsers: userTableEntryType[]) => void;
+  checkboxSelection?: boolean;
+  selectedUsers?: userTableEntryType[];
 };
 
-export default function UserTable({users}: UserTableProps) {
+export default function UserTable({
+  users,
+  onSelectionChange,
+  checkboxSelection = false,
+  selectedUsers = []
+}: UserTableProps) {
   const [page, setPage] = useState(0);
   const [pageSize, setPageSize] = useState(10);
   const [hoveredRow, setHoveredRow] = useState<string | null>(null);
 
   const rows = users;
-
-  const handlePageChange = (_: React.SyntheticEvent, newPage: number) => {
-    setPage(newPage);
-  };
 
   const getRatingColor = (rating: number) => {
     if (rating >= 2400) return 'text-red-500';
@@ -42,6 +46,15 @@ export default function UserTable({users}: UserTableProps) {
     return 'text-green-500';
   };
 
+  const handleSelectionChange = (newSelection: GridRowSelectionModel) => {
+    if (onSelectionChange) {
+      const selectedUsers = newSelection.map((id) => 
+        rows.find((user) => user.userName === id)
+      ).filter((user): user is userTableEntryType => user !== undefined);
+      onSelectionChange(selectedUsers);
+    }
+  };
+
   const columns: GridColDef[] = [
     { 
       field: 'avatar', 
@@ -53,6 +66,7 @@ export default function UserTable({users}: UserTableProps) {
         <motion.div 
           className='h-full flex justify-center items-center w-8'
           whileHover={{ scale: 1.1 }}
+          transition={{ type: "spring", stiffness: 300 }}
         >
           <Image 
             style={{
@@ -60,7 +74,8 @@ export default function UserTable({users}: UserTableProps) {
               height: '30px', 
               width: '30px', 
               objectFit: 'cover',
-              border: '2px solid #e5e7eb'
+              border: '2px solid #e5e7eb',
+              boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
             }} 
             src={params.row.avatar} 
             alt={''} 
@@ -78,9 +93,9 @@ export default function UserTable({users}: UserTableProps) {
       renderCell: (params: GridCellParams) => (
         <Link 
           href={`/profile/${params.row.userName}`}
-          className="hover:text-blue-500 transition-colors font-medium"
+          className="hover:text-blue-500 transition-colors font-medium flex items-center gap-2"
         >
-          {params.row.userName}
+          <span className="text-gray-700">{params.row.userName}</span>
         </Link>
       ),
     },
@@ -90,10 +105,14 @@ export default function UserTable({users}: UserTableProps) {
       flex: 1, 
       minWidth: 150,
       renderCell: (params: GridCellParams) => (
-        <div className={`flex items-center gap-2 font-medium ${getRatingColor(params.row.maxRating)}`}>
+        <motion.div 
+          className={`flex items-center gap-2 font-medium ${getRatingColor(params.row.maxRating)}`}
+          whileHover={{ scale: 1.05 }}
+          transition={{ type: "spring", stiffness: 300 }}
+        >
           <TrendingUp className="w-4 h-4" />
-          {params.row.maxRating}
-        </div>
+          <span>{params.row.maxRating}</span>
+        </motion.div>
       )
     },
     { 
@@ -102,10 +121,14 @@ export default function UserTable({users}: UserTableProps) {
       flex: 1, 
       minWidth: 150,
       renderCell: (params: GridCellParams) => (
-        <div className={`flex items-center gap-2 font-medium ${getRankColor(params.row.maxRank)}`}>
+        <motion.div 
+          className={`flex items-center gap-2 font-medium ${getRankColor(params.row.maxRank)}`}
+          whileHover={{ scale: 1.05 }}
+          transition={{ type: "spring", stiffness: 300 }}
+        >
           <Medal className="w-4 h-4" />
-          {params.row.maxRank}
-        </div>
+          <span>{params.row.maxRank}</span>
+        </motion.div>
       )
     },
     { 
@@ -114,64 +137,82 @@ export default function UserTable({users}: UserTableProps) {
       flex: 1, 
       minWidth: 150,
       renderCell: (params: GridCellParams) => (
-        <div className={`flex items-center gap-2 font-medium ${params.row.contribution >= 0 ? 'text-green-500' : 'text-red-500'}`}>
+        <motion.div 
+          className={`flex items-center gap-2 font-medium ${params.row.contribution >= 0 ? 'text-green-500' : 'text-red-500'}`}
+          whileHover={{ scale: 1.05 }}
+          transition={{ type: "spring", stiffness: 300 }}
+        >
           <Star className="w-4 h-4" />
-          {params.row.contribution}
-        </div>
+          <span>{params.row.contribution}</span>
+        </motion.div>
       )
     },
   ];
 
   return (
     <motion.div 
-      className='p-6'
+      className="p-6"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
     >
-      {rows.length > 0 ? (
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-          <DataGrid
-            rows={rows}
-            columns={columns}
-            initialState={{
-              pagination: { paginationModel: { pageSize: 10 } },
-            }}
-            pageSizeOptions={[10, 20, 50]}
-            className="text-gray-700"
-            autoHeight
-            sx={{
-              border: 'none',
-              '& .MuiDataGrid-cell': {
-                borderColor: '#f3f4f6',
+      <div className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden backdrop-blur-sm backdrop-filter">
+        <DataGrid
+          rows={rows}
+          columns={columns}
+          getRowId={(row) => row.userName}
+          initialState={{
+            pagination: { paginationModel: { pageSize: 10 } },
+          }}
+          pageSizeOptions={[5, 10, 25]}
+          className="text-gray-700"
+          autoHeight
+          checkboxSelection={checkboxSelection}
+          onRowSelectionModelChange={handleSelectionChange}
+          rowSelectionModel={selectedUsers.map(user => user.userName)}
+          sx={{
+            border: 'none',
+            '& .MuiDataGrid-cell': {
+              borderColor: '#f3f4f6',
+              padding: '12px 16px',
+            },
+            '& .MuiDataGrid-columnHeaders': {
+              backgroundColor: '#f8fafc',
+              borderBottom: '2px solid #e5e7eb',
+              '& .MuiDataGrid-columnHeader': {
+                fontWeight: '600',
+                color: '#1f2937',
+              }
+            },
+            '& .MuiDataGrid-row': {
+              '&:hover': {
+                backgroundColor: '#f8fafc',
+                transform: 'scale(1.002)',
+                transition: 'all 0.2s ease',
               },
-              '& .MuiDataGrid-columnHeaders': {
-                backgroundColor: '#f9fafb',
-                borderBottom: '2px solid #e5e7eb',
-              },
-              '& .MuiDataGrid-row': {
-                '&:hover': {
-                  backgroundColor: '#f9fafb',
-                },
-                transition: 'background-color 0.2s ease',
-              },
-              '& .MuiDataGrid-footerContainer': {
-                borderTop: '2px solid #e5e7eb',
-              },
-              '& .MuiTablePagination-root': {
-                color: '#374151',
-              },
-              '& .MuiDataGrid-virtualScroller': {
-                backgroundColor: '#ffffff',
-              },
-            }}
-          />
-        </div>
-      ) : (
-        <div className="flex justify-center items-center h-64 text-gray-500">
-          No users found
-        </div>
-      )}
+              '&:nth-of-type(odd)': {
+                backgroundColor: '#fafafa',
+              }
+            },
+            '& .MuiDataGrid-footerContainer': {
+              borderTop: '2px solid #e5e7eb',
+              backgroundColor: '#f8fafc',
+            },
+            '& .MuiTablePagination-root': {
+              color: '#374151',
+            },
+            '& .MuiDataGrid-virtualScroller': {
+              backgroundColor: '#ffffff',
+            },
+            '& .MuiCheckbox-root': {
+              color: '#6b7280',
+              '&.Mui-checked': {
+                color: '#3b82f6',
+              }
+            },
+          }}
+        />
+      </div>
     </motion.div>
   );
 }
