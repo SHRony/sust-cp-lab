@@ -57,7 +57,7 @@ async function tryToAddCFCache(username: string) {
   const handles = await getCFHandles(username);
   const response = await prisma.sust_cp_lab_cf_handles.findMany({ where: { username: username } });
     const cfHandles = response.map((row) => row.handle);
-    let user = await getCFInfo(cfHandles);
+    let user = await getCFInfo(cfHandles);    
     addCFCache(username, user);
     
     // Add empty CF cache or update existing one
