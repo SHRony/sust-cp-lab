@@ -21,7 +21,7 @@ export function LandingLamp() {
             duration: 0.8,
             ease: "easeInOut",
           }}
-          className=" bg-gradient-to-br from-slate-300 to-slate-500 py-4 bg-clip-text text-center text-4xl font-medium tracking-tight text-transparent md:text-7xl"
+          className="bg-white py-4 bg-clip-text text-center text-4xl font-medium tracking-tight text-transparent md:text-7xl"
         >
           SUST  <br /> Competitive programming lab
         </motion.h1>
