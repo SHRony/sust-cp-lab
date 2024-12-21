@@ -41,80 +41,106 @@ export const crawlAndStoreVjudgeResults = async (vjudgeId: string) => {
         const vjudgeHandles = new Set(usersWithVjudgeHandles.map(user => user.vjudge_handle));
 
         // Fetch submissions from VJudge API
-        const response = await axios.get(`https://vjudge.net/contest/rank/single/${vjudgeId}`);
-        const contestData: VjudgeContestResponse = response.data;
-        if (!contestData || !contestData.submissions) {
-            throw new Error('Failed to fetch submissions from VJudge');
-        }
-        // Create a map of user IDs to usernames
-        const userIdToUsername = new Map(
-            Object.entries(contestData.participants).map(([userId, [username]]) => [userId, username])
-        );
-        // Filter and transform submissions
-        const submissionsToUpsert = contestData.submissions
-            .filter(sub => {
-                const username = userIdToUsername.get(sub[0].toString());
-                return username && vjudgeHandles.has(username);
-            })
-            .map(sub => {
-                const username = userIdToUsername.get(sub[0].toString())!;
-                const problemIndex = sub[1] as number;
-                const isAccepted = sub[2] === 1;
-                const submitTime = new Date(contestData.begin + (sub[3] as number) * 1000);
-
-                return {
-                    vjudge_contest_id: contest.id,
-                    vjudge_handle: username,
-                    problem_no: String.fromCharCode(65 + problemIndex), // Convert 0 to 'A', 1 to 'B', etc.
-                    is_accepted: isAccepted,
-                    submission_time: submitTime,
-                };
+        console.log(`Fetching submissions from VJudge for contest ${vjudgeId}`);
+        try {
+            const response = await axios.get(`https://vjudge.net/contest/rank/single/${vjudgeId}`, {
+                headers: {
+                    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+                    'Accept': 'application/json',
+                    'Origin': 'https://vjudge.net',
+                    'Referer': `https://vjudge.net/contest/${vjudgeId}`
+                },
+                timeout: 10000 // 10 second timeout
             });
-
-        // Update contest start time and duration if not set
-        await prisma.sust_cp_lab_vjudge_contests.update({
-            where: {
-                id: contest.id
-            },
-            data: {
-                start_time: new Date(contestData.begin),
-                duration_seconds: Math.floor(contestData.length / 1000)
+            console.log('Successfully received response from VJudge');
+            const contestData: VjudgeContestResponse = response.data;
+            if (!contestData || !contestData.submissions) {
+                console.error('Invalid response data:', contestData);
+                throw new Error('Failed to fetch submissions from VJudge: Invalid response data');
             }
-        });
+            // Create a map of user IDs to usernames
+            const userIdToUsername = new Map(
+                Object.entries(contestData.participants).map(([userId, [username]]) => [userId, username])
+            );
+            // Filter and transform submissions
+            const submissionsToUpsert = contestData.submissions
+                .filter(sub => {
+                    const username = userIdToUsername.get(sub[0].toString());
+                    return username && vjudgeHandles.has(username);
+                })
+                .map(sub => {
+                    const username = userIdToUsername.get(sub[0].toString())!;
+                    const problemIndex = sub[1] as number;
+                    const isAccepted = sub[2] === 1;
+                    const submitTime = new Date(contestData.begin + (sub[3] as number) * 1000);
 
-        // Bulk upsert submissions
-        for (const submission of submissionsToUpsert) {
-            await prisma.sust_cp_lab_vjudge_submissions.upsert({
+                    return {
+                        vjudge_contest_id: contest.id,
+                        vjudge_handle: username,
+                        problem_no: String.fromCharCode(65 + problemIndex), // Convert 0 to 'A', 1 to 'B', etc.
+                        is_accepted: isAccepted,
+                        submission_time: submitTime,
+                    };
+                });
+
+            // Update contest start time and duration if not set
+            await prisma.sust_cp_lab_vjudge_contests.update({
                 where: {
-                    vjudge_contest_id_vjudge_handle_problem_no_submission_time: {
-                        vjudge_contest_id: submission.vjudge_contest_id,
-                        vjudge_handle: submission.vjudge_handle,
-                        problem_no: submission.problem_no,
-                        submission_time: submission.submission_time
-                    }
+                    id: contest.id
                 },
-                update: {
-                    is_accepted: submission.is_accepted
-                },
-                create: submission
+                data: {
+                    start_time: new Date(contestData.begin),
+                    duration_seconds: Math.floor(contestData.length / 1000)
+                }
             });
-        }
 
-        // Update contest status
-        await prisma.sust_cp_lab_vjudge_contests.update({
-            where: {
-                id: contest.id
-            },
-            data: {
-                is_result_available: true
+            // Bulk upsert submissions
+            for (const submission of submissionsToUpsert) {
+                await prisma.sust_cp_lab_vjudge_submissions.upsert({
+                    where: {
+                        vjudge_contest_id_vjudge_handle_problem_no_submission_time: {
+                            vjudge_contest_id: submission.vjudge_contest_id,
+                            vjudge_handle: submission.vjudge_handle,
+                            problem_no: submission.problem_no,
+                            submission_time: submission.submission_time
+                        }
+                    },
+                    update: {
+                        is_accepted: submission.is_accepted
+                    },
+                    create: submission
+                });
             }
-        });
 
-        return {
-            success: true,
-            message: `Successfully processed ${submissionsToUpsert.length} submissions`,
-            submissionsCount: submissionsToUpsert.length
-        };
+            // Update contest status
+            await prisma.sust_cp_lab_vjudge_contests.update({
+                where: {
+                    id: contest.id
+                },
+                data: {
+                    is_result_available: true
+                }
+            });
+
+            return {
+                success: true,
+                message: `Successfully processed ${submissionsToUpsert.length} submissions`,
+                submissionsCount: submissionsToUpsert.length
+            };
+
+        } catch (error) {
+            console.error('Error fetching from VJudge API:', error);
+            if (axios.isAxiosError(error)) {
+                console.error('Axios error details:', {
+                    status: error.response?.status,
+                    statusText: error.response?.statusText,
+                    headers: error.response?.headers,
+                    data: error.response?.data
+                });
+                throw new Error(`Failed to fetch from VJudge API: ${error.response?.status} ${error.response?.statusText}`);
+            }
+            throw error;
+        }
 
     } catch (error) {
         console.error('Error in crawlAndStoreVjudgeResults:', error);
